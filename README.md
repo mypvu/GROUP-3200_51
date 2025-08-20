@@ -13,3 +13,13 @@ Ideally, we envisage an automated system where key parameters of a compound of i
 Client: Connie Locher
 Location: Department of Pharmacy, School of Health and Clinical Sciences, Curnow Building, UWA
 IP: Creative Commons (open source)
+
+## Development
+
+Make sure you have Node installed: https://nodejs.org/
+
+```
+cd project
+npm install
+npm run dev -- --open
+```
