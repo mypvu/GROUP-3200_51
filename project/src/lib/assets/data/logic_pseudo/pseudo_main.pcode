@@ -1,0 +1,44 @@
+MAIN
+----
+function run_filtering(P):
+    // Load each database
+    db_1A = load_db("1A")
+    db_1B = load_db("1B")
+    db_2A = load_db("2A")
+    db_2B = load_db("2B")
+
+    trail = new AuditTrail()
+
+    // Filter each independently (T only applied inside B dbs)
+    cand_1A = filter_one_database("1A", db_1A, P)
+    cand_1B = filter_one_database("1B", db_1B, P)
+    cand_2A = filter_one_database("2A", db_2A, P)
+    cand_2B = filter_one_database("2B", db_2B, P)
+
+    // Get ID sets for intersection step
+    set_1A = set([c.id for c in cand_1A])
+    set_1B = set([c.id for c in cand_1B])
+    set_2A = set([c.id for c in cand_2A])
+    set_2B = set([c.id for c in cand_2B])
+
+    // Group intersections:
+    survivor_1 = set_intersection(set_1A, set_1B)  // Group 1 (DB 1A ∩ 1B)
+    survivor_2 = set_intersection(set_2A, set_2B)  // Group 2 (DB 2A ∩ 2B)
+
+    // Optional: store these summaries in the audit trail
+    trail.survivors_by_step["INTERSECTION@Group1"] = list(survivor_1)
+    trail.survivors_by_step["INTERSECTION@Group2"] = list(survivor_2)
+
+    return {
+        "candidates": {
+            "1A": [c.id for c in cand_1A],
+            "1B": [c.id for c in cand_1B],
+            "2A": [c.id for c in cand_2A],
+            "2B": [c.id for c in cand_2B]
+        },
+        "survivors": {
+            "Group1": list(survivor_1),
+            "Group2": list(survivor_2)
+        },
+        "audit": trail
+    }
