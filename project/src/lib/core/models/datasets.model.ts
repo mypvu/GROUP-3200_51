@@ -1,4 +1,4 @@
-import type { Compound, CompoundA, CompoundB } from "./compund.model";
+import type { Compound} from "./compund.model";
 
 export interface DataSetsInterface {
     NP1: Compound[];

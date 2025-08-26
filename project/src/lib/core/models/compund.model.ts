@@ -1,5 +1,3 @@
-import { expectTypeOf } from "vitest";
-
 export type DBLabel = "A1" | "A2" | "B1" | "B2";
 
 interface CompoundBase {

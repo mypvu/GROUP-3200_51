@@ -1,8 +1,6 @@
 import { generateRangeParams } from "$lib/utils/range_generate";
-import { DEFAULT_PARAMS, DEFAULT_PARAMS as DP} from "../../utils/rw";
-import { isCompoundB, type Compound,type CompoundA, type CompoundB, type Sample } from "../models/compund.model";
+import { isCompoundB, type Compound, type Sample } from "../models/compund.model";
 import DataSets from "../models/datasets.model";
-import { CompoundFilter } from "./CompundFilter";
 import { DEV_254nm_filter, DEV_366nm_filter, FL_Peaks_filter, rf_filter, UV_Peaks_filter, VSNP_366nm_filter } from "./Methods";
 
 enum R{
@@ -10,7 +8,7 @@ enum R{
     MAX
 }
 
-export default class BasicFilter implements CompoundFilter{
+export default class BasicFilter {
     private res: DataSets
     private bfh: BasicFilterHelper
 
@@ -37,7 +35,6 @@ export default class BasicFilter implements CompoundFilter{
         this.bfh.set(vs2, Array.from(this.datasets.VS2()))
         this.res.C_VS2 = this.bfh.applyAllFilters(generateRangeParams(vs2)).result()
         
-
         return this.res
     }
 
