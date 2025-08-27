@@ -2,13 +2,25 @@
 
 Project Description:
 
-The UWA Honey Research lab has established a comprehensive High Performance Thin Layer Chromatography (HPTLC) derived database on a large number of phenolic standards. The captured information (in Excel) includes Rf values for two different mobile phases, RGB values at 254 and 366 nm, RGB values at 366 nm and white light after derivatisation with two different reagents as well as the respective UV- and fluorescence spectra's maxima and minima. 
+The UWA Honey Research lab has established a comprehensive High Performance Thin Layer Chromatography (HPTLC) derived
+database on a large number of phenolic standards. The captured information (in Excel) includes Rf values for two
+different mobile phases, RGB values at 254 and 366 nm, RGB values at 366 nm and white light after derivatisation with
+two different reagents as well as the respective UV- and fluorescence spectra's maxima and minima.
 
-This information can be used to screen constituents in honey extracts for potential matches with the database following a validated protocol, thus aiding in chemical compound identification. Potential hits are confirmed using spectral overlays. The establishment, validation and application of the database is described in the following paper: https://www.mdpi.com/1420-3049/27/19/6651 
+This information can be used to screen constituents in honey extracts for potential matches with the database following
+a validated protocol, thus aiding in chemical compound identification. Potential hits are confirmed using spectral
+overlays. The establishment, validation and application of the database is described in the following
+paper: https://www.mdpi.com/1420-3049/27/19/6651
 
-Given the wealth of data used in this approach confirmed matches are more reliable than those obtained with other analytical methods (e.g. HPLC-DAD). However, manual screening of sample data against the database is time consuming and would therefore benefit from an automated approach. 
+Given the wealth of data used in this approach confirmed matches are more reliable than those obtained with other
+analytical methods (e.g. HPLC-DAD). However, manual screening of sample data against the database is time consuming and
+would therefore benefit from an automated approach.
 
-Ideally, we envisage an automated system where key parameters of a compound of interest are inputted to automatically generate potential matches from the database including spectral overlays. Such an automated approach would greatly facilitate the identification of honey constituents and therefore benefit authentication and quality control efforts of the honeybee industry. By extension, the approach could also be adapted for other natural product classes, thus opening up new avenues for compound identification.
+Ideally, we envisage an automated system where key parameters of a compound of interest are inputted to automatically
+generate potential matches from the database including spectral overlays. Such an automated approach would greatly
+facilitate the identification of honey constituents and therefore benefit authentication and quality control efforts of
+the honeybee industry. By extension, the approach could also be adapted for other natural product classes, thus opening
+up new avenues for compound identification.
 
 Client: Connie Locher
 Location: Department of Pharmacy, School of Health and Clinical Sciences, Curnow Building, UWA
@@ -16,10 +28,35 @@ IP: Creative Commons (open source)
 
 ## Development
 
+### Design
+
+The project uses the Astro framework: https://docs.astro.build
+
+Keep in mind our project (or "app") is "serverless". It doesn't rely on a web server for anything other than serving the
+app assets.
+
+We are using Astro because of this - it's great at serverless deployment. Libraries imported in Astro code will be
+bundled with the app and minified.
+
+### Preparing
+
 Make sure you have Node installed: https://nodejs.org/
 
 ```
 cd project
 npm install
+```
+
+### Developing
+
+```
+cd project
 npm run dev -- --open
+```
+
+### Building
+
+```
+cd project
+npm run build
 ```
