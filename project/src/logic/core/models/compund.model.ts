@@ -7,8 +7,10 @@ interface CompoundBase {
   DEV_254nm: number;             // Color 1 (e.g., "blue", hex, code)
   DEV_366nm: number;             // Color 2
   VSNP_366nm: number;            // Color 3
-  UV_Peaks: number;            // list<float>
-  FL_Peaks: number;            // list<float>
+  UV_Peaks_num: number;         // number of UV peaks
+  UV_Peaks: number[];            // list<float>
+  FL_Peaks_num: number;         // number of FL peaks
+  FL_Peaks: number[];            // list<float>
 }
 
 export interface Sample {
@@ -19,12 +21,12 @@ export interface Sample {
 }
 
 export interface CompoundA extends CompoundBase {
-  db_label: "A1" | "B1";
+  db_label: "A1" | "A2";
   T?: undefined;                 // explicitly not present
 }
 
 export interface CompoundB extends CompoundBase {
-  db_label: "A2" | "B2";
+  db_label: "B1" | "B2";
   T: number | null;              // only for B databases
 }
 
