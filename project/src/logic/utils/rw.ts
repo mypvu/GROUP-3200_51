@@ -1,6 +1,4 @@
-import DefaultParams from "../config/default_parameters.json"
-import type { Compound } from "../core/models/compund.model"
+import DefaultBounds from "../config/default_bound.json"
+import type { FilterBounds } from "../core/models/filter.model"
 
-export type CompundFilterInterface = Omit<Compound, "id" | "db_label">
-
-export const DEFAULT_PARAMS: CompundFilterInterface = DefaultParams
+export const DEFAULT_BOUNDS: FilterBounds = DefaultBounds
