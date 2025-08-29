@@ -1,7 +1,7 @@
-import type { CompundFilterInterface } from "$lib/utils/rw";
-import type { Sample } from "../models/compund.model";
-import type DataSets from "../models/datasets.model";
-import BasicFilter from "./BasicFilter";
+import type { Sample } from "@/logic/core/models/compund.model";
+import type DataSets from "@core/models/datasets.model";
+import BasicFilter from "@core/algorithms/BasicFilter";
+import { FilterBounds } from "../models/filter.model";
 
 
 export default class CompoundFilter {
@@ -11,11 +11,11 @@ export default class CompoundFilter {
     constructor(
             samples: Sample, 
             datasets: DataSets, 
-            default_value: CompundFilterInterface) {
+            threshold: FilterBounds) {
                 this.bf = new BasicFilter(samples, datasets)
     }
 
-    extract(): Compound[] {
+    extract(): DataSets {
             
     }
 

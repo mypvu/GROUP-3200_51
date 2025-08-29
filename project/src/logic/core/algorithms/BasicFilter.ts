@@ -1,7 +1,17 @@
-import { generateRangeParams } from "../../utils/range_generate";
-import { isCompoundB, type Compound, type Sample } from "../models/compound.model";
-import DataSets from "../models/datasets.model";
-import { DEV_254nm_filter, DEV_366nm_filter, FL_Peaks_filter, rf_filter, UV_Peaks_filter, VSNP_366nm_filter, T_filter, UV_Peaks_num_filter, FL_Peaks_num_filter} from "./Methods";
+import { generateRangeParams } from "@/logic/utils/range_generate";
+import { isCompoundV, type Compound, type Sample } from "@core/models/compund.model";
+import DataSets from "@core/models/datasets.model";
+import {
+  rf_predicate,
+  DEV_254nm_predicate,
+  DEV_366nm_predicate,
+  VSNP_366nm_predicate,
+  T_predicate,
+  UV_Peaks_predicate,
+  FL_Peaks_predicate,
+  UV_Peaks_num_predicate,
+  FL_Peaks_num_predicate
+} from "@core/algorithms/Methods"
 
 enum R{
     MIN,
@@ -15,25 +25,25 @@ export default class BasicFilter {
     constructor(private samples: Sample, 
                 private datasets: DataSets) {
         this.res = new DataSets([],[],[],[])
-        this.bfh = new BasicFilterHelper(samples.NP1, Array.from(datasets))
+        this.bfh = new BasicFilterHelper(samples.NP_KDS, Array.from(datasets))
     }
 
     extract(): DataSets {
-        let np1 = this.samples.NP1
-        this.bfh.set(np1, Array.from(this.datasets.NP1()))
-        this.res.C_NP1 = this.bfh.applyAllFilters(generateRangeParams(np1)).result()
+        let np1 = this.samples.NP_KDS
+        this.bfh.set(np1, Array.from(this.datasets.NK()))
+        this.res.NP_KDS = this.bfh.applyAllFilters(generateRangeParams(np1)).result()
 
-        let vs1 = this.samples.VS1
-        this.bfh.set(vs1, Array.from(this.datasets.VS1()))
-        this.res.C_VS1 = this.bfh.applyAllFilters(generateRangeParams(vs1)).result()
+        let vs1 = this.samples.VS_KDS
+        this.bfh.set(vs1, Array.from(this.datasets.VK()))
+        this.res.VS_KDS = this.bfh.applyAllFilters(generateRangeParams(vs1)).result()
 
-        let np2 = this.samples.NP2
-        this.bfh.set(np2, Array.from(this.datasets.NP2()))
-        this.res.C_NP2 = this.bfh.applyAllFilters(generateRangeParams(np2)).result()
+        let np2 = this.samples.NP_LDS
+        this.bfh.set(np2, Array.from(this.datasets.NL()))
+        this.res.NP_LDS = this.bfh.applyAllFilters(generateRangeParams(np2)).result()
 
-        let vs2 = this.samples.VS2
-        this.bfh.set(vs2, Array.from(this.datasets.VS2()))
-        this.res.C_VS2 = this.bfh.applyAllFilters(generateRangeParams(vs2)).result()
+        let vs2 = this.samples.VS_LDS
+        this.bfh.set(vs2, Array.from(this.datasets.VL()))
+        this.res.VS_LDS = this.bfh.applyAllFilters(generateRangeParams(vs2)).result()
         
         return this.res
     }
@@ -68,21 +78,20 @@ class BasicFilterHelper {
         uv?: [number, number][],
         fl_num?: number,
         fl?: [number, number][]
-    }): BasicFilterHelper {
+    }, T?: boolean): BasicFilterHelper {
         this.res = this.data.filter((compound) => {
             if (this.c.db_label !== compound.db_label) return false
-            if (params.rf && !rf_filter(params.rf)(compound)) return false
-            if (params.dev254 && !DEV_254nm_filter(params.dev254)(compound)) return false
-            if (params.dev366 && !DEV_366nm_filter(params.dev366)(compound)) return false
-            if (params.vsnp && !VSNP_366nm_filter(params.vsnp)(compound)) return false
-            //if (params.t && !T_filter(params.t)(compound)) return false;
-            if (params.uv_num && !UV_Peaks_num_filter(params.uv_num)(compound)) return false
-            if (params.uv && !UV_Peaks_filter(params.uv)(compound)) return false
-    
-            if (params.fl_num && !FL_Peaks_num_filter(params.fl_num)(compound)) return false
-            if (params.fl && !FL_Peaks_filter(params.fl)(compound)) return false
+            if (params.rf && !rf_predicate(params.rf)(compound)) return false
+            if (params.dev254 && !DEV_254nm_predicate(params.dev254)(compound)) return false
+            if (params.dev366 && !DEV_366nm_predicate(params.dev366)(compound)) return false
+            if (params.vsnp && !VSNP_366nm_predicate(params.vsnp)(compound)) return false
+            if (T && params.t && !T_predicate(params.t)(compound)) return false
+            if (params.uv_num && !UV_Peaks_num_predicate(params.uv_num)(compound)) return false
+            if (params.uv && !UV_Peaks_predicate(params.uv)(compound)) return false
+            if (params.fl_num && !FL_Peaks_num_predicate(params.fl_num)(compound)) return false
+            if (params.fl && !FL_Peaks_predicate(params.fl)(compound)) return false
 
-            return true
+    return true
         })
 
         return this
@@ -94,43 +103,43 @@ class BasicFilterHelper {
     }
 
     rf(range: [number, number]) :BasicFilterHelper {
-        this.res.filter(rf_filter(range))
+        this.res.filter(rf_predicate(range))
 
         return this
     }
 
     DEV_254nm(range: [number, number]) :BasicFilterHelper {
-        this.res.filter(DEV_254nm_filter(range))
+        this.res.filter(DEV_254nm_predicate(range))
         
         return this
     }
 
     DEV_366nm(range: [number, number]) :BasicFilterHelper {
-        this.res.filter(DEV_366nm_filter(range))
+        this.res.filter(DEV_366nm_predicate(range))
 
         return this
     }
 
     VSNP_366nm(range: [number, number]) :BasicFilterHelper {
-        this.res.filter(VSNP_366nm_filter(range))
+        this.res.filter(VSNP_366nm_predicate(range))
 
         return this
     }
 
     UV_Peaks(range: [number, number][]) :BasicFilterHelper {
-        this.res.filter(UV_Peaks_filter(range))
+        this.res.filter(UV_Peaks_predicate(range))
 
         return this
     }
 
     FL_Peaks(range: [number, number][]) :BasicFilterHelper {
-        this.res.filter(FL_Peaks_filter(range))
+        this.res.filter(FL_Peaks_predicate(range))
 
         return this
     }
 
     T() :BasicFilterHelper {
-        if (this.c && !isCompoundB(this.c))
+        if (this.c && !isCompoundV(this.c))
             throw new Error("Program failed :Compund does not have value \"T\" to compare!")
             
 

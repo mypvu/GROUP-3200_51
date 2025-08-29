@@ -1,4 +1,4 @@
-import type { Compound } from "../core/models/compound.model";
+import type { Compound } from "../core/models/compund.model";
 import { DEFAULT_BOUNDS } from "./rw";
 
 export interface RangeParams {

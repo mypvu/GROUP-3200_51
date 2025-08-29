@@ -1,41 +1,41 @@
-import type { Compound} from "./compund.model";
+import type { Compound, CompoundN, CompoundV} from "./compund.model";
 
 export interface DataSetsInterface {
-    NP1: Compound[];
-    VS1: Compound[];
-    NP2: Compound[];
-    VS2: Compound[];
+    NK: CompoundN[];
+    NL: CompoundN[];
+    VK: CompoundV[];
+    VL: CompoundV[];
 }
 
 export default class DataSets implements Iterable<Compound> {
     constructor(
-        public C_NP1: Compound[],
-        public C_VS1: Compound[],
-        public C_NP2: Compound[],
-        public C_VS2: Compound[]
+        public NP_KDS: Compound[],
+        public NP_LDS: Compound[],
+        public VS_KDS: Compound[],
+        public VS_LDS: Compound[]
     ) {}
 
     *[Symbol.iterator](): Iterator<Compound> {
-        for (const c of this.C_NP1) yield c
-        for (const c of this.C_VS1) yield c
-        for (const c of this.C_NP2) yield c
-        for (const c of this.C_VS2) yield c
+        for (const c of this.NP_KDS) yield c
+        for (const c of this.VS_KDS) yield c
+        for (const c of this.NP_LDS) yield c
+        for (const c of this.VS_LDS) yield c
     }
 
-    *NP1(): Iterable<Compound> {
-        for (const c of this.C_NP1) yield c
+    *NK(): Iterable<Compound> {
+        for (const c of this.NP_KDS) yield c
     }
 
-    *VS1(): Iterable<Compound> {
-        for (const c of this.C_VS1) yield c
+    *NL(): Iterable<Compound> {
+        for (const c of this.NP_LDS) yield c
     }
 
-    *NP2(): Iterable<Compound> {
-        for (const c of this.C_NP2) yield c
+    *VK(): Iterable<Compound> {
+        for (const c of this.VS_KDS) yield c
     }
 
-    *VS2() :Iterable<Compound> {
-        for (const c of this.C_VS2) yield c
+    *VL() :Iterable<Compound> {
+        for (const c of this.VS_LDS) yield c
     }
 
     toArray(): Compound[] {
@@ -44,10 +44,10 @@ export default class DataSets implements Iterable<Compound> {
 
     merge(): Compound[] {
     return [
-        ...this.C_NP1,
-        ...this.C_VS1,
-        ...this.C_NP2,
-        ...this.C_VS2
+        ...this.NP_KDS,
+        ...this.VS_KDS,
+        ...this.NP_LDS,
+        ...this.VS_LDS
     ];
 }
 }
