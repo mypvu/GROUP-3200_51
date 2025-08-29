@@ -1,7 +1,7 @@
-import { generateRangeParams } from "$lib/utils/range_generate";
-import { isCompoundB, type Compound, type Sample } from "../models/compund.model";
+import { generateRangeParams } from "../../utils/range_generate";
+import { isCompoundB, type Compound, type Sample } from "../models/compound.model";
 import DataSets from "../models/datasets.model";
-import { DEV_254nm_filter, DEV_366nm_filter, FL_Peaks_filter, rf_filter, UV_Peaks_filter, VSNP_366nm_filter } from "./Methods";
+import { DEV_254nm_filter, DEV_366nm_filter, FL_Peaks_filter, rf_filter, UV_Peaks_filter, VSNP_366nm_filter, T_filter, UV_Peaks_num_filter, FL_Peaks_num_filter} from "./Methods";
 
 enum R{
     MIN,
@@ -64,8 +64,10 @@ class BasicFilterHelper {
         dev366?: [number, number],
         vsnp?: [number, number],
         t?: [number, number],
-        uv?: [number, number],
-        fl?: [number, number]
+        uv_num?: number,
+        uv?: [number, number][],
+        fl_num?: number,
+        fl?: [number, number][]
     }): BasicFilterHelper {
         this.res = this.data.filter((compound) => {
             if (this.c.db_label !== compound.db_label) return false
@@ -74,8 +76,12 @@ class BasicFilterHelper {
             if (params.dev366 && !DEV_366nm_filter(params.dev366)(compound)) return false
             if (params.vsnp && !VSNP_366nm_filter(params.vsnp)(compound)) return false
             //if (params.t && !T_filter(params.t)(compound)) return false;
+            if (params.uv_num && !UV_Peaks_num_filter(params.uv_num)(compound)) return false
             if (params.uv && !UV_Peaks_filter(params.uv)(compound)) return false
+    
+            if (params.fl_num && !FL_Peaks_num_filter(params.fl_num)(compound)) return false
             if (params.fl && !FL_Peaks_filter(params.fl)(compound)) return false
+
             return true
         })
 
@@ -111,13 +117,13 @@ class BasicFilterHelper {
         return this
     }
 
-    UV_Peaks(range: [number, number]) :BasicFilterHelper {
+    UV_Peaks(range: [number, number][]) :BasicFilterHelper {
         this.res.filter(UV_Peaks_filter(range))
 
         return this
     }
 
-    FL_Peaks(range: [number, number]) :BasicFilterHelper {
+    FL_Peaks(range: [number, number][]) :BasicFilterHelper {
         this.res.filter(FL_Peaks_filter(range))
 
         return this
