@@ -1,4 +1,4 @@
-import type { Compound } from "../models/compund.model";
+import type { Compound } from "../models/compound.model";
 
 export enum RI {
     MIN = 0,
@@ -30,12 +30,30 @@ export function T_filter(range: [number, number]) {
         typeof c.T === "number" && c.T >= range[RI.MIN] && c.T <= range[RI.MAX];
 }
 
-export function UV_Peaks_filter(range: [number, number]) {
+export function UV_Peaks_num_filter(filter_uv_num: number) {
     return (c: Compound): boolean =>
-        Array.isArray(c.UV_Peaks) && c.UV_Peaks.some(peak => peak >= range[RI.MIN] && peak <= range[RI.MAX]);
+        typeof c.UV_Peaks_num === "number" && c.UV_Peaks_num === filter_uv_num;
+};
+
+export function UV_Peaks_filter(range: [number, number][]) {
+    return (c: Compound): boolean => {
+        if (!Array.isArray(c.UV_Peaks) || c.UV_Peaks.length !== range.length || !c.UV_Peaks.every(peak => typeof peak === "number" && !Number.isNaN(peak))) {
+            return false;
+        }
+        return c.UV_Peaks.every((peak, i) => peak >= range[i][RI.MIN] && peak <= range[i][RI.MAX]);
+    };
 }
 
-export function FL_Peaks_filter(range: [number, number]) {
+export function FL_Peaks_num_filter(filter_fl_num: number) {
     return (c: Compound): boolean =>
-        Array.isArray(c.FL_Peaks) && c.FL_Peaks.some(peak => peak >= range[RI.MIN] && peak <= range[RI.MAX]);
+        typeof c.FL_Peaks_num === "number" && c.FL_Peaks_num === filter_fl_num;
+};
+
+export function FL_Peaks_filter(range: [number, number][]) {
+    return (c: Compound): boolean => {
+        if (!Array.isArray(c.FL_Peaks) || c.FL_Peaks.length !== range.length || !c.FL_Peaks.every(peak => typeof peak === "number" && !Number.isNaN(peak))) {
+            return false;
+        }
+        return c.FL_Peaks.every((peak, i) => peak >= range[i][RI.MIN] && peak <= range[i][RI.MAX]);
+    };
 }
