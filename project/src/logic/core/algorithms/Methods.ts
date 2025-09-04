@@ -6,6 +6,7 @@ export enum RI {
 }
 
 export function rf_predicate(range: [number, number]) {
+    // console.log(range)
     return (c: Compound): boolean => 
         typeof c.RF === "number" && c.RF !== null && c.RF >= range[RI.MIN] && c.RF <= range[RI.MAX];
 }
