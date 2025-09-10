@@ -1,10 +1,49 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Welcome from "../components/Welcome.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-	<div class="text-4xl">test</div>
+	<div
+		class="flex flex-col gap-10 w-screen h-screen justify-center items-center"
+	>
+		<!-- Title -->
+		<div class="text-5xl font-bold">HTPLC Compound Matcher</div>
 
-	<Welcome />
+		<!-- Content -->
+		<div class="flex flex-row flex-wrap gap-10">
+			<!-- Sidebar -->
+			<div class="flex flex-col justify-between gap-1">
+				<div
+					class="p-5 w-50 border-black border-4 rounded-3xl text-2xl font-bold text-center"
+				>
+					Incomplete Analyses
+				</div>
+
+				<div
+					class="p-5 w-50 border-black border-4 rounded-3xl text-2xl font-bold text-center"
+				>
+					Incomplete Analyses
+				</div>
+
+				<div
+					class="p-5 w-50 border-black border-4 rounded-3xl text-2xl font-bold text-center"
+				>
+					Incomplete Analyses
+				</div>
+			</div>
+			<div class="">
+				<div
+					class="flex flex-col w-100 h-100 justify-center items-center gap-5 aspect-square border-black border-4 rounded-3xl"
+				>
+					<div class="text-3xl font-bold">Start New Analysis</div>
+					<div
+						class="p-5 w-50 border-black border-4 rounded-3xl text-2xl font-bold text-center"
+					>
+						todo
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </Layout>
