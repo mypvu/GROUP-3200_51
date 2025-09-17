@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  status?: string;
+  href: string;
+}
+const { title, status, href } = Astro.props;
+---
+
+<a href={href} 
+   class={`block p-6 border-4 ${status === 'INCOMPLETE' ? 'border-red-500' : 'border-black'} rounded-2xl`}>
+  <h3 class="text-lg font-bold">{title}</h3>
+  {status && <p class="text-sm">{status}</p>}
+</a>

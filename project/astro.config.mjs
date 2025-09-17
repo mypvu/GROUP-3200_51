@@ -9,3 +9,6 @@ export default defineConfig({
     plugins: [tailwindcss()]
   }
 });
+export default {
+  integrations: [tailwind()],
+};

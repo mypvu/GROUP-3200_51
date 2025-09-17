@@ -1,0 +1,49 @@
+---
+import { Astro } from "astro";
+const { type } = Astro.params; // dynamic route param (kds-np, etc.)
+---
+
+<div class="p-8 border-2 border-black rounded-2xl">
+  <h2 class="text-2xl font-bold text-center mb-6">New Analysis {type.toUpperCase()}</h2>
+
+  <form class="grid grid-cols-2 gap-4">
+    <label>
+      Rf: <input type="text" class="border p-1 rounded" name="rf" />
+    </label>
+
+    <label>
+      RGB1 (H° DEV 254 nm):
+      <input type="text" class="border p-1 rounded" name="rgb1" />
+    </label>
+
+    <label>CF1: <input type="text" class="border p-1 rounded" name="cf1" /></label>
+
+    <label>
+      RGB2 (H° DEV 366 nm):
+      <input type="text" class="border p-1 rounded" name="rgb2" />
+    </label>
+
+    <label>CF2: <input type="text" class="border p-1 rounded" name="cf2" /></label>
+
+    <label>
+      RGB3 (H° NP 366 nm):
+      <input type="text" class="border p-1 rounded" name="rgb3" />
+    </label>
+
+    <label>CF3: <input type="text" class="border p-1 rounded" name="cf3" /></label>
+
+    <!-- UV Vis Peaks -->
+    <label>UV Vis Peaks <input type="text" class="border p-1 rounded" name="uvpeaks" /></label>
+    <label>UV λ 1: <input type="text" class="border p-1 rounded" name="uv1" /></label>
+    <label>UV λ 2: <input type="text" class="border p-1 rounded" name="uv2" /></label>
+    <label>UV λ 3: <input type="text" class="border p-1 rounded" name="uv3" /></label>
+
+    <!-- FI Peaks -->
+    <label>FI Peaks <input type="text" class="border p-1 rounded" name="fipeaks" /></label>
+    <label>FI λ 1: <input type="text" class="border p-1 rounded" name="fi1" /></label>
+    <label>FI λ 2: <input type="text" class="border p-1 rounded" name="fi2" /></label>
+    <label>FI λ 3: <input type="text" class="border p-1 rounded" name="fi3" /></label>
+  </form>
+
+  <button type="submit" class="mt-6 px-4 py-2 rounded-2xl border-2 border-black">→</button>
+</div>
