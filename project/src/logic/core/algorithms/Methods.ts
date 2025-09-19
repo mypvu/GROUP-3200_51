@@ -12,21 +12,61 @@ export function rf_predicate(range: [number, number]) {
 }
 
 export function DEV_254nm_predicate(range: [number, number]) {
+    if (range[RI.MIN] < 0){
+        range[RI.MIN] += 360;
+        return (c: Compound): boolean =>
+            typeof c.DEV_254nm === "number" && (c.DEV_254nm >= range[RI.MIN] && c.DEV_254nm <= 360 || c.DEV_254nm <= range[RI.MAX]&& c.DEV_254nm >=0);
+    }
+    if (range[RI.MAX] > 360){
+        range[RI.MAX] -= 360;
+        return (c: Compound): boolean =>
+            typeof c.DEV_254nm === "number" && (c.DEV_254nm >= range[RI.MIN] && c.DEV_254nm <= 360 || c.DEV_254nm <= range[RI.MAX]&& c.DEV_254nm >=0);
+    }
     return (c: Compound): boolean =>
         typeof c.DEV_254nm === "number" && c.DEV_254nm >= range[RI.MIN] && c.DEV_254nm <= range[RI.MAX];
 }
 
 export function DEV_366nm_predicate(range: [number, number]) {
+    if (range[RI.MIN] < 0){
+        range[RI.MIN] += 360;
+        return (c: Compound): boolean =>
+            typeof c.DEV_366nm === "number" && (c.DEV_366nm >= range[RI.MIN] && c.DEV_366nm <= 360 || c.DEV_366nm <= range[RI.MAX]&& c.DEV_366nm >=0);
+    }
+    if (range[RI.MAX] > 360){
+        range[RI.MAX] -= 360;
+        return (c: Compound): boolean =>
+            typeof c.DEV_366nm === "number" && (c.DEV_366nm >= range[RI.MIN] && c.DEV_366nm <= 360 || c.DEV_366nm <= range[RI.MAX]&& c.DEV_366nm >=0);
+    }
     return (c: Compound): boolean =>
         typeof c.DEV_366nm === "number" && c.DEV_366nm >= range[RI.MIN] && c.DEV_366nm <= range[RI.MAX];
 }
 
 export function VSNP_366nm_predicate(range: [number, number]) {
+    if (range[RI.MIN] < 0){
+        range[RI.MIN] += 360;
+        return (c: Compound): boolean =>
+            typeof c.VSNP_366nm === "number" && (c.VSNP_366nm >= range[RI.MIN] && c.VSNP_366nm <= 360 || c.VSNP_366nm <= range[RI.MAX]&& c.VSNP_366nm >=0);
+    }
+    if (range[RI.MAX] > 360){
+        range[RI.MAX] -= 360;
+        return (c: Compound): boolean =>
+            typeof c.VSNP_366nm === "number" && (c.VSNP_366nm >= range[RI.MIN] && c.VSNP_366nm <= 360 || c.VSNP_366nm <= range[RI.MAX]&& c.VSNP_366nm >=0);
+    }
     return (c: Compound): boolean =>
         typeof c.VSNP_366nm === "number" && c.VSNP_366nm >= range[RI.MIN] && c.VSNP_366nm <= range[RI.MAX];
 }
 
 export function T_predicate(range: [number, number]) {
+    if (range[RI.MIN] < 0){
+        range[RI.MIN] += 360;
+        return (c: Compound): boolean =>
+            typeof c.T === "number" && (c.T >= range[RI.MIN] && c.T <= 360 || c.T <= range[RI.MAX]&& c.T >=0);
+    }
+    if (range[RI.MAX] > 360){
+        range[RI.MAX] -= 360;
+        return (c: Compound): boolean =>
+            typeof c.T === "number" && (c.T >= range[RI.MIN] && c.T <= 360 || c.T <= range[RI.MAX]&& c.T >=0);
+    }
     return (c: Compound): boolean =>
         typeof c.T === "number" && c.T >= range[RI.MIN] && c.T <= range[RI.MAX];
 }
