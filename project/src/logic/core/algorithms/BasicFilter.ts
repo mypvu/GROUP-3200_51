@@ -1,6 +1,6 @@
 import { generateRangeParams, RangeParams } from "@/logic/utils/range_generate";
 import { isCompoundV, type Compound, type Sample } from "@core/models/compund.model";
-import DataSets from "../models/datasets.model";
+import DataSets, { type DataSetsID } from "../models/datasets.model";
 import {
   rf_predicate,
   DEV_254nm_predicate,
@@ -28,7 +28,16 @@ export default class BasicFilter {
         this.bfh = new BasicFilterHelper(samples.NP_KDS, Array.from(datasets))
     }
 
+    set(samples: Sample, datasets: DataSets): BasicFilter {
+        this. samples = samples
+        this.datasets = datasets
+        
+        return this
+    }
+
     extract(): DataSets {
+        this.res = new DataSets([],[],[],[]);
+        
         let np1 = this.samples.NP_KDS
         this.bfh.set(np1, Array.from(this.datasets.NK()))
         this.res.NP_KDS = this.bfh.applyAllFilters(generateRangeParams(np1)).result()
@@ -47,6 +56,19 @@ export default class BasicFilter {
         
         return this.res
     }
+
+    simple(): DataSetsID {
+        const toIds = (cs: Compound[]): number[] => 
+            cs.map(c => (c.id !== undefined ? c.id: NaN))
+              .filter(id => !isNaN(id))
+
+        return {
+            NK: toIds(this.res.NP_KDS),
+            NL: toIds(this.res.NP_LDS),
+            VK: toIds(this.res.VS_KDS),
+            VL: toIds(this.res.VS_LDS)
+        }
+    } 
 
 }
 

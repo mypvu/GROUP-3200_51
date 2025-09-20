@@ -1,0 +1,586 @@
+{
+    "KDS_NP": {
+        "test1": {
+            "input": {
+                "rf": 0.435,
+                "colour1": 137.4,
+                "colour2": 180,
+                "colour3": 210.9,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    276
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    225,
+                    316
+                ]
+            },
+            "expected": {
+                "result": [
+                    58
+                ]
+            }
+        },
+        "test2": {
+            "input": {
+                "rf": 0.52,
+                "colour1": 134.8,
+                "colour2": 151.9,
+                "colour3": 147.1,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    269,
+                    369
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    224,
+                    368
+                ]
+            },
+            "expected": {
+                "result": [
+                    14
+                ]
+            }
+        },
+        "test3": {
+            "input": {
+                "rf": 0.505,
+                "colour1": 140.1,
+                "colour2": 180,
+                "colour3": 193.3,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    278
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    220,
+                    303
+                ]
+            },
+            "expected": {
+                "result": []
+            }
+        },
+        "test4": {
+            "input": {
+                "rf": 0.555,
+                "colour1": 138.8,
+                "colour2": 169.8,
+                "colour3": 167.2,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    293
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    223,
+                    251,
+                    368
+                ]
+            },
+            "expected": {
+                "result": [
+                    24
+                ]
+            }
+        },
+        "test-mock1": {
+            "input": {
+                "rf": 0.482,
+                "colour1": 142.3,
+                "colour2": 189.7,
+                "colour3": 202.1,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    278
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    220,
+                    310
+                ]
+            },
+            "expected": {
+                "result": [
+                    67
+                ]
+            }
+        },
+        "test-mock2": {
+            "input": {
+                "rf": 0.621,
+                "colour1": 130.4,
+                "colour2": 134.2,
+                "colour3": 202.1,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    280
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    220,
+                    330
+                ]
+            },
+            "expected": {
+                "result": [
+                    51,
+                    53
+                ]
+            }
+        }
+    },
+    "KDS_VS": {
+        "test1": {
+            "input": {
+                "rf": 0.435,
+                "colour1": 136.8,
+                "colour2": 180,
+                "colour3": 204.2,
+                "t": 14.3,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    277
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    225,
+                    316
+                ]
+            },
+            "expected": {
+                "result": [
+                    58
+                ]
+            }
+        },
+        "test2": {
+            "input": {
+                "rf": 0.52,
+                "colour1": 136.7,
+                "colour2": 174.2,
+                "colour3": 190.2,
+                "t": 36.3,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    269,
+                    371
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    223,
+                    367
+                ]
+            },
+            "expected": {
+                "result": [
+                    14
+                ]
+            }
+        },
+        "test3": {
+            "input": {
+                "rf": 0.505,
+                "colour1": 139.9,
+                "colour2": 182.8,
+                "colour3": 203.7,
+                "t": 13.9,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    278
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    221,
+                    308
+                ]
+            },
+            "expected": {
+                "result": []
+            }
+        },
+        "test-mock1": {
+            "input": {
+                "rf": 0.466,
+                "colour1": 141.2,
+                "colour2": 176.5,
+                "colour3": 195.3,
+                "t": 9.8,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    280
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    221,
+                    250,
+                    345
+                ]
+            },
+            "expected": {
+                "result": [
+                    87
+                ]
+            }
+        },
+        "test-mock2": {
+            "input": {
+                "rf": 0.588,
+                "colour1": 133.4,
+                "colour2": 168.9,
+                "colour3": 209.1,
+                "t": 11.4,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    290
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    221,
+                    250,
+                    365
+                ]
+            },
+            "expected": {
+                "result": [
+                    23,
+                    24
+                ]
+            }
+        }
+    },
+    "LDS_NP": {
+        "test1": {
+            "input": {
+                "rf": 0.608,
+                "colour1": 139.3,
+                "colour2": 180,
+                "colour3": 209.2,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    277
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    225,
+                    316
+                ]
+            },
+            "expected": {
+                "result": [
+                    58,
+                    67
+                ]
+            }
+        },
+        "test2": {
+            "input": {
+                "rf": 0.685,
+                "colour1": 121.3,
+                "colour2": 151.9,
+                "colour3": 147.1,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    269,
+                    367
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    223,
+                    362
+                ]
+            },
+            "expected": {
+                "result": [
+                    14
+                ]
+            }
+        },
+        "test3": {
+            "input": {
+                "rf": 0.664,
+                "colour1": 142.5,
+                "colour2": 210.8,
+                "colour3": 197.6,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    278
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    223,
+                    304
+                ]
+            },
+            "expected": {
+                "result": []
+            }
+        },
+        "test4": {
+            "input": {
+                "rf": 0.689,
+                "colour1": 138.8,
+                "colour2": 169.8,
+                "colour3": 167.2,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    293
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    223,
+                    251,
+                    368
+                ]
+            },
+            "expected": {
+                "result": [
+                    22,
+                    24
+                ]
+            }
+        },
+        "test-mock1": {
+            "input": {
+                "rf": 0.574,
+                "colour1": 127.6,
+                "colour2": 188.2,
+                "colour3": 201.4,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    280
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    220,
+                    250,
+                    350
+                ]
+            },
+            "expected": {
+                "result": [
+                    77
+                ]
+            }
+        },
+        "test-mock2": {
+            "input": {
+                "rf": 0.642,
+                "colour1": 145.1,
+                "colour2": 176.7,
+                "colour3": 192.8,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    293
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    223,
+                    251,
+                    368
+                ]
+            },
+            "expected": {
+                "result": []
+            }
+        },
+        "test-mock2a": {
+            "input": {
+                "rf": 0.642,
+                "colour1": 145.1,
+                "colour2": 176.7,
+                "colour3": 192.8,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    293
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    223,
+                    251,
+                    345
+                ]
+            },
+            "expected": {
+                "result": [
+                    18
+                ]
+            }
+        }
+    },
+    "LDS_VS": {
+        "test1": {
+            "input": {
+                "rf": 0.58,
+                "colour1": 136.3,
+                "colour2": 181.3,
+                "colour3": 203.3,
+                "t": 16.3,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    277
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    225,
+                    316
+                ]
+            },
+            "expected": {
+                "result": [
+                    58
+                ]
+            }
+        },
+        "test2": {
+            "input": {
+                "rf": 0.65,
+                "colour1": 123.7,
+                "colour2": 174,
+                "colour3": 183.7,
+                "t": 2.5,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    269,
+                    371
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    223,
+                    367
+                ]
+            },
+            "expected": {
+                "result": [
+                    14
+                ]
+            }
+        },
+        "test3": {
+            "input": {
+                "rf": 0.635,
+                "colour1": 140.4,
+                "colour2": 190.9,
+                "colour3": 201.7,
+                "t": 14.4,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    278
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    221,
+                    308
+                ]
+            },
+            "expected": {
+                "result": []
+            }
+        },
+        "test4": {
+            "input": {
+                "rf": 0.685,
+                "colour1": 138.9,
+                "colour2": 169.8,
+                "colour3": 215.7,
+                "t": 0,
+                "uv_peaks_num": 1,
+                "uv_peaks": [
+                    293
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    223,
+                    251,
+                    368
+                ]
+            },
+            "expected": {
+                "result": [
+                    22,
+                    23,
+                    24
+                ]
+            }
+        },
+        "test-mock1": {
+            "input": {
+                "rf": 0.612,
+                "colour1": 129.5,
+                "colour2": 177.6,
+                "colour3": 199.8,
+                "t": 8.7,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    265,
+                    368
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    223,
+                    340
+                ]
+            },
+            "expected": {
+                "result": [
+                    12,
+                    15,
+                    16
+                ]
+            }
+        },
+        "test-mock2": {
+            "input": {
+                "rf": 0.593,
+                "colour1": 143.2,
+                "colour2": 185.4,
+                "colour3": 207.6,
+                "t": 12.1,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    250,
+                    308
+                ],
+                "fl_peaks_num": 2,
+                "fl_peaks": [
+                    223,
+                    310
+                ]
+            },
+            "expected": {
+                "result": [
+                    31,
+                    32,
+                    39,
+                    56
+                ]
+            }
+        },
+        "test-mock2a": {
+            "input": {
+                "rf": 0.593,
+                "colour1": 143.2,
+                "colour2": 185.4,
+                "colour3": 207.6,
+                "t": 12.1,
+                "uv_peaks_num": 2,
+                "uv_peaks": [
+                    250,
+                    308
+                ],
+                "fl_peaks_num": 3,
+                "fl_peaks": [
+                    223,
+                    300
+                ]
+            },
+            "expected": {
+                "result": []
+            }
+        }
+    }
+}

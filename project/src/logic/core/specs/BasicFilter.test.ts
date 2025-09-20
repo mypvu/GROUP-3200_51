@@ -1,12 +1,51 @@
-import { expect, test } from 'vitest'
+import { describe, it, expect, beforeEach, vi, test } from "vitest";
 import BasicFilter from '../algorithms/BasicFilter'
 import { ds,sample } from '../../utils/csvLoader'
-
-test('adds 1 + 2 to equal 3', () => {
-  expect(1 + 2).toBe(3)
-})
-
+import test_case from './case.json'
 
 const bf = new BasicFilter(sample, ds)
-// bf.extract()
-console.log(bf.extract())
+
+// mapping between test section and sample key/db_label
+const sampleMap: Record<string, { key: keyof typeof sample; db_label: string }> = {
+  KDS_NP: { key: "NP_KDS", db_label: "NK" },
+  LDS_NP: { key: "NP_LDS", db_label: "NL" },
+  KDS_VS: { key: "VS_KDS", db_label: "VK" },
+  LDS_VS: { key: "VS_LDS", db_label: "VL" },
+};
+
+describe("BasicFilter tests from case.json", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  for (const [section, tests] of Object.entries(test_case)) {
+    describe(`${section} testing`, () => {
+      for (const [name, { input, expected }] of Object.entries(tests)) {
+        it(name, () => {
+          const { key, db_label } = sampleMap[section];
+
+          // Fill sample with current test case
+          // If it's a V-compound, include T field
+          (sample as any)[key] = {
+            db_label,
+            RF: input.rf,
+            DEV_254nm: input.colour1,
+            DEV_366nm: input.colour2,
+            VSNP_366nm: input.colour3,
+            UV_Peaks_num: input.uv_peaks_num,
+            UV_Peaks: input.uv_peaks,
+            FL_Peaks_num: input.fl_peaks_num,
+            FL_Peaks: input.fl_peaks,
+            ...(input.t !== undefined ? { T: input.t } : {}),
+          };
+
+          bf.set(sample, ds).extract();
+
+          // compare expected
+          const simpleResult = bf.simple()[db_label as keyof ReturnType<typeof bf.simple>];
+          expect(simpleResult).toEqual(expected.result);
+        });
+      }
+    });
+  }
+});

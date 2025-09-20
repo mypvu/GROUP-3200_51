@@ -61,7 +61,7 @@ export function load(path: string, label: DBLabel): Compound[] {
   const rfHeader = label === "NK" || label === "VK" ? H.rf_mpb : H.rf_mpa;
 
   return parsed.map((row, idx) => {
-    const id = get(row, H.code) || String(idx);
+    const id = toNumber(get(row, H.code));
 
     const RF = toNumber(get(row, rfHeader));
 
