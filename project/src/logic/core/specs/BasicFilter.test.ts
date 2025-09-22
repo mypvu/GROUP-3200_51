@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, vi, test } from "vitest";
 import BasicFilter from '../algorithms/BasicFilter'
-import { ds,sample } from '../../utils/csvLoader'
+import { ds,sample as i_sample } from '../../utils/csvLoader'
 import test_case from './case.json'
 
-const bf = new BasicFilter(sample, ds)
+const bf = new BasicFilter(i_sample, ds)
+let sample = i_sample
 
 // mapping between test section and sample key/db_label
 const sampleMap: Record<string, { key: keyof typeof sample; db_label: string }> = {
@@ -12,6 +13,40 @@ const sampleMap: Record<string, { key: keyof typeof sample; db_label: string }> 
   KDS_VS: { key: "VS_KDS", db_label: "VK" },
   LDS_VS: { key: "VS_LDS", db_label: "VL" },
 };
+
+
+describe("Manual testing for Basic Filter", () => {
+
+  beforeEach(() => {
+    sample = { NP_KDS: undefined,
+               NP_LDS: undefined,
+               VS_KDS: undefined,
+               VS_LDS: undefined}
+  })
+
+  it("Manual testing with NP_KDS", () => {
+
+    sample.NP_KDS = {
+      "db_label" : "NK",
+      "RF": 0.435,
+      "DEV_254nm": 137.4,
+      "DEV_366nm": 180,
+      "VSNP_366nm": 210.9,
+      "UV_Peaks_num": 1,
+      "UV_Peaks": [276],
+      "FL_Peaks_num": 2,
+      "FL_Peaks": [225, 316]
+    }
+
+
+    bf.set(sample,ds).extract()
+    expect(bf.simple().NK).toEqual([58]);
+
+    console.log(bf.simple())
+    
+  });
+
+});
 
 describe("BasicFilter tests from case.json", () => {
   beforeEach(() => {

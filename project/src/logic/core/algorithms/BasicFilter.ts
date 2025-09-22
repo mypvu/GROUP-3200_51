@@ -40,19 +40,19 @@ export default class BasicFilter {
         
         let np1 = this.samples.NP_KDS
         this.bfh.set(np1, Array.from(this.datasets.NK()))
-        this.res.NP_KDS = this.bfh.applyAllFilters(generateRangeParams(np1)).result()
+        this.res.NP_KDS = np1 ? this.bfh.applyAllFilters(generateRangeParams(np1)).result() : []
 
         let vs1 = this.samples.VS_KDS
         this.bfh.set(vs1, Array.from(this.datasets.VK()))
-        this.res.VS_KDS = this.bfh.applyAllFilters(generateRangeParams(vs1)).result()
+        this.res.VS_KDS = vs1 ? this.bfh.applyAllFilters(generateRangeParams(vs1)).result() : []
 
         let np2 = this.samples.NP_LDS
         this.bfh.set(np2, Array.from(this.datasets.NL()))
-        this.res.NP_LDS = this.bfh.applyAllFilters(generateRangeParams(np2)).result()
+        this.res.NP_LDS = np2 ? this.bfh.applyAllFilters(generateRangeParams(np2)).result() : []
 
         let vs2 = this.samples.VS_LDS
         this.bfh.set(vs2, Array.from(this.datasets.VL()))
-        this.res.VS_LDS = this.bfh.applyAllFilters(generateRangeParams(vs2)).result()
+        this.res.VS_LDS = vs2 ? this.bfh.applyAllFilters(generateRangeParams(vs2)).result() : []
         
         return this.res
     }

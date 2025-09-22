@@ -31,10 +31,10 @@ export type CompoundVK = CompoundV;
 export type CompoundVL = CompoundV;
 
 export interface Sample {
-  NP_KDS: CompoundNP,
-  NP_LDS: CompoundNL,
-  VS_KDS: CompoundVK,
-  VS_LDS: CompoundVL
+  NP_KDS?: CompoundNP,
+  NP_LDS?: CompoundNL,
+  VS_KDS?: CompoundVK,
+  VS_LDS?: CompoundVL
 }
 
 
