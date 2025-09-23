@@ -1,14 +1,13 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import StartPage from "@/components/home/StartPage.astro";
 import NavMenu from "../components/home/NavMenu.astro";
 import Button from "../components/home/Button.astro";
 ---
 
-
 <div class="flex gap-8 p-8">
   <NavMenu />
-  <div class="flex flex-col items-center justify-center border-2 border-black rounded-2xl p-12 flex-1">
+  <div
+    class="flex flex-col items-center justify-center border-2 border-black rounded-2xl p-12 flex-1"
+  >
     <h1 class="text-3xl font-bold mb-6">HTPLC Compound Matcher</h1>
     <Button href="/new-analysis" text="Start New Analysis →" />
   </div>
