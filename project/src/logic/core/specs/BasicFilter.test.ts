@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach, vi, test } from "vitest";
 import BasicFilter from '../algorithms/BasicFilter'
-import { ds,sample as i_sample } from '../../utils/csvLoader'
+import { ds, sample as i_sample } from '../../utils/csvLoader'
 import test_case from './case.json'
+
 
 const bf = new BasicFilter(i_sample, ds)
 let sample = i_sample
@@ -18,16 +19,60 @@ const sampleMap: Record<string, { key: keyof typeof sample; db_label: string }> 
 describe("Manual testing for Basic Filter", () => {
 
   beforeEach(() => {
-    sample = { NP_KDS: undefined,
-               NP_LDS: undefined,
-               VS_KDS: undefined,
-               VS_LDS: undefined}
+    sample = {
+      "NP_KDS": {
+        "db_label": "NK",
+        "RF": 0,
+        "DEV_254nm": 0,
+        "DEV_366nm": 0,
+        "VSNP_366nm": 0,
+        "UV_Peaks_num": 0,
+        "UV_Peaks": [],
+        "FL_Peaks_num": 0,
+        "FL_Peaks": []
+      },
+      "NP_LDS": {
+        "db_label": "NL",
+        "RF": 0,
+        "DEV_254nm": 0,
+        "DEV_366nm": 0,
+        "VSNP_366nm": 0,
+        "UV_Peaks_num": 0,
+        "UV_Peaks": [],
+        "FL_Peaks_num": 0,
+        "FL_Peaks": []
+      },
+      "VS_KDS": {
+        "db_label": "VK",
+        "RF": 0,
+        "DEV_254nm": 0,
+        "DEV_366nm": 0,
+        "VSNP_366nm": 0,
+        "UV_Peaks_num": 0,
+        "UV_Peaks": [],
+        "FL_Peaks_num": 0,
+        "FL_Peaks": [],
+        "T": null
+      },
+      "VS_LDS": {
+        "db_label": "VL",
+        "RF": 0,
+        "DEV_254nm": 0,
+        "DEV_366nm": 0,
+        "VSNP_366nm": 0,
+        "UV_Peaks_num": 0,
+        "UV_Peaks": [],
+        "FL_Peaks_num": 0,
+        "FL_Peaks": [],
+        "T": null
+      }
+    }
   })
 
   it("Manual testing with NP_KDS", () => {
 
     sample.NP_KDS = {
-      "db_label" : "NK",
+      "db_label": "NK",
       "RF": 0.435,
       "DEV_254nm": 137.4,
       "DEV_366nm": 180,
@@ -39,11 +84,11 @@ describe("Manual testing for Basic Filter", () => {
     }
 
 
-    bf.set(sample,ds).extract()
+    bf.set(sample, ds).extract()
     expect(bf.simple().NK).toEqual([58]);
 
     console.log(bf.simple())
-    
+
   });
 
 });
