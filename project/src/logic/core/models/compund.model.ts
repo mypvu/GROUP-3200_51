@@ -1,7 +1,8 @@
 export type DBLabel = "NK" | "NL" | "VK" | "VL";
 
 interface CompoundBase {
-  id: string;                    // or number, if you prefer
+  id?: number;                    
+  name?: string;
   db_label: DBLabel;
   RF: number;                    // retention factor
   DEV_254nm: number;             // Color 1 (e.g., "blue", hex, code)

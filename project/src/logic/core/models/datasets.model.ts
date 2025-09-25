@@ -1,5 +1,12 @@
 import type { Compound, CompoundN, CompoundV} from "./compund.model";
 
+export interface DataSetsID {
+    NK: number[];
+    NL: number[];
+    VK: number[];
+    VL: number[];
+}
+
 export interface DataSetsInterface {
     NK: CompoundN[];
     NL: CompoundN[];
