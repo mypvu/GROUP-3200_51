@@ -2,8 +2,9 @@ import fs from "node:fs";
 import Papa from "papaparse";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Compound, DBLabel, Sample } from "../core/models/compund.model";
+import type { Compound, DBLabel, Sample } from "../core/models/compund.model";
 import DataSets from "../core/models/datasets.model";
+import { get, H, toNumber } from "./utils";
 
 // types: DBLabel = "NK" | "NL" | "VK" | "VL";
 // type Compound = { /* your fields */ };
@@ -11,48 +12,7 @@ import DataSets from "../core/models/datasets.model";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Prefer first non-empty column in `keys`
-function get(row: Record<string, string>, keys: string[]): string {
-  for (const k of keys) {
-    const v = row[k];
-    if (v != null && String(v).trim() !== "") return v;
-  }
-  return "";
-}
-
-function toNumber(v: string | undefined): number {
-  if (!v) return NaN;
-  const s = v.trim().replace(",", ".");
-  // If the cell contains "H° and C" like "78 / 0.35", take the first number (H°).
-  const m = s.match(/-?\d+(?:\.\d+)?/);
-  return m ? parseFloat(m[0]) : NaN;
-}
-
-const H = {
-  code: ["Code", "ID"],
-  name: ["Name of Compound and Subclass"],
-
-  rf_mpb: ["Rf (MPB)", "Rf(MPB)", "Rf MPB"],
-  rf_mpa: ["Rf (MPA)", "Rf(MPA)", "Rf MPA"],
-
-  dev254: ["254 nm DEV H° and C", "H° DEV 254 nm"],
-  dev366: ["366 nm DEV H° and C", "H° DEV 366 nm"],
-  vsa366: ["366 nm VSA  H° and C", "366 nm VSA H° and C", "H° NP 366 nm"],
-
-  t_vsa: ["T VSA H° and C", "T"],
-
-  uv_peaks_num: ["UV-Vis Peaks"],
-  uv1: ["UV λ1", "UV λ 1"],
-  uv2: ["UV λ2", "UV λ 2"],
-  uv3: ["UV λ3", "UV λ 3"],
-
-  fl_peaks_num: ["Fl Peaks", "FL Peaks"],
-  fl1: ["Fl λ 1", "Fl λ1"],
-  fl2: ["Fl λ 2", "Fl λ2"],
-  fl3: ["Fl λ 3", "Fl λ3"],
-};
-
-export function load(path: string, label: DBLabel): Compound[] {
+export function load_csv(path: string, label: DBLabel): Compound[] {
   // pass path like "./data/1NP.csv"
   const abs = resolve(__dirname, path);
   const csv = fs.readFileSync(abs, "utf8");
@@ -109,23 +69,19 @@ export function load(path: string, label: DBLabel): Compound[] {
 
 
 // Example: load your four CSVs
-const NK = load("./data/NK.csv", "NK");
-const NL = load("./data/NL.csv", "NL");
-const VK = load("./data/VK.csv", "VK");
-const VL = load("./data/VL.csv", "VL");
+const NK = load_csv("./data/NK.csv", "NK");
+const NL = load_csv("./data/NL.csv", "NL");
+const VK = load_csv("./data/VK.csv", "VK");
+const VL = load_csv("./data/VL.csv", "VL");
 
-// Create DataSets
 const ds = new DataSets(NK, NL, VK, VL);
 
-// Create a sample (pick first entry from each DB)
 const sample: Sample = {
     NP_KDS: NK[1],
     NP_LDS: NL[1],
     VS_KDS: VK[1],
     VS_LDS: VL[1],
 };
-
-// console.log(sample)
 
 export { ds, sample };
 

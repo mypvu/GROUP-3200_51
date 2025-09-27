@@ -1,0 +1,156 @@
+[
+  {
+    "id": "A1-001",
+    "db_label": "1A",
+    "RF": 0.45,
+    "DEV_254nm": "blue",
+    "DEV_366nm": "yellow",
+    "VSNP_366nm": "green",
+    "UV_Peaks": [254, 300],
+    "FL_Peaks": [366],
+    "T": null
+  },
+  {
+    "id": "A2-002",
+    "db_label": "2A",
+    "RF": 0.67,
+    "DEV_254nm": "red",
+    "DEV_366nm": "orange",
+    "VSNP_366nm": "purple",
+    "UV_Peaks": [260, 310],
+    "FL_Peaks": [366, 400],
+    "T": null
+  },
+  {
+    "id": "B1-003",
+    "db_label": "1B",
+    "RF": 0.32,
+    "DEV_254nm": "green",
+    "DEV_366nm": "blue",
+    "VSNP_366nm": "yellow",
+    "UV_Peaks": [254, 280],
+    "FL_Peaks": [366, 390],
+    "T": 5.2
+  },
+  {
+    "id": "B2-004",
+    "db_label": "2B",
+    "RF": 0.88,
+    "DEV_254nm": "purple",
+    "DEV_366nm": "pink",
+    "VSNP_366nm": "orange",
+    "UV_Peaks": [270, 320],
+    "FL_Peaks": [366],
+    "T": null
+  },
+  {
+    "id": "A1-005",
+    "db_label": "1A",
+    "RF": 0.51,
+    "DEV_254nm": "cyan",
+    "DEV_366nm": "magenta",
+    "VSNP_366nm": "lime",
+    "UV_Peaks": [255, 305],
+    "FL_Peaks": [370],
+    "T": null
+  },
+  {
+    "id": "A2-006",
+    "db_label": "2A",
+    "RF": 0.73,
+    "DEV_254nm": "teal",
+    "DEV_366nm": "brown",
+    "VSNP_366nm": "gray",
+    "UV_Peaks": [265, 315],
+    "FL_Peaks": [375, 410],
+    "T": null
+  },
+  {
+    "id": "A1-007",
+    "db_label": "1A",
+    "RF": 0.39,
+    "DEV_254nm": "navy",
+    "DEV_366nm": "olive",
+    "VSNP_366nm": "maroon",
+    "UV_Peaks": [258, 308],
+    "FL_Peaks": [366, 380],
+    "T": null
+  },
+  {
+    "id": "A2-008",
+    "db_label": "2A",
+    "RF": 0.62,
+    "DEV_254nm": "silver",
+    "DEV_366nm": "gold",
+    "VSNP_366nm": "beige",
+    "UV_Peaks": [270, 320],
+    "FL_Peaks": [366, 400],
+    "T": null
+  },
+  {
+    "id": "B1-009",
+    "db_label": "1B",
+    "RF": 0.29,
+    "DEV_254nm": "black",
+    "DEV_366nm": "white",
+    "VSNP_366nm": "red",
+    "UV_Peaks": [254, 290],
+    "FL_Peaks": [366, 395],
+    "T": 4.8
+  },
+  {
+    "id": "B2-010",
+    "db_label": "2B",
+    "RF": 0.81,
+    "DEV_254nm": "orange",
+    "DEV_366nm": "blue",
+    "VSNP_366nm": "green",
+    "UV_Peaks": [275, 325],
+    "FL_Peaks": [366],
+    "T": null
+  },
+  {
+    "id": "B1-011",
+    "db_label": "1B",
+    "RF": 0.36,
+    "DEV_254nm": "yellow",
+    "DEV_366nm": "purple",
+    "VSNP_366nm": "pink",
+    "UV_Peaks": [257, 307],
+    "FL_Peaks": [366, 385],
+    "T": 6.1
+  },
+  {
+    "id": "B2-012",
+    "db_label": "2B",
+    "RF": 0.92,
+    "DEV_254nm": "brown",
+    "DEV_366nm": "gray",
+    "VSNP_366nm": "blue",
+    "UV_Peaks": [280, 330],
+    "FL_Peaks": [366, 410],
+    "T": null
+  },
+  {
+    "id": "A1-013",
+    "db_label": "1A",
+    "RF": 0.48,
+    "DEV_254nm": "green",
+    "DEV_366nm": "red",
+    "VSNP_366nm": "yellow",
+    "UV_Peaks": [260, 310],
+    "FL_Peaks": [366],
+    "T": null
+  },
+  {
+    "id": "A2-014",
+    "db_label": "2A",
+    "RF": 0.69,
+    "DEV_254nm": "purple",
+    "DEV_366nm": "orange",
+    "VSNP_366nm": "cyan",
+    "UV_Peaks": [265, 315],
+    "FL_Peaks": [366, 405],
+    "T": null
+  }
+]

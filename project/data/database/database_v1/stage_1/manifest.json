@@ -1,0 +1,38 @@
+{
+  "stage": "stage_1",
+  "updatedAt": "2025-09-27T12:48:16.000Z",
+  "files": [
+    {
+      "name": "Database_KDS_NP.xlsx",
+      "path": "database_v1/stage_1/Database_KDS_NP.xlsx",
+      "url": "/database_v1/stage_1/Database_KDS_NP.xlsx",
+      "size": 219998,
+      "sha256": "18a8ef7c9c33a3b3798cb3052898ccffd8c342b6810f345ddcef926ec3ef2a6c",
+      "lastModified": "2025-09-27T12:48:16.000Z"
+    },
+    {
+      "name": "Database_KDS_VS.xlsx",
+      "path": "database_v1/stage_1/Database_KDS_VS.xlsx",
+      "url": "/database_v1/stage_1/Database_KDS_VS.xlsx",
+      "size": 162209,
+      "sha256": "c25910db5d502dc1864ade2f8272de799f5b0a93f5af3a283e11a6b0e2c938ab",
+      "lastModified": "2025-09-20T11:05:44.467Z"
+    },
+    {
+      "name": "Database_LDS_NP.xlsx",
+      "path": "database_v1/stage_1/Database_LDS_NP.xlsx",
+      "url": "/database_v1/stage_1/Database_LDS_NP.xlsx",
+      "size": 233038,
+      "sha256": "fbf9df8630e71e42e2962d6f2b5b6253da87125700ae000174c046706c479fb8",
+      "lastModified": "2025-09-20T11:05:44.468Z"
+    },
+    {
+      "name": "Database_LDS_VS.xlsx",
+      "path": "database_v1/stage_1/Database_LDS_VS.xlsx",
+      "url": "/database_v1/stage_1/Database_LDS_VS.xlsx",
+      "size": 209013,
+      "sha256": "9257c8a90462018284fd9a6edb1f11115e35834727f3362f1ca4b637a318903a",
+      "lastModified": "2025-09-20T11:05:44.469Z"
+    }
+  ]
+}

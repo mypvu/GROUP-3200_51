@@ -1,3 +1,6 @@
-import { Sample } from "./compund.model"
+import type { Sample } from "./compund.model"
 
-export type InputParams = Sample[]
+export type InputParams = {
+    samples: Sample[],
+    version: string
+}
