@@ -2,25 +2,46 @@
   "base": "/",
   "build": "",
   "latest": {
-    "stage": "stage_1",
-    "version": null,
-    "manifest": "database_v1/stage_1/manifest.json",
-    "updatedAt": "2025-09-27T12:48:16.000Z"
+    "version": "v1",
+    "stage": "stage_2",
+    "manifest": "v1/stage_2/manifest.json",
+    "updatedAt": "2025-09-28T12:36:32.679Z"
   },
-  "stages": [
+  "versions": [
     {
-      "name": "stage_1",
-      "updatedAt": "2025-09-27T12:48:16.000Z",
-      "type": "files",
-      "manifest": "database_v1/stage_1/manifest.json",
-      "versions": []
+      "name": "cleaned_csv_db",
+      "manifest": "cleaned_csv_db/manifest.json",
+      "updatedAt": null,
+      "stages": []
     },
     {
-      "name": "stage_2",
-      "updatedAt": null,
-      "type": null,
-      "manifest": null,
-      "versions": []
+      "name": "compound_db",
+      "manifest": "compound_db/manifest.json",
+      "updatedAt": "2025-08-21T16:40:53.000Z",
+      "stages": [
+        {
+          "name": "raw_excel_db",
+          "manifest": "compound_db/raw_excel_db/manifest.json",
+          "updatedAt": "2025-08-21T16:40:53.000Z"
+        }
+      ]
+    },
+    {
+      "name": "v1",
+      "manifest": "v1/manifest.json",
+      "updatedAt": "2025-09-28T12:36:32.679Z",
+      "stages": [
+        {
+          "name": "stage_1",
+          "manifest": "v1/stage_1/manifest.json",
+          "updatedAt": "2025-09-27T15:00:16.000Z"
+        },
+        {
+          "name": "stage_2",
+          "manifest": "v1/stage_2/manifest.json",
+          "updatedAt": "2025-09-28T12:36:32.679Z"
+        }
+      ]
     }
   ]
 }

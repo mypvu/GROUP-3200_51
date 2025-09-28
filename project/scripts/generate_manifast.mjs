@@ -1,137 +1,191 @@
 // Node 20+
-// 用法：node .github/scripts/build-manifest.mjs --root docs --base "/<repo>/"
-// 用户站点(根域)则 --base "/"
+//
+// Usage:
+//   node .github/scripts/build-manifest.mjs --root data/database --base "/<repo>/"
+//   For a site at domain root, use: --base "/"
+//   Optionally set BUILD_SHA in env to append ?v=<sha8> to generated file URLs.
+//
+// Layout (no extra layers):
+//   <ROOT>/<version>/<stage>/*.xlsx
+//
+// What this script does:
+// 1) Writes a manifest.json in each <version>/<stage>/ listing its .xlsx files.
+// 2) Writes a version-level manifest.json in each <version>/ summarizing its stages.
+// 3) Writes a top-level <ROOT>/database-index.json summarizing all versions and the global latest.
+
 import { promises as fs } from "node:fs";
 import { createReadStream } from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
 
+// ----- CLI args -----
 const args = Object.fromEntries(
-  process.argv.slice(2).map((v,i,a)=> v.startsWith("--") ? [v.slice(2), a[i+1]]:[]).filter(Boolean)
+  process.argv
+    .slice(2)
+    .map((v, i, a) => (v.startsWith("--") ? [v.slice(2), a[i + 1]] : []))
+    .filter(Boolean)
 );
+
+// Root of the database (e.g., "data/database")
 const ROOT  = args.root || "data/database";
+// Public base URL prefix for generated file URLs (ends with "/")
 const BASE  = (args.base || "/").replace(/\/?$/, "/");
-const BUILD = (process.env.BUILD_SHA || "").slice(0,8);
+// Optional short build id for URL cache-busting
+const BUILD = (process.env.BUILD_SHA || "").slice(0, 8);
 
-const isDir = async p => { try { return (await fs.stat(p)).isDirectory(); } catch { return false; } };
-const list  = async p => { try { return await fs.readdir(p); } catch { return []; } };
-const toPosix = rel => rel.split(path.sep).join("/");
+// ----- helpers -----
+const isDir = async (p) => {
+  try { return (await fs.stat(p)).isDirectory(); }
+  catch { return false; }
+};
 
-function fileUrl(relPosix){
-  const u = BASE.replace(/\/+$/,"") + "/" + relPosix.replace(/^\/+/,"");
+const list = async (p) => {
+  try { return await fs.readdir(p); }
+  catch { return []; }
+};
+
+const toPosix = (rel) => rel.split(path.sep).join("/");
+
+function fileUrl(relPosix) {
+  const u = BASE.replace(/\/+$/, "") + "/" + relPosix.replace(/^\/+/, "");
   return encodeURI(u) + (BUILD ? `?v=${BUILD}` : "");
 }
-async function sha256(file){
-  return await new Promise((resolve,reject)=>{
+
+async function sha256(file) {
+  return await new Promise((resolve, reject) => {
     const h = createHash("sha256");
-    createReadStream(file).on("data",d=>h.update(d)).on("end",()=>resolve(h.digest("hex"))).on("error",reject);
+    createReadStream(file)
+      .on("data", (d) => h.update(d))
+      .on("end", () => resolve(h.digest("hex")))
+      .on("error", reject);
   });
 }
 
-async function manifestForFiles(rootAbs, dirAbs){
-  const names = (await list(dirAbs)).filter(n=>/\.xlsx$/i.test(n));
+/**
+ * Build a manifest for all .xlsx files inside a given stage directory.
+ * Returns: { updatedAt, files: [ { name, path, url, size, sha256, lastModified } ] }
+ */
+async function manifestForStage(rootAbs, stageAbs) {
+  const names = (await list(stageAbs)).filter((n) => /\.xlsx$/i.test(n));
   const items = [];
   let latest = 0;
-  for(const name of names){
-    const abs = path.join(dirAbs, name);
+
+  for (const name of names) {
+    const abs = path.join(stageAbs, name);
     const st = await fs.stat(abs);
     latest = Math.max(latest, st.mtimeMs);
     const rel = path.relative(rootAbs, abs);
     items.push({
       name,
       path: toPosix(rel),
-      url:  fileUrl(toPosix(rel)),
+      url: fileUrl(toPosix(rel)),
       size: st.size,
       sha256: await sha256(abs),
       lastModified: new Date(st.mtimeMs).toISOString(),
     });
   }
+
   return {
     updatedAt: new Date(latest || Date.now()).toISOString(),
-    files: items.sort((a,b)=>a.name.localeCompare(b.name)),
+    files: items.sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
-async function build(){
+async function build() {
   const rootAbs = path.resolve(ROOT);
-  const dbRoot  = path.join(rootAbs, "database_v1");
-  if(!(await isDir(dbRoot))) throw new Error(`Not found: ${dbRoot}`);
+  if (!(await isDir(rootAbs))) throw new Error(`Not found: ${rootAbs}`);
 
-  const index = { base: BASE, build: BUILD, latest: null, stages: [] };
-  const latestCandidates = [];
-
-  // 找所有 stage_x 目录
-  const stageDirs = (await list(dbRoot))
-    .map(n => path.join(dbRoot, n))
-    .filter(async p => await isDir(p));
-
-  for (const sdir of stageDirs){
-    if(!(await isDir(sdir))) continue;
-    const stageName = path.basename(sdir); // e.g. stage_1
-
-    // 判断是“直接放文件”还是“有版本子目录”
-    const entries = await list(sdir);
-    const versionDirs = [];
-    let hasXlsxHere = false;
-
-    for(const n of entries){
-      const p = path.join(sdir, n);
-      if (await isDir(p)) {
-        // 认为是一个版本目录（命名随意，比如 v1 / 2025-09-27）
-        versionDirs.push(p);
-      } else if (/\.xlsx$/i.test(n)) {
-        hasXlsxHere = true;
-      }
-    }
-
-    const stageEntry = { name: stageName, updatedAt: null, type: null, manifest: null, versions: [] };
-
-    if (hasXlsxHere) {
-      // 直接文件：写 stage 级 manifest.json
-      const mf = await manifestForFiles(rootAbs, sdir);
-      stageEntry.updatedAt = mf.updatedAt;
-      stageEntry.type = "files";
-      const out = path.join(sdir, "manifest.json");
-      await fs.writeFile(out, JSON.stringify({ stage: stageName, ...mf }, null, 2));
-      stageEntry.manifest = toPosix(path.relative(rootAbs, out));
-      latestCandidates.push({ stage: stageName, version: null, manifest: stageEntry.manifest, updatedAt: mf.updatedAt });
-    }
-
-    if (versionDirs.length){
-      // 为每个版本写 manifest，并写一个 stage 索引
-      const vers = [];
-      for (const vdir of versionDirs){
-        const vname = path.basename(vdir);
-        const mf = await manifestForFiles(rootAbs, vdir);
-        const out = path.join(vdir, "manifest.json");
-        await fs.writeFile(out, JSON.stringify({ stage: stageName, version: vname, ...mf }, null, 2));
-        vers.push({ name: vname, manifest: toPosix(path.relative(rootAbs, out)), updatedAt: mf.updatedAt });
-        latestCandidates.push({ stage: stageName, version: vname, manifest: toPosix(path.relative(rootAbs, out)), updatedAt: mf.updatedAt });
-      }
-      vers.sort((a,b)=> a.name.localeCompare(b.name));
-      // stage 索引
-      const stageIdxPath = path.join(sdir, "manifest.json");
-      const latestV = [...vers].sort((a,b)=> a.updatedAt < b.updatedAt ? 1 : -1)[0] || null;
-      const stageIdx = { stage: stageName, type: "versions", latest: latestV, versions: vers };
-      await fs.writeFile(stageIdxPath, JSON.stringify(stageIdx, null, 2));
-
-      stageEntry.type = "versions";
-      stageEntry.versions = vers;
-      stageEntry.manifest = toPosix(path.relative(rootAbs, stageIdxPath));
-      stageEntry.updatedAt = latestV?.updatedAt || null;
-    }
-
-    index.stages.push(stageEntry);
+  // Collect <version> directories directly under ROOT (e.g., v1, v2)
+  const versionDirs = [];
+  for (const n of await list(rootAbs)) {
+    const p = path.join(rootAbs, n);
+    if (await isDir(p)) versionDirs.push(p);
   }
 
-  // 选出全局 latest
-  latestCandidates.sort((a,b)=> a.updatedAt < b.updatedAt ? 1 : -1);
+  const index = { base: BASE, build: BUILD, latest: null, versions: [] };
+  const latestCandidates = [];
+
+  for (const vdir of versionDirs) {
+    const versionName = path.basename(vdir);
+
+    // Collect <stage> directories under each version (e.g., stage_1, stage_2)
+    const stageDirs = [];
+    for (const n of await list(vdir)) {
+      const p = path.join(vdir, n);
+      if (await isDir(p)) stageDirs.push(p);
+    }
+
+    const versionSummary = {
+      name: versionName,
+      manifest: null,     // path to <version>/manifest.json
+      updatedAt: null,
+      stages: [],         // array of { name, manifest, updatedAt }
+    };
+
+    // Build a stage manifest inside each stage directory
+    for (const sdir of stageDirs) {
+      const stageName = path.basename(sdir);
+      const mf = await manifestForStage(rootAbs, sdir);
+
+      // Write <version>/<stage>/manifest.json
+      const stageManifestPath = path.join(sdir, "manifest.json");
+      await fs.writeFile(
+        stageManifestPath,
+        JSON.stringify({ version: versionName, stage: stageName, ...mf }, null, 2)
+      );
+
+      const entry = {
+        name: stageName,
+        manifest: toPosix(path.relative(rootAbs, stageManifestPath)),
+        updatedAt: mf.updatedAt,
+      };
+
+      versionSummary.stages.push(entry);
+      latestCandidates.push({
+        version: versionName,
+        stage: stageName,
+        manifest: entry.manifest,
+        updatedAt: mf.updatedAt,
+      });
+    }
+
+    // Sort stages by name for stable output
+    versionSummary.stages.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Determine the latest stage within this version
+    const latestStage =
+      [...versionSummary.stages].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0] || null;
+
+    versionSummary.updatedAt = latestStage?.updatedAt || null;
+
+    // Write <version>/manifest.json
+    const versionManifestPath = path.join(vdir, "manifest.json");
+    const versionManifest = {
+      version: versionName,
+      latest: latestStage,
+      stages: versionSummary.stages,
+    };
+    await fs.writeFile(versionManifestPath, JSON.stringify(versionManifest, null, 2));
+    versionSummary.manifest = toPosix(path.relative(rootAbs, versionManifestPath));
+
+    // Add to top-level index
+    index.versions.push(versionSummary);
+  }
+
+  // Sort versions by name (lexical). If you prefer newest by mtime, sort by updatedAt instead.
+  index.versions.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Compute global latest across all (version, stage) pairs
+  latestCandidates.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
   index.latest = latestCandidates[0] || null;
 
-  // 总索引
+  // Write <ROOT>/database-index.json
   const outIndex = path.join(rootAbs, "database-index.json");
   await fs.writeFile(outIndex, JSON.stringify(index, null, 2));
   console.log(`Wrote ${outIndex}`);
 }
 
-build().catch(e=>{ console.error(e); process.exit(1); });
+build().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

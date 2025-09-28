@@ -1,3 +1,4 @@
 {
-    "remote_database_url": ""
+    "database_url": "http://134.115.198.190",
+    "threshold_url": "http://134.115.198.190/threshold.json"
 }

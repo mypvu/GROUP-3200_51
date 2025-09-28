@@ -6,14 +6,14 @@ import { get, H, toNumber } from "./utils";
 import download_from_url from "./network";
 
 export async function fetch_dataset(url: URL): Promise<DataSets> {
-
+	
 	return await fetch_datasets_from_manifest(new URL(url.toString() + "/manifest.json"))
 }
 
 
 
 async function fetch_datasets_from_manifest(url: URL): Promise<DataSets> {
-	const res = await fetch(url.toString(), { cache: "no-store" });
+	const res = await fetch(url.toString(), { cache: "default" });
 	if (!res.ok)
 		throw new Error(`Failed to load manifest: ${res.status} ${url}`);
 
@@ -30,7 +30,7 @@ async function fetch_datasets_from_manifest(url: URL): Promise<DataSets> {
 			throw new Error("No version manifest found in stage manifest.");
 		const verUrl = new URL(next, url);
 
-		const r2 = await fetch(verUrl.toString(), { cache: "no-store" });
+		const r2 = await fetch(verUrl.toString(), { cache: "default" });
 		if (!r2.ok) 
 			throw new Error(`Failed to load version manifest: ${r2.status} ${verUrl}`);
 

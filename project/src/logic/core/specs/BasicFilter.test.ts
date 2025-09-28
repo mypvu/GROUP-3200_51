@@ -84,10 +84,8 @@ describe("Manual testing for Basic Filter", () => {
     }
 
 
-    bf.set(sample, ds).extract()
-    expect(bf.simple().NK).toEqual([58]);
-
-    console.log(bf.simple())
+    const res = bf.set(sample, ds).extract()
+    expect(res.ids().NK).toEqual([58]);
 
   });
 
@@ -119,10 +117,10 @@ describe("BasicFilter tests from case.json", () => {
             ...(input.t !== undefined ? { T: input.t } : {}),
           };
 
-          bf.set(sample, ds).extract();
+          const res = bf.set(sample, ds).extract();
 
           // compare expected
-          const simpleResult = bf.simple()[db_label as keyof ReturnType<typeof bf.simple>];
+          const simpleResult = res.ids()[db_label as keyof ReturnType<typeof res.ids>];
           expect(simpleResult).toEqual(expected.result);
         });
       }
