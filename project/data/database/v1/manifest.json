@@ -1,10 +1,5 @@
 {
   "version": "v1",
-  "latest": {
-    "name": "stage_2",
-    "manifest": "v1/stage_2/manifest.json",
-    "updatedAt": "2025-09-28T12:36:32.679Z"
-  },
   "stages": [
     {
       "name": "stage_1",

@@ -3,21 +3,16 @@ import * as XLSX from "xlsx"
 import DataSets from "../core/models/datasets.model";
 import type { Compound, DBLabel } from "../core/models/compund.model";
 import { get, H, toNumber } from "./utils";
-import download_from_url from "./network";
+import download_from_url, { download_json } from "./network";
+
 
 export async function fetch_dataset(url: URL): Promise<DataSets> {
-	
-	return await fetch_datasets_from_manifest(new URL(url.toString() + "/manifest.json"))
+		return await fetch_datasets_from_manifest(new URL(url.toString() + "/manifest.json"))
 }
 
-
-
 async function fetch_datasets_from_manifest(url: URL): Promise<DataSets> {
-	const res = await fetch(url.toString(), { cache: "default" });
-	if (!res.ok)
-		throw new Error(`Failed to load manifest: ${res.status} ${url}`);
 
-	const manifest = await res.json();
+	const manifest = await download_json(url)
 
 	let files: Array<{ name?: string; url?: string; path?: string }>;
 	if ("files" in manifest && Array.isArray(manifest.files)) {

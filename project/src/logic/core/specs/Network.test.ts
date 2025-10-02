@@ -1,6 +1,6 @@
 
 import { ds, load_csv } from "@/logic/utils/csvLoader";
-import { fetch_dataset, parse_excel } from "@/logic/utils/fetch_excel";
+import { fetch_dataset, parse_excel } from "@/logic/utils/fetch_excel_st1";
 import download_from_url from "@/logic/utils/network";
 import { describe, it, expect, beforeEach, vi, test } from "vitest";
 import conf from "../../config/conf.json"

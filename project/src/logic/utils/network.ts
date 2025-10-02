@@ -10,7 +10,7 @@ export default async function download_from_url(url: URL) :Promise<ArrayBuffer> 
 
 export async function download_json(url: URL): Promise<any> {
 
-    const res = await fetch(url)
+    const res = await fetch(url, {cache: "default"})
     if(!res.ok)
         throw new Error(`Fetch failed ${res.status} for ${url}`);
 

@@ -2,7 +2,7 @@ import BasicFilter from "@core/algorithms/BasicFilter";
 import type { FilterBounds } from "../models/filter.model";
 import type { Out_Stage_1, Out_Stage_2 } from "../models/result_parameters.model";
 import type { InputParams } from "../models/search_parameters.model";
-import { fetch_dataset } from "@/logic/utils/fetch_excel";
+import { fetch_dataset } from "@/logic/utils/fetch_excel_st1";
 import conf from "../../config/conf.json"
 
 export default class CompoundFilter {
@@ -32,6 +32,12 @@ export default class CompoundFilter {
             compounds: res_ds,
             version: ver
         }
+    }
+
+    async st2(ver: number): Promise<Out_Stage_2> {
+
+        
+
     }
 
 
