@@ -1,30 +1,30 @@
 ---
-import Header from '../components/Header.astro';
+import Header from "../components/Header.astro";
+import Layout from "@/layouts/Layout.astro";
 ---
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
     <title>View Database</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-gray-100 min-h-screen flex flex-col">
-    <Header title="View Database" />
+</head>
 
-    <main class="p-10 flex flex-col gap-6">
-      <div class="bg-white p-6 rounded-2xl shadow">
-        <h2 class="text-2xl font-semibold mb-4">Spectral Overlays</h2>
-        <p class="text-gray-600">Placeholder for overlay previews</p>
-        <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl shadow-lg">Download</button>
-      </div>
+<Layout>
+    <div class="flex min-h-screen flex-col bg-gray-100">
+        <Header title="View Database" />
 
-      <div class="bg-white p-6 rounded-2xl shadow">
-        <h2 class="text-2xl font-semibold mb-4">Match Candidates</h2>
-        <p class="text-gray-600">Placeholder for candidate table</p>
-      </div>
-    </main>
-  </body>
-</html>
+        <main class="flex flex-col gap-6 p-10">
+            <div class="rounded-2xl bg-white p-6 shadow">
+                <h2 class="mb-4 text-2xl font-semibold">Spectral Overlays</h2>
+                <p class="text-gray-600">Placeholder for overlay previews</p>
+                <button
+                    class="mt-4 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow-lg hover:bg-blue-700"
+                    >Download</button
+                >
+            </div>
+
+            <div class="rounded-2xl bg-white p-6 shadow">
+                <h2 class="mb-4 text-2xl font-semibold">Match Candidates</h2>
+                <p class="text-gray-600">Placeholder for candidate table</p>
+            </div>
+        </main>
+    </div>
+</Layout>
