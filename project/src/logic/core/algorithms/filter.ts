@@ -17,9 +17,9 @@ export default class CompoundFilter {
                 this.bf = new BasicFilter(input.samples)
     }
 
-    async st1(ver: number): Promise<Out_Stage_1> {
+    async st1(ver = this.input.version): Promise<Out_Stage_1> {
         // load remote database base on manifest
-        const ds = await fetch_dataset(new URL(conf.database_url +"/v" + ver.toString() + "/stage_1"))
+        const ds = await fetch_dataset(new URL(conf.database_url +"/v" + ver + "/stage_1"))
 
         // set the input data and sample
         this.bf.set(this.input.samples,ds)
@@ -34,10 +34,12 @@ export default class CompoundFilter {
         }
     }
 
-    async st2(ver: number): Promise<Out_Stage_2> {
-
+    async st2(ver = this.input.version): Promise<Out_Stage_2> {
         
 
+        return {
+            version: ver
+        }
     }
 
 
