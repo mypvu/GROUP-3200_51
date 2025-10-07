@@ -16,6 +16,9 @@
   },
   "devDependencies": {
     "papaparse": "^5.5.3",
+    "prettier": "3.6.2",
+    "prettier-plugin-astro": "0.14.1",
+    "prettier-plugin-tailwindcss": "0.6.14",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   }
