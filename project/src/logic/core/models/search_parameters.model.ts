@@ -1,3 +1,3 @@
-import { Sample } from "./compund.model"
+import type { Sample } from "./compund.model";
 
 export type InputParams = Sample[]

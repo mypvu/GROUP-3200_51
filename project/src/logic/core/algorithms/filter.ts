@@ -1,8 +1,8 @@
 import type { Sample } from "@/logic/core/models/compund.model";
 import type DataSets from "@core/models/datasets.model";
 import BasicFilter from "@core/algorithms/BasicFilter";
-import { FilterBounds } from "../models/filter.model";
-import { OutputParams } from "../models/result_parameters.model";
+import type { FilterBounds } from "../models/filter.model";
+import type { OutputParams } from "../models/result_parameters.model";
 
 
 export default class CompoundFilter {

@@ -2,7 +2,11 @@ import fs from "node:fs";
 import Papa from "papaparse";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Compound, DBLabel, Sample } from "../core/models/compund.model";
+import type {
+    Compound,
+    DBLabel,
+    Sample,
+} from "../core/models/compund.model";
 import DataSets from "../core/models/datasets.model";
 
 // types: DBLabel = "NK" | "NL" | "VK" | "VL";

@@ -1,4 +1,7 @@
-import { generateRangeParams, RangeParams } from "@/logic/utils/range_generate";
+import {
+    generateRangeParams,
+    type RangeParams,
+} from "@/logic/utils/range_generate";
 import { isCompoundV, type Compound, type Sample } from "@core/models/compund.model";
 import DataSets, { type DataSetsID } from "../models/datasets.model";
 import {

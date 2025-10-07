@@ -1,3 +1,3 @@
-import { Compound } from "./compund.model"
+import type { Compound } from "./compund.model";
 
 export type OutputParams = Compound[]
