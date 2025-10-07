@@ -55,6 +55,18 @@ export default class DataSets implements Iterable<Compound> {
         ...this.VS_KDS,
         ...this.NP_LDS,
         ...this.VS_LDS
-    ];
-}
+    ];}
+
+    ids(): DataSetsID {
+        const toIds = (cs: Compound[]): number[] => 
+            cs.map(c => (c.id !== undefined ? c.id: NaN))
+              .filter(id => !isNaN(id))
+
+        return {
+            NK: toIds(this.NP_KDS),
+            NL: toIds(this.NP_LDS),
+            VK: toIds(this.VS_KDS),
+            VL: toIds(this.VS_LDS)
+        }
+    } 
 }

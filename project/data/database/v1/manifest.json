@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "stages": [
+    {
+      "name": "stage_1",
+      "manifest": "v1/stage_1/manifest.json",
+      "updatedAt": "2025-09-27T15:00:16.000Z"
+    },
+    {
+      "name": "stage_2",
+      "manifest": "v1/stage_2/manifest.json",
+      "updatedAt": "2025-09-28T12:36:32.679Z"
+    }
+  ]
+}

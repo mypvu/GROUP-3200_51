@@ -1,25 +1,45 @@
-import type { Sample } from "@/logic/core/models/compund.model";
-import type DataSets from "@core/models/datasets.model";
 import BasicFilter from "@core/algorithms/BasicFilter";
 import type { FilterBounds } from "../models/filter.model";
-import type { OutputParams } from "../models/result_parameters.model";
-
+import type { Out_Stage_1, Out_Stage_2 } from "../models/result_parameters.model";
+import type { InputParams } from "../models/search_parameters.model";
+import { fetch_dataset } from "@/logic/utils/fetch_excel_st1";
+import conf from "../../config/conf.json"
 
 export default class CompoundFilter {
     private bf: BasicFilter
+    private input: InputParams
     // specturm filter
 
     constructor(
-            samples: Sample, 
-            datasets: DataSets, 
-            threshold: FilterBounds) {
-                this.bf = new BasicFilter(samples, datasets)
+            input: InputParams,
+            threshold?: FilterBounds) {
+                this.input = input
+                this.bf = new BasicFilter(input.samples)
     }
 
-    extract(): OutputParams {
-            
+    async st1(ver = this.input.version): Promise<Out_Stage_1> {
+        // load remote database base on manifest
+        const ds = await fetch_dataset(new URL(conf.database_url +"/v" + ver + "/stage_1"))
 
-        return []
+        // set the input data and sample
+        this.bf.set(this.input.samples,ds)
+
+        // extract result from sample provided
+        const res_ds = this.bf.extract()
+
+        return {
+            ids: res_ds.ids(),
+            compounds: res_ds,
+            version: ver
+        }
+    }
+
+    async st2(ver = this.input.version): Promise<Out_Stage_2> {
+        
+
+        return {
+            version: ver
+        }
     }
 
 

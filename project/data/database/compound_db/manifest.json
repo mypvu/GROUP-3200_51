@@ -1,0 +1,15 @@
+{
+  "version": "compound_db",
+  "latest": {
+    "name": "raw_excel_db",
+    "manifest": "compound_db/raw_excel_db/manifest.json",
+    "updatedAt": "2025-08-21T16:40:53.000Z"
+  },
+  "stages": [
+    {
+      "name": "raw_excel_db",
+      "manifest": "compound_db/raw_excel_db/manifest.json",
+      "updatedAt": "2025-08-21T16:40:53.000Z"
+    }
+  ]
+}
