@@ -1,128 +1,130 @@
 ---
 // src/pages/results.astro
+import Layout from "@/layouts/Layout.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Results - HTPLC Compound Matcher</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .btn-hover-effect {
-        transition: all 0.3s ease;
-      }
-      .btn-hover-effect:hover {
-        transform: translateY(-2px);
-      }
-      .results-table {
+<style>
+    .results-table {
         width: 100%;
         border-collapse: collapse;
-      }
-      .results-table th, .results-table td {
-        border: 1px solid #D1D5DB;
+    }
+    .results-table th,
+    .results-table td {
+        border: 1px solid #d1d5db;
         padding: 12px;
         text-align: center;
-      }
-      .results-table th {
-        background-color: #F3F4F6;
+    }
+    .results-table th {
+        background-color: #f3f4f6;
         font-weight: bold;
-      }
-      .match-good {
-        color: #10B981;
+    }
+    .match-good {
+        color: #10b981;
         font-weight: bold;
-      }
-      .match-bad {
-        color: #EF4444;
+    }
+    .match-bad {
+        color: #ef4444;
         font-weight: bold;
-      }
-    </style>
-  </head>
-  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
-    <div class="max-w-4xl mx-auto">
-      
-      <!-- Save & Exit Button -->
-      <div class="mb-6 text-left">
-        <a href="/" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg btn-hover-effect font-semibold inline-block">
-          Save & Exit
-        </a>
-      </div>
+    }
+</style>
 
-      <!-- Results Summary -->
-      <div class="bg-white rounded-lg p-6 mb-6 text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Results:</h2>
-        <h3 class="text-lg font-semibold">Show Results Above: 80%</h3>
-        <p class="text-lg mb-2">Based on 2 given experiments (AN, AV)</p>
-        <p class="text-lg mb-2">Matches 1/2 given: AV. No match: AN</p>
-      </div>
+<head>
+    <title>Results - HTPLC Compound Matcher</title>
+</head>
 
-      <!-- Results Table -->
-      <div class="bg-white rounded-lg p-6 mb-6">
-        <table class="results-table">
-          <thead>
-            <tr>
-              <th>Match Candidates</th>
-              <th>Match Score %</th>
-              <th>Rf match</th>
-              <th>RGB Match</th>
-              <th>Spectral</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Syringic Acid</td>
-              <td class="match-good">92%</td>
-              <td class="match-good">✓</td>
-              <td class="match-good">✓</td>
-              <td class="match-good">✓</td>
-            </tr>
-            <tr>
-              <td>Methyl Syringate</td>
-              <td class="match-good">84%</td>
-              <td class="match-good">✓</td>
-              <td class="match-bad">X</td>
-              <td class="match-good">✓</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<Layout>
+    <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div class="mx-auto max-w-4xl">
+            <!-- Save & Exit Button -->
+            <div class="mb-6 text-left">
+                <a
+                    href="/"
+                    class="btn-hover-effect inline-block rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
+                >
+                    Save & Exit
+                </a>
+            </div>
 
-      <!-- Action Buttons -->
-      <div class="flex justify-center space-x-4 mb-8">
-        <a href="/detailed-results" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg btn-hover-effect font-semibold">
-          View Detailed Results
-        </a>
-        <a href="/spectral-overlays" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg btn-hover-effect font-semibold">
-          View Spectral Overlays
-        </a>
-      </div>
+            <!-- Results Summary -->
+            <div class="mb-6 rounded-lg bg-white p-6 text-center">
+                <h2 class="mb-4 text-2xl font-bold text-gray-800">Results:</h2>
+                <h3 class="text-lg font-semibold">Show Results Above: 80%</h3>
+                <p class="mb-2 text-lg">
+                    Based on 2 given experiments (AN, AV)
+                </p>
+                <p class="mb-2 text-lg">Matches 1/2 given: AV. No match: AN</p>
+            </div>
 
-      <!-- Analysis Status -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-lg p-4 text-center">
-          <h3 class="font-bold">KDS + NP</h3>
-          <p class="text-green-500 font-semibold">COMPLETE</p>
+            <!-- Results Table -->
+            <div class="mb-6 rounded-lg bg-white p-6">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Match Candidates</th>
+                            <th>Match Score %</th>
+                            <th>Rf match</th>
+                            <th>RGB Match</th>
+                            <th>Spectral</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Syringic Acid</td>
+                            <td class="match-good">92%</td>
+                            <td class="match-good">✓</td>
+                            <td class="match-good">✓</td>
+                            <td class="match-good">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Methyl Syringate</td>
+                            <td class="match-good">84%</td>
+                            <td class="match-good">✓</td>
+                            <td class="match-bad">X</td>
+                            <td class="match-good">✓</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mb-8 flex justify-center space-x-4">
+                <a
+                    href="/detailed-results"
+                    class="btn-hover-effect rounded-lg bg-blue-500 px-6 py-3 font-semibold text-white hover:bg-blue-600"
+                >
+                    View Detailed Results
+                </a>
+                <a
+                    href="/spectral-overlays"
+                    class="btn-hover-effect rounded-lg bg-purple-500 px-6 py-3 font-semibold text-white hover:bg-purple-600"
+                >
+                    View Spectral Overlays
+                </a>
+            </div>
+
+            <!-- Analysis Status -->
+            <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div class="rounded-lg bg-white p-4 text-center">
+                    <h3 class="font-bold">KDS + NP</h3>
+                    <p class="font-semibold text-green-500">COMPLETE</p>
+                </div>
+                <div class="rounded-lg bg-white p-4 text-center">
+                    <h3 class="font-bold">LDS + NP</h3>
+                    <p class="font-semibold text-green-500">COMPLETE</p>
+                </div>
+                <div class="rounded-lg bg-white p-4 text-center">
+                    <h3 class="font-bold">KDS + VS</h3>
+                    <p class="font-semibold text-green-500">COMPLETE</p>
+                </div>
+                <div class="rounded-lg bg-white p-4 text-center">
+                    <h3 class="font-bold">LDS + VS</h3>
+                    <p class="font-semibold text-green-500">COMPLETE</p>
+                </div>
+            </div>
         </div>
-        <div class="bg-white rounded-lg p-4 text-center">
-          <h3 class="font-bold">LDS + NP</h3>
-          <p class="text-green-500 font-semibold">COMPLETE</p>
-        </div>
-        <div class="bg-white rounded-lg p-4 text-center">
-          <h3 class="font-bold">KDS + VS</h3>
-          <p class="text-green-500 font-semibold">COMPLETE</p>
-        </div>
-        <div class="bg-white rounded-lg p-4 text-center">
-          <h3 class="font-bold">LDS + VS</h3>
-          <p class="text-green-500 font-semibold">COMPLETE</p>
-        </div>
-      </div>
-    </div>
 
-    <footer class="text-center py-6 text-gray-500 text-sm mt-8">
-      <p>HTPLC Compound Matcher v1.0 | Results</p>
-    </footer>
-  </body>
-</html>
+        <footer class="mt-8 py-6 text-center text-sm text-gray-500">
+            <p>HTPLC Compound Matcher v1.0 | Results</p>
+        </footer>
+    </body>
+</Layout>
