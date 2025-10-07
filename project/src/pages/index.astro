@@ -1,9 +1,73 @@
 ---
-import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
-import StartPage from "@/components/home/StartPage.astro";
+// src/pages/index.astro
 ---
 
-<Layout>
-	<StartPage></StartPage>
-</Layout>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTPLC Compound Matcher</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .btn-hover-effect {
+        transition: all 0.3s ease;
+      }
+      .btn-hover-effect:hover {
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
+    <!-- Title -->
+    <header class="text-center mt-10">
+      <h1 class="text-5xl font-bold text-gray-800">HTPLC Compound Matcher</h1>
+    </header>
+
+    <main class="flex flex-1 items-center justify-center mt-12 px-4">
+      <div class="flex flex-col lg:flex-row gap-12 items-center">
+        <!-- Left side buttons -->
+        <div class="flex flex-col gap-6">
+          <a
+            href="/analysis"
+            class="w-48 text-center border-2 border-black bg-white rounded-2xl px-4 py-6 text-xl font-semibold hover:bg-gray-100 btn-hover-effect"
+          >
+            Incomplete<br />Analyses
+          </a>
+          <a
+            href="/database"
+            class="w-48 text-center border-2 border-black bg-white rounded-2xl px-4 py-6 text-xl font-semibold hover:bg-gray-100 btn-hover-effect"
+          >
+            View<br />Database
+          </a>
+          <a
+            href="/results"
+            class="w-48 text-center border-2 border-black bg-white rounded-2xl px-4 py-6 text-xl font-semibold hover:bg-gray-100 btn-hover-effect"
+          >
+            Previous<br />Analyses
+          </a>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden lg:block h-40 w-px bg-gray-300"></div>
+
+        <!-- Right side main box -->
+        <div class="flex flex-col items-center justify-center border-2 border-black bg-white rounded-2xl px-16 py-20">
+          <h2 class="text-3xl font-semibold mb-8 text-gray-800">Start New Analysis</h2>
+          <a
+            href="/analysis-new"
+            class="flex items-center justify-center border-2 border-black rounded-full w-16 h-16 hover:bg-gray-100 btn-hover-effect"
+          >
+            <span class="text-3xl font-bold">→</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center py-6 text-gray-500 text-sm">
+      <p>HTPLC Compound Matcher v1.0</p>
+    </footer>
+  </body>
+</html>
