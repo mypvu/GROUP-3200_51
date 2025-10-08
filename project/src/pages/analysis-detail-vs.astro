@@ -1,9 +1,8 @@
 ---
-// src/pages/analysis-detail.astro
-const params = new URL(Astro.url).searchParams;
+// src/pages/analysis-detail-vs.astro
+const params = new URL(Astro.request.url).searchParams;
 const name = params.get("name") || "Analysis";
 ---
-
 
 <html lang="en">
   <head>
@@ -110,6 +109,15 @@ const name = params.get("name") || "Analysis";
                   <label class="text-lg font-semibold text-gray-700 w-64 text-right">RGB3 (H° NP 366 nm):</label>
                   <input type="text" class="input-field" placeholder="______">
                   <span class="font-semibold">CF3:</span>
+                  <input type="text" class="input-field" placeholder="______">
+                </div>
+              </div>
+
+              <!-- T VSA -->
+                <div class="flex items-center justify-center space-x-4">
+                  <label class="text-lg font-semibold text-gray-700 w-64 text-right">T VSA (H° and C):</label>
+                  <input type="text" class="input-field" placeholder="______">
+                  <span class="font-semibold">CF4:</span>
                   <input type="text" class="input-field" placeholder="______">
                 </div>
               </div>
