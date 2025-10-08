@@ -1,5 +1,9 @@
 ---
-// src/pages/analysis/detail.astro
+// src/pages/analysis/new/details/[type].astro
+// NOTE!: This is a *dynamic route* (see how it's called [type].astro)
+// This means that type is a parameter - for example, analysis/new/details/kds-np would be this page with the type "kds-np"
+// This lets us reuse the same page for different analysis types
+// Keep in mind that it's not really dynamic, as we are building the site statically - we need to manually add the different types to the static paths below
 export async function getStaticPaths() {
     return [
         { params: { type: "kds-np" } },
