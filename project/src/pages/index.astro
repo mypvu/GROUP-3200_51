@@ -1,72 +1,63 @@
 ---
+import Layout from "@/layouts/Layout.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
     <title>HTPLC Compound Matcher</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .btn-hover-effect {
-        transition: all 0.3s ease;
-      }
-      .btn-hover-effect:hover {
-        transform: translateY(-2px);
-      }
-    </style>
-  </head>
+</head>
 
-  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col">
-    <!-- Title -->
-    <header class="text-center mt-10">
-      <h1 class="text-5xl font-bold text-gray-800">HTPLC Compound Matcher</h1>
-    </header>
+<Layout>
+    <body
+        class="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-indigo-100"
+    >
+        <!-- Title -->
+        <header class="mt-10 text-center">
+            <h1 class="text-5xl font-bold text-gray-800">
+                HTPLC Compound Matcher
+            </h1>
+        </header>
 
-    <main class="flex flex-1 items-center justify-center mt-12 px-4">
-      <div class="flex flex-col lg:flex-row gap-12 items-center">
-        <!-- Left side buttons -->
-        <div class="flex flex-col gap-6">
-          <a
-            href="/Database"
-            class="w-48 text-center border-2 border-black bg-white rounded-2xl px-4 py-6 text-xl font-semibold hover:bg-gray-100 btn-hover-effect"
-          >
-            View<br />Database
-          </a>
+        <main class="mt-12 flex flex-1 items-center justify-center px-4">
+            <div class="flex flex-col items-center gap-12 lg:flex-row">
+                <!-- Left side buttons -->
+                <div class="flex flex-col gap-6">
+                    <a
+                        href="/Database"
+                        class="btn-hover-effect w-48 rounded-2xl border-2 border-black bg-white px-4 py-6 text-center text-xl font-semibold hover:bg-gray-100"
+                    >
+                        View<br />Database
+                    </a>
 
-          <a
-            href="/saved-analysis"
-            class="w-48 text-center border-2 border-black bg-white rounded-2xl px-4 py-6 text-xl font-semibold hover:bg-gray-100 btn-hover-effect"
-          >
-            Saved<br />Analyses
-          </a>
-        </div>
+                    <a
+                        href="/saved-analysis"
+                        class="btn-hover-effect w-48 rounded-2xl border-2 border-black bg-white px-4 py-6 text-center text-xl font-semibold hover:bg-gray-100"
+                    >
+                        Saved<br />Analyses
+                    </a>
+                </div>
 
-        <!-- Divider -->
-        <div class="hidden lg:block h-40 w-px bg-gray-300"></div>
+                <!-- Divider -->
+                <div class="hidden h-40 w-px bg-gray-300 lg:block"></div>
 
-        <!-- Right side main box -->
-        <div
-          class="flex flex-col items-center justify-center border-2 border-black bg-white rounded-2xl px-16 py-20"
-        >
-          <h2 class="text-3xl font-semibold mb-8 text-gray-800">
-            Start New Analysis
-          </h2>
-          <a
-            href="/analysis"
-            class="flex items-center justify-center border-2 border-black rounded-full w-16 h-16 hover:bg-gray-100 btn-hover-effect"
-          >
-            <span class="text-3xl font-bold">→</span>
-          </a>
-        </div>
-      </div>
-    </main>
+                <!-- Right side main box -->
+                <div
+                    class="flex flex-col items-center justify-center rounded-2xl border-2 border-black bg-white px-16 py-20"
+                >
+                    <h2 class="mb-8 text-3xl font-semibold text-gray-800">
+                        Start New Analysis
+                    </h2>
+                    <a
+                        href="/analysis"
+                        class="btn-hover-effect flex h-16 w-16 items-center justify-center rounded-full border-2 border-black hover:bg-gray-100"
+                    >
+                        <span class="text-3xl font-bold">→</span>
+                    </a>
+                </div>
+            </div>
+        </main>
 
-    <footer class="text-center py-6 text-gray-500 text-sm">
-      <p>HTPLC Compound Matcher v1.0</p>
-    </footer>
-  </body>
-</html>
+        <footer class="py-6 text-center text-sm text-gray-500">
+            <p>HTPLC Compound Matcher v1.0</p>
+        </footer>
+    </body>
+</Layout>
