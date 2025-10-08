@@ -1,5 +1,6 @@
 import type { DataSetsID } from "./datasets.model"
 import type DataSets from "./datasets.model"
+import type Specturm from "./specturm.model"
 
 
 export type ResultStage1 = {
@@ -8,8 +9,7 @@ export type ResultStage1 = {
     version: string
 }
 
-
 export type ResultStage2 = {
-    ids: DataSetsID,
+    specturms: Specturm[]
     version: string
 }
