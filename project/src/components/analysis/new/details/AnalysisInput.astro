@@ -1,0 +1,360 @@
+---
+import HelperService from "@/logic/helper_service.ts";
+const { type = "unknown" } = Astro.props;
+
+const name = HelperService.getTypeDisplayName(type);
+const isVsType = type == "kds-vs" || type == "lds-vs";
+
+---
+
+<style>
+    .input-field {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 10px 12px;
+        width: 120px;
+        font-size: 16px;
+        text-align: center;
+    }
+    .input-field:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .arrow-hover {
+        transition: all 0.3s ease;
+    }
+    .arrow-hover:hover {
+        transform: translateX(4px);
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+</style>
+
+<analysis-input data-type={type}>
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div class="mx-auto max-w-6xl">
+            <!-- Left Column: Notes and Save & Exit stacked -->
+            <div class="flex gap-8">
+                <!-- Left Side: Notes and Save & Exit -->
+                <div class="flex w-64 flex-col gap-4">
+                    <!-- Save & Exit Button (Top) -->
+                    <!--
+                        NOTE:
+                        The save and exit button href is in the script below (in connectedCallback)
+                    -->
+                    <a
+                        id="save-and-exit"
+                        class="btn-hover-effect cursor-pointer rounded-lg bg-gray-500 px-6 py-2 text-center font-semibold text-white hover:bg-gray-600"
+                    >
+                        Save & Exit
+                    </a>
+
+                    <!-- Compact Notes Box (Below Save & Exit) -->
+                    <div class="rounded-2xl bg-white p-4 shadow-lg">
+                        <h3 class="mb-2 text-lg font-semibold text-gray-800">
+                            Notes
+                        </h3>
+                        <textarea
+                            class="mb-2 h-20 w-full rounded-lg border border-gray-300 p-2 text-sm"
+                            placeholder="Add notes here..."></textarea>
+                        <button
+                            class="btn-hover-effect w-full rounded-lg bg-blue-500 px-3 py-1 text-sm font-semibold text-white hover:bg-blue-600"
+                        >
+                            Save Notes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Side: Analysis Form Card -->
+                <div class="flex-1">
+                    <div class="relative rounded-2xl bg-white p-8 shadow-lg">
+                        <!-- Header -->
+                        <div class="mb-8 text-center">
+                            <h1 class="mb-2 text-3xl font-bold text-gray-800">
+                                New Analysis
+                            </h1>
+                            <h2 class="text-2xl font-semibold text-gray-600">
+                                {name}
+                            </h2>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Rf Input -->
+                            <div
+                                class="flex items-center justify-center space-x-4"
+                            >
+                                <label
+                                    class="w-32 text-right text-lg font-semibold text-gray-700"
+                                >Rf:</label
+                                >
+                                <input
+                                    id="rf"
+                                    type="text"
+                                    class="input-field"
+                                    placeholder="______"
+                                />
+                            </div>
+
+                            <!-- RGB Inputs -->
+                            <div class="space-y-4">
+                                <!-- RGB 1 -->
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-64 text-right text-lg font-semibold text-gray-700"
+                                    >RGB 1 (H° DEV 254 nm):</label
+                                    >
+                                    <input
+                                        id="rgb-1"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                    <span class="font-semibold">CF1:</span>
+                                    <input
+                                        id="rgb-1-cf1"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                </div>
+
+                                <!-- RGB 2 -->
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-64 text-right text-lg font-semibold text-gray-700"
+                                    >RGB2 (H° DEV 366 nm):</label
+                                    >
+                                    <input
+                                        id="rgb-2"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                    <span class="font-semibold">CF2:</span>
+                                    <input
+                                        id="rgb-2-cf2"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                </div>
+
+                                <!-- RGB 3 -->
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-64 text-right text-lg font-semibold text-gray-700"
+                                    >RGB3 (H° NP 366 nm):</label
+                                    >
+                                    <input
+                                        id="rgb-3"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                    <span class="font-semibold">CF3:</span>
+                                    <input
+                                        id="rgb-3-cf3"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                </div>
+                            </div>
+
+                            {isVsType ? (
+                                <!-- T VSA -->
+                                <div
+                                    class="flex items-center justify-center space-x-4 mt-4"
+                                >
+                                    <label
+                                        class="text-lg font-semibold text-gray-700 w-64 text-right"
+                                    >
+                                        T VSA (H° and C):
+                                    </label>
+                                    <input
+                                        id="t-vsa"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                    <span class="font-semibold">CF4:</span>
+                                    <input
+                                        id="t-vsa-cf4"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                </div>
+                            ) : (<div/>)}
+
+                            <!-- UV Vis Peaks -->
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-32 text-right text-lg font-semibold text-gray-700"
+                                    >UV Vis Peaks</label
+                                    >
+                                    <input
+                                        id="uv-vis-peaks"
+                                        type="text"
+                                        class="input-field w-20"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">UV λ.1:</span>
+                                    <input
+                                        id="uv-vis-d1"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">UV λ.2:</span>
+                                    <input
+                                        id="uv-vis-d2"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">UV λ.3:</span>
+                                    <input
+                                        id="uv-vis-d3"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- FI Peaks -->
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-32 text-right text-lg font-semibold text-gray-700"
+                                    >FI Peaks</label
+                                    >
+                                    <input
+                                        id="fi-peaks"
+                                        type="text"
+                                        class="input-field w-20"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">FI λ.1:</span>
+                                    <input
+                                        id="fi-d1"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">FI λ.2:</span>
+                                    <input
+                                        id="fi-d2"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">FI λ.3:</span>
+                                    <input
+                                        id="fi-d3"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Centered Arrow at Bottom -->
+                            <div class="mt-8 text-center">
+                                <a
+                                    href="/analysis"
+                                    title="Complete Analysis"
+                                    class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
+                                >
+                                        <span
+                                            class="text-2xl font-bold text-gray-600"
+                                        >→</span
+                                        >
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</analysis-input>
+
+<script>
+    import InputService from "@/logic/input_service.ts";
+    import { AnalysisViewController } from "./AnalysisInput.ts";
+    import { type Compound, getCompoundByType, type Sample } from "@core/models/compund.model.ts";
+    import type { InputParams } from "@core/models/search_parameters.model.ts";
+
+    class AnalysisInput extends HTMLElement {
+        private inputParams: InputParams | undefined;
+        private inputCompound: Compound | undefined;
+        private viewController: AnalysisViewController | undefined;
+
+        async saveAndExit() {
+            await this.viewController?.save();
+            location.href = "/analysis/new";
+        }
+
+        async connectedCallback() {
+            const type = this.dataset.type;
+
+            // Load input params from local storage
+            this.inputParams = await InputService.getOrCreateInput();
+            this.inputCompound = getCompoundByType(type!, this.inputParams!.samples)!;
+
+            // Prepare the view controller so we can start adding inputs
+            this.viewController = new AnalysisViewController(() => {
+                InputService.saveInput(this.inputParams!);
+            })
+
+            document.getElementById("save-and-exit")!.addEventListener("click", () => this.saveAndExit())
+
+            this.viewController.addNumberInput("rf", () => this.inputCompound!.RF, e => {
+                this.inputCompound!.RF = e;
+            });
+
+            this.viewController.addNumberInput("rgb-1", () => this.inputCompound!.DEV_254nm, e => {
+                this.inputCompound!.DEV_254nm = e;
+            });
+
+            this.viewController.addNumberInput("rgb-2", () => this.inputCompound!.DEV_366nm, e => {
+                this.inputCompound!.DEV_366nm = e;
+            });
+
+            this.viewController.addNumberInput("rgb-3", () => this.inputCompound!.VSNP_366nm, e => {
+                this.inputCompound!.VSNP_366nm = e;
+            });
+
+            try {
+                this.viewController.load();
+            } catch (e) {
+                console.warn("Stored input params failed to load, will be recreated", e);
+
+                // Reset input params
+                this.inputParams = await InputService.createEmptyInput();
+                this.inputCompound = getCompoundByType(type!, this.inputParams!.samples)!;
+                await InputService.saveInput(this.inputParams!);
+
+                // Reload
+                this.viewController.load();
+            }
+        }
+    }
+
+    customElements.define("analysis-input", AnalysisInput);
+</script>

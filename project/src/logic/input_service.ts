@@ -10,26 +10,6 @@ const persistentInputStorage = persistentAtom<InputParams | undefined>(
     },
 );
 
-/**
- * Wrapper for InputParams that writes the values to local storage.
- */
-export class StoredFilterInput {
-    private _value: InputParams;
-
-    constructor(value: InputParams) {
-        this._value = value;
-    }
-
-    public get value(): InputParams {
-        return this._value;
-    }
-
-    public set value(newValue: InputParams) {
-        persistentInputStorage.set(newValue);
-        this._value = newValue;
-    }
-}
-
 export default class InputService {
     /**
      * Is the user already working on an input?
@@ -38,14 +18,8 @@ export default class InputService {
         return persistentInputStorage.get() !== undefined;
     }
 
-    public static async createInput(
-        params: InputParams,
-    ): Promise<StoredFilterInput> {
-        return new StoredFilterInput(params);
-    }
-
-    public static async createEmptyInput(): Promise<StoredFilterInput> {
-        return new StoredFilterInput({
+    public static async createEmptyInput(): Promise<InputParams> {
+        return {
             version: "",
             samples: {
                 NP_KDS: {
@@ -95,20 +69,17 @@ export default class InputService {
                     T: null,
                 },
             },
-        });
+        };
     }
 
-    public static async getOrCreateInput(): Promise<StoredFilterInput> {
+    public static async getOrCreateInput(): Promise<InputParams> {
         if (persistentInputStorage.get() === undefined) {
             return this.createEmptyInput();
         }
-        return new StoredFilterInput(persistentInputStorage.get()!);
+        return persistentInputStorage.get()!;
     }
 
-    public static async getInput(): Promise<StoredFilterInput> {
-        if (persistentInputStorage.get() === undefined) {
-            throw new Error("getInput() called but no stored input exists");
-        }
-        return new StoredFilterInput(persistentInputStorage.get()!);
+    public static async saveInput(input: InputParams): Promise<void> {
+        persistentInputStorage.set(input);
     }
 }
