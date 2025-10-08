@@ -2,10 +2,10 @@
 // src/pages/analysis/detail.astro
 export async function getStaticPaths() {
     return [
-        { params: { type: 'kds-np' } },
-        { params: { type: 'lds-np' } },
-        { params: { type: 'kds-vs' } },
-        { params: { type: 'lds-vs' } },
+        { params: { type: "kds-np" } },
+        { params: { type: "lds-np" } },
+        { params: { type: "kds-vs" } },
+        { params: { type: "lds-vs" } },
     ];
 }
 
@@ -19,7 +19,7 @@ if (type === undefined || !HelperService.doesTypeExist(type)) {
     throw new Error("Invalid analysis type");
 }
 
-const name=  HelperService.getTypeDisplayName(type);
+const name = HelperService.getTypeDisplayName(type);
 const isVsType = type == "kds-vs" || type == "lds-vs";
 ---
 
@@ -186,14 +186,15 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                             </div>
 
                             {isVsType ? (
-                                <!-- T VSA -->
+                            <!-- T VSA -->
                                 <div
-                                    class="flex items-center justify-center space-x-4"
+                                    class="mt-6 flex flex-wrap items-center justify-center gap-4"
                                 >
                                     <label
-                                        class="w-64 text-right text-lg font-semibold text-gray-700"
-                                    >T VSA (H° and C):</label
+                                        class="w-72 text-right text-lg font-semibold text-gray-700"
                                     >
+                                        T VSA (H° and C):
+                                    </label>
                                     <input
                                         type="text"
                                         class="input-field"
@@ -278,30 +279,18 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                                 </div>
                             </div>
 
-                            <!-- Action Buttons -->
-                            <div class="flex justify-center space-x-4 pt-6">
-                                <button
-                                    class="btn-hover-effect rounded-lg bg-blue-500 px-8 py-3 font-semibold text-white hover:bg-blue-600"
-                                >
-                                    Save Analysis
-                                </button>
+                            <!-- Centered Arrow at Bottom -->
+                            <div class="mt-8 text-center">
                                 <a
-                                    href="/results"
-                                    class="btn-hover-effect inline-flex items-center rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600"
+                                    href="/analysis"
+                                    title="Complete Analysis"
+                                    class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
                                 >
-                                    View Results
+                                    <span
+                                        class="text-2xl font-bold text-gray-600"
+                                        >→</span
+                                    >
                                 </a>
-                            </div>
-                        </div>
-
-                        <!-- Centered Arrow at Bottom -->
-                        <div class="mt-8 text-center">
-                            <div
-                                class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
-                            >
-                                <span class="text-2xl font-bold text-gray-600"
-                                    >→</span
-                                >
                             </div>
                         </div>
                     </div>
