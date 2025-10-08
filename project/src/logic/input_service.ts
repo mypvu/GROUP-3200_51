@@ -98,6 +98,13 @@ export default class InputService {
         });
     }
 
+    public static async getOrCreateInput(): Promise<StoredFilterInput> {
+        if (persistentInputStorage.get() === undefined) {
+            return this.createEmptyInput();
+        }
+        return new StoredFilterInput(persistentInputStorage.get()!);
+    }
+
     public static async getInput(): Promise<StoredFilterInput> {
         if (persistentInputStorage.get() === undefined) {
             throw new Error("getInput() called but no stored input exists");

@@ -1,10 +1,33 @@
 ---
-// src/pages/analysis-detail-vs.astro
+// src/pages/analysis/detail.astro
+export async function getStaticPaths() {
+    return [
+        { params: { type: 'kds-np' } },
+        { params: { type: 'lds-np' } },
+        { params: { type: 'kds-vs' } },
+        { params: { type: 'lds-vs' } },
+    ];
+}
 
 import Layout from "@/layouts/Layout.astro";
-const params = new URL(Astro.request.url).searchParams;
-const name = params.get("name") || "Analysis";
+import HelperService from "@/logic/helper_service.ts";
+
+const { type } = Astro.params;
+
+if (type === undefined || !HelperService.doesTypeExist(type)) {
+    // TODO: graceful error
+    throw new Error("Invalid analysis type");
+}
+
+const name=  HelperService.getTypeDisplayName(type);
+const isVsType = type == "kds-vs" || type == "lds-vs";
 ---
+
+<script lang="ts">
+    import InputService from "@/logic/input_service.ts";
+
+    var input = await InputService.getOrCreateInput();
+</script>
 
 <head>
     <meta charset="UTF-8" />
@@ -12,12 +35,6 @@ const name = params.get("name") || "Analysis";
 </head>
 
 <style>
-    .btn-hover-effect {
-        transition: all 0.3s ease;
-    }
-    .btn-hover-effect:hover {
-        transform: translateY(-2px);
-    }
     .input-field {
         border: 1px solid #d1d5db;
         border-radius: 6px;
@@ -168,122 +185,124 @@ const name = params.get("name") || "Analysis";
                                 </div>
                             </div>
 
-                            <!-- T VSA -->
-                            <div
-                                class="flex items-center justify-center space-x-4"
-                            >
-                                <label
-                                    class="w-64 text-right text-lg font-semibold text-gray-700"
+                            {isVsType ? (
+                                <!-- T VSA -->
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-64 text-right text-lg font-semibold text-gray-700"
                                     >T VSA (H° and C):</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                    <span class="font-semibold">CF4:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                </div>
+                            ) : (<div/>)}
+
+                            <!-- UV Vis Peaks -->
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-center space-x-4"
                                 >
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="______"
-                                />
-                                <span class="font-semibold">CF4:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="______"
-                                />
+                                    <label
+                                        class="w-32 text-right text-lg font-semibold text-gray-700"
+                                        >UV Vis Peaks</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="input-field w-20"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">UV λ.1:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">UV λ.2:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">UV λ.3:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- FI Peaks -->
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-center space-x-4"
+                                >
+                                    <label
+                                        class="w-32 text-right text-lg font-semibold text-gray-700"
+                                        >FI Peaks</label
+                                    >
+                                    <input
+                                        type="text"
+                                        class="input-field w-20"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">FI λ.1:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">FI λ.2:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                    <span class="font-semibold">FI λ.3:</span>
+                                    <input
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="___"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex justify-center space-x-4 pt-6">
+                                <button
+                                    class="btn-hover-effect rounded-lg bg-blue-500 px-8 py-3 font-semibold text-white hover:bg-blue-600"
+                                >
+                                    Save Analysis
+                                </button>
+                                <a
+                                    href="/results"
+                                    class="btn-hover-effect inline-flex items-center rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600"
+                                >
+                                    View Results
+                                </a>
                             </div>
                         </div>
 
-                        <!-- UV Vis Peaks -->
-                        <div class="space-y-3">
+                        <!-- Centered Arrow at Bottom -->
+                        <div class="mt-8 text-center">
                             <div
-                                class="flex items-center justify-center space-x-4"
+                                class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
                             >
-                                <label
-                                    class="w-32 text-right text-lg font-semibold text-gray-700"
-                                    >UV Vis Peaks</label
+                                <span class="text-2xl font-bold text-gray-600"
+                                    >→</span
                                 >
-                                <input
-                                    type="text"
-                                    class="input-field w-20"
-                                    placeholder="___"
-                                />
-                                <span class="font-semibold">UV λ.1:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="___"
-                                />
-                                <span class="font-semibold">UV λ.2:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="___"
-                                />
-                                <span class="font-semibold">UV λ.3:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="___"
-                                />
                             </div>
-                        </div>
-
-                        <!-- FI Peaks -->
-                        <div class="space-y-3">
-                            <div
-                                class="flex items-center justify-center space-x-4"
-                            >
-                                <label
-                                    class="w-32 text-right text-lg font-semibold text-gray-700"
-                                    >FI Peaks</label
-                                >
-                                <input
-                                    type="text"
-                                    class="input-field w-20"
-                                    placeholder="___"
-                                />
-                                <span class="font-semibold">FI λ.1:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="___"
-                                />
-                                <span class="font-semibold">FI λ.2:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="___"
-                                />
-                                <span class="font-semibold">FI λ.3:</span>
-                                <input
-                                    type="text"
-                                    class="input-field"
-                                    placeholder="___"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex justify-center space-x-4 pt-6">
-                            <button
-                                class="btn-hover-effect rounded-lg bg-blue-500 px-8 py-3 font-semibold text-white hover:bg-blue-600"
-                            >
-                                Save Analysis
-                            </button>
-                            <a
-                                href="/results"
-                                class="btn-hover-effect inline-flex items-center rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600"
-                            >
-                                View Results
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Centered Arrow at Bottom -->
-                    <div class="mt-8 text-center">
-                        <div
-                            class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
-                        >
-                            <span class="text-2xl font-bold text-gray-600"
-                                >→</span
-                            >
                         </div>
                     </div>
                 </div>
