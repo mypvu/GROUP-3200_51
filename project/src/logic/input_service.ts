@@ -44,6 +44,60 @@ export default class InputService {
         return new StoredFilterInput(params);
     }
 
+    public static async createEmptyInput(): Promise<StoredFilterInput> {
+        return new StoredFilterInput({
+            version: "",
+            samples: {
+                NP_KDS: {
+                    db_label: "NK",
+                    RF: 0,
+                    DEV_254nm: 0,
+                    DEV_366nm: 0,
+                    VSNP_366nm: 0,
+                    UV_Peaks_num: 0,
+                    UV_Peaks: [],
+                    FL_Peaks_num: 0,
+                    FL_Peaks: [],
+                },
+                NP_LDS: {
+                    db_label: "NL",
+                    RF: 0,
+                    DEV_254nm: 0,
+                    DEV_366nm: 0,
+                    VSNP_366nm: 0,
+                    UV_Peaks_num: 0,
+                    UV_Peaks: [],
+                    FL_Peaks_num: 0,
+                    FL_Peaks: [],
+                },
+                VS_KDS: {
+                    db_label: "VK",
+                    RF: 0,
+                    DEV_254nm: 0,
+                    DEV_366nm: 0,
+                    VSNP_366nm: 0,
+                    UV_Peaks_num: 0,
+                    UV_Peaks: [],
+                    FL_Peaks_num: 0,
+                    FL_Peaks: [],
+                    T: null,
+                },
+                VS_LDS: {
+                    db_label: "VL",
+                    RF: 0,
+                    DEV_254nm: 0,
+                    DEV_366nm: 0,
+                    VSNP_366nm: 0,
+                    UV_Peaks_num: 0,
+                    UV_Peaks: [],
+                    FL_Peaks_num: 0,
+                    FL_Peaks: [],
+                    T: null,
+                },
+            },
+        });
+    }
+
     public static async getInput(): Promise<StoredFilterInput> {
         if (persistentInputStorage.get() === undefined) {
             throw new Error("getInput() called but no stored input exists");
