@@ -26,7 +26,7 @@ export function generateRangeParams(reference: Compound, bounds = DEFAULT_BOUNDS
     result.fl = [];
     for (let i = 0; i < (reference.UV_Peaks_num || 0); i++) {
         if (bounds.UV_Peak) {
-            result.uv.push([
+            result.uv.  push([
                 reference.UV_Peaks[i] * (1 - bounds.UV_Peak),
                 reference.UV_Peaks[i] * (1 + bounds.UV_Peak)
             ]);

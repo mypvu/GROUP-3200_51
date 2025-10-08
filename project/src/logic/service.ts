@@ -1,20 +1,20 @@
 ﻿/**
  * Static class for easier access to the algorithm code
  */
-import type { Sample } from "@core/models/compund.model.ts";
-import type DataSets from "@core/models/datasets.model.ts";
-import type { DataSetsID } from "@core/models/datasets.model.ts";
 import { persistentAtom } from "@nanostores/persistent";
-import BasicFilter from "@core/algorithms/BasicFilter.ts";
-import { ds, sample as i_sample } from "./utils/csvLoader.ts";
+import type { InputParams, ResultStage1, ResultStage2 } from "./algo.interface.ts";
+import CompoundFilter from "./core/algorithms/filter.ts";
 
 interface FilterResult {
     // Inputs
-    sample: Sample;
+    input: InputParams
 
     // Outputs
-    extracted: DataSets;
-    simple: DataSetsID;
+    result: {
+        stage1?: ResultStage1,
+        stage2?: ResultStage2
+    },
+
 }
 
 const persistentResultStorage = persistentAtom<FilterResult[]>("results", [], {
@@ -37,19 +37,19 @@ export default class FilterService {
      * @param datasets TODO
      */
     public static async run(
-        sample: Sample,
-        datasets: DataSets,
+        input: InputParams
     ): Promise<FilterResult> {
         // Do calculations
-        const bf = new BasicFilter(i_sample, ds);
-        bf.set(sample, datasets).extract();
+        const cf = new CompoundFilter(input)
 
         // Create a FilterResult
         let result: FilterResult = {
-            sample: sample,
+            input: input,
 
-            extracted: bf.extract(),
-            simple: bf.simple(),
+            result: {
+                stage1: await cf.st1(),
+                stage2: undefined
+            }
         };
 
         // Save the result to storage

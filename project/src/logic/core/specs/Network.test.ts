@@ -5,7 +5,7 @@ import download_from_url from "@/logic/utils/network";
 import { describe, it, expect, beforeEach, vi, test } from "vitest";
 import conf from "../../config/conf.json"
 
-const excelLink = "http://134.115.198.190/v1/stage_1/Database_KDS_NP.xlsx"
+const excelLink = "http://10.135.234.220/v1/stage_1/Database_KDS_NP.xlsx"
 
 const el = new URL(excelLink)
 
