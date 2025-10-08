@@ -1,0 +1,142 @@
+---
+// src/pages/analysis.astro
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Analysis - HTPLC Compound Matcher</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .btn-hover-effect {
+        transition: all 0.3s ease;
+      }
+      .btn-hover-effect:hover {
+        transform: translateY(-2px);
+      }
+      .analysis-box {
+        border: 2px solid #4B5563;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      .analysis-box:hover {
+        border-color: #3B82F6;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Header -->
+      <header class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800">New Analysis</h1>
+      </header>
+
+      <!-- Save & Exit Button -->
+      <div class="mb-8">
+        <a
+          href="/"
+          class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg btn-hover-effect font-semibold inline-block"
+        >
+          Save & Exit
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column - Notes Only -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="bg-white rounded-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Notes</h3>
+            <textarea
+              class="w-full h-32 border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Add notes about your analyses here..."
+            ></textarea>
+            <button
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-3 w-full btn-hover-effect font-semibold"
+            >
+              Save Notes
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column - Analysis Boxes -->
+        <div class="lg:col-span-2 space-y-4">
+          <!-- KDS + NP -->
+          <div class="analysis-box bg-white p-6">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">KDS + NP</h3>
+                <p class="text-red-500 font-bold mt-1">INCOMPLETE</p>
+              </div>
+              <a
+                href={`/analysis-detail?type=kds-np&name=KDS%20NP`}
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded btn-hover-effect font-semibold"
+              >
+                Edit
+              </a>
+            </div>
+          </div>
+
+          <!-- LDS + NP -->
+          <div class="analysis-box bg-white p-6">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">LDS + NP</h3>
+                <p class="text-red-500 font-bold mt-1">INCOMPLETE</p>
+              </div>
+              <a
+                href={`/analysis-detail?type=lds-np&name=LDS%20NP`}
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded btn-hover-effect font-semibold"
+              >
+                Edit
+              </a>
+            </div>
+          </div>
+
+          <!-- KDS + VS -->
+          <div class="analysis-box bg-white p-6">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">KDS + VS</h3>
+                <p class="text-red-500 font-bold mt-1">INCOMPLETE</p>
+              </div>
+              <a
+                href={`/analysis-detail-vs?type=kds-vs&name=KDS%20VS`}
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded btn-hover-effect font-semibold"
+              >
+                Edit
+              </a>
+            </div>
+          </div>
+
+          <!-- LDS + VS -->
+          <div class="analysis-box bg-white p-6">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-2xl font-bold text-gray-800">LDS + VS</h3>
+                <p class="text-red-500 font-bold mt-1">INCOMPLETE</p>
+              </div>
+              <a
+                href={`/analysis-detail-vs?type=lds-vs&name=LDS%20VS`}
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded btn-hover-effect font-semibold"
+              >
+                Edit
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-gray-500 text-sm mt-8">
+      <p>HTPLC Compound Matcher v1.0 | New Analysis</p>
+    </footer>
+  </body>
+</html>

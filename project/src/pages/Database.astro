@@ -1,0 +1,58 @@
+---
+import Header from '../components/Header.astro';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Database</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      // Placeholder for download functionality
+      function downloadDatabase(name) {
+        alert(`Downloading database: ${name}`);
+        // Example: window.location.href = `/api/download?db=${name}`;
+      }
+    </script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen flex flex-col">
+    <Header title="View Database" />
+
+    <main class="p-10 flex flex-col gap-6">
+
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-3xl font-bold text-gray-800">View Databases</h1>
+      </div>
+
+      <!-- Spectral Overlays Section -->
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <h2 class="text-2xl font-semibold mb-4">Spectral Overlays</h2>
+        <p class="text-gray-600">Placeholder for overlay previews</p>
+        <button
+          onclick="downloadDatabase('SpectralOverlays')"
+          class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl shadow-lg"
+        >
+          Download
+        </button>
+      </div>
+
+      <!-- Match Candidates Section -->
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <h2 class="text-2xl font-semibold mb-4">Match Candidates</h2>
+        <p class="text-gray-600">Placeholder for candidate table</p>
+        <button
+          onclick="downloadDatabase('MatchCandidates')"
+          class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl shadow-lg"
+        >
+          Download
+        </button>
+      </div>
+    </main>
+  </body>
+</html>
