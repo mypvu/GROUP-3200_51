@@ -1,0 +1,178 @@
+---
+import Header from '../components/Header.astro';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detailed Results</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      // Utility to color a cell based on hue value
+      function colorByHue(cell, hueValue) {
+        if (!hueValue || isNaN(hueValue)) return;
+        const hue = parseFloat(hueValue);
+        const color = `hsl(${hue}, 70%, 45%)`;
+        cell.style.backgroundColor = color;
+        cell.style.color = "white";
+        cell.style.fontWeight = "600";
+      }
+
+      // Apply hue-based colors on page load
+      function applyHueColors() {
+        document.querySelectorAll("[data-hue]").forEach((cell) => {
+          colorByHue(cell, cell.dataset.hue);
+        });
+      }
+
+      // Dummy download
+      function downloadResults() {
+        alert("Downloading results...");
+      }
+
+      function goBack() {
+        window.history.back();
+      }
+
+      window.addEventListener("DOMContentLoaded", applyHueColors);
+    </script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center">
+    <Header title="Detailed Results" />
+
+    <main class="w-full max-w-6xl p-10">
+      <!-- Title and Download -->
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-900">Detailed Results:</h1>
+        <button
+          onclick="downloadResults()"
+          class="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-900 px-5 py-2 rounded-2xl shadow transition"
+        >
+          <span>Download</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto bg-white rounded-2xl shadow-lg">
+        <table class="min-w-full border-collapse text-center">
+          <thead class="bg-gray-200 text-gray-700 text-sm uppercase font-semibold">
+            <tr>
+              <th class="p-3 border">Name and Code</th>
+              <th class="p-3 border">Rf 1</th>
+              <th class="p-3 border">H° DEV 254 nm</th>
+              <th class="p-3 border">H° DEV 366 nm</th>
+              <th class="p-3 border">H° VSA 366 nm</th>
+              <th class="p-3 border">H° T VSA</th>
+              <th class="p-3 border">FI DEV λ</th>
+              <th class="p-3 border">FI DEV λ m</th>
+              <th class="p-3 border">UV DEV λ₁</th>
+              <th class="p-3 border">UV DEV λ₂</th>
+              <th class="p-3 border">UV DEV λ₃</th>
+              <th class="p-3 border">FI VS λ</th>
+              <th class="p-3 border">UV VS λ</th>
+            </tr>
+          </thead>
+
+          <tbody class="text-gray-800">
+            <!-- Row 1 -->
+            <tr>
+              <td class="p-3 border font-semibold">Test Compound A</td>
+              <td class="p-3 border">0.580</td>
+              <td class="p-3 border" data-hue="137">137</td>
+              <td class="p-3 border" data-hue="180">180</td>
+              <td class="p-3 border" data-hue="204">204</td>
+              <td class="p-3 border" data-hue="14">14</td>
+              <td class="p-3 border"></td>
+              <td class="p-3 border"></td>
+              <td class="p-3 border">277</td>
+              <td class="p-3 border">0</td>
+              <td class="p-3 border">0</td>
+              <td class="p-3 border">251</td>
+              <td class="p-3 border">354</td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="bg-gray-50">
+              <td class="p-3 border font-semibold">Number of Potential Matches</td>
+              <td class="p-3 border">32</td>
+              <td class="p-3 border">32</td>
+              <td class="p-3 border">32</td>
+              <td class="p-3 border">29</td>
+              <td class="p-3 border">27</td>
+              <td class="p-3 border">27</td>
+              <td class="p-3 border">22</td>
+              <td class="p-3 border">8</td>
+              <td class="p-3 border">5</td>
+              <td class="p-3 border">5</td>
+              <td class="p-3 border">5</td>
+              <td class="p-3 border">2</td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr>
+              <td class="p-3 border font-semibold">Methyl Syringate, (48)</td>
+              <td class="p-3 border">0.610</td>
+              <td class="p-3 border" data-hue="138">138</td>
+              <td class="p-3 border" data-hue="175">175</td>
+              <td class="p-3 border" data-hue="219">219</td>
+              <td class="p-3 border" data-hue="43">43</td>
+              <td class="p-3 border">237</td>
+              <td class="p-3 border">258</td>
+              <td class="p-3 border">277</td>
+              <td class="p-3 border">0</td>
+              <td class="p-3 border">0</td>
+              <td class="p-3 border">248</td>
+              <td class="p-3 border">351</td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr class="bg-gray-50">
+              <td class="p-3 border font-semibold">Syringic Acid, (58)</td>
+              <td class="p-3 border">0.577</td>
+              <td class="p-3 border" data-hue="137">137</td>
+              <td class="p-3 border" data-hue="192">192</td>
+              <td class="p-3 border" data-hue="218">218</td>
+              <td class="p-3 border" data-hue="28">28</td>
+              <td class="p-3 border">225</td>
+              <td class="p-3 border">258</td>
+              <td class="p-3 border">277</td>
+              <td class="p-3 border">0</td>
+              <td class="p-3 border">0</td>
+              <td class="p-3 border">247</td>
+              <td class="p-3 border">351</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Go Back Button -->
+      <div class="flex justify-center mt-10">
+        <button
+          onclick="goBack()"
+          class="border border-black text-black text-lg font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition"
+        >
+          Go Back
+        </button>
+      </div>
+    </main>
+  </body>
+</html>

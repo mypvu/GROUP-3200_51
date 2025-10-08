@@ -17,15 +17,6 @@ import Header from '../components/Header.astro';
         alert(`Downloading database: ${name}`);
         // Example: window.location.href = `/api/download?db=${name}`;
       }
-
-      // Placeholder for adding new features
-      function addNewFeature() {
-        const featureName = prompt("Enter new feature name:");
-        if (featureName) {
-          alert(`Feature "${featureName}" added successfully!`);
-          // Example: POST to /api/addFeature with featureName
-        }
-      }
     </script>
   </head>
 
@@ -34,15 +25,9 @@ import Header from '../components/Header.astro';
 
     <main class="p-10 flex flex-col gap-6">
 
-      <!-- Header and action buttons -->
+      <!-- Header -->
       <div class="flex justify-between items-center mb-4">
         <h1 class="text-3xl font-bold text-gray-800">View Databases</h1>
-        <button
-          onclick="addNewFeature()"
-          class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl shadow-lg transition"
-        >
-          + Add New Feature
-        </button>
       </div>
 
       <!-- Spectral Overlays Section -->
