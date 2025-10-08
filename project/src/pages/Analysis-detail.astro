@@ -1,3 +1,4 @@
+
 ---
 // src/pages/analysis-detail.astro
 const params = new URL(Astro.url).searchParams;
@@ -53,7 +54,7 @@ const name = params.get("name") || "Analysis";
         <!-- Left Side: Notes and Save & Exit -->
         <div class="flex flex-col gap-4 w-64">
           <!-- Save & Exit Button (Top) -->
-          <a href="/analysis-new" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg btn-hover-effect font-semibold text-center">
+          <a href="/analysis" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg btn-hover-effect font-semibold text-center">
             Save & Exit
           </a>
 
@@ -69,6 +70,7 @@ const name = params.get("name") || "Analysis";
             </button>
           </div>
         </div>
+        
 
         <!-- Right Side: Analysis Form Card -->
         <div class="flex-1">
@@ -143,22 +145,19 @@ const name = params.get("name") || "Analysis";
                 </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="flex justify-center space-x-4 pt-6">
-                <button class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg btn-hover-effect font-semibold">
-                  Save Analysis
-                </button>
-                <a href="/results" class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg btn-hover-effect font-semibold inline-flex items-center">
-                  View Results
-                </a>
-              </div>
-            </div>
 
-            <!-- Centered Arrow at Bottom -->
-            <div class="text-center mt-8">
-              <div class="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full border-2 border-gray-300 arrow-hover cursor-pointer">
-                <span class="text-2xl font-bold text-gray-600">→</span>
-              </div>
+           <!-- Centered Arrow at Bottom -->
+          <div class="text-center mt-8">
+            <a
+              href="/analysis"
+              title="Complete Analysis"
+              class="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full border-2 border-gray-300 arrow-hover cursor-pointer"
+            >
+              <span class="text-2xl font-bold text-gray-600">→</span>
+            </a>
+          </div>
+
+
             </div>
           </div>
         </div>
