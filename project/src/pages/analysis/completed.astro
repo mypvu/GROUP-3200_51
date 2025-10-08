@@ -1,0 +1,113 @@
+---
+import Layout from "@/layouts/Layout.astro";
+const analyses = [
+    { title: "KDS + NP", type: "kds-np" },
+    { title: "LDS + NP", type: "lds-np" },
+    { title: "KDS + VS", type: "kds-vs" },
+    { title: "LDS + VS", type: "lds-vs" },
+];
+---
+
+<head>
+    <title>Completed Analysis - HTPLC Compound Matcher</title>
+</head>
+
+<style>
+    .analysis-box {
+        border: 2px solid #4b5563;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .analysis-box:hover {
+        border-color: #10b981; /* green-500 */
+    }
+</style>
+
+<Layout>
+    <body
+        class="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-indigo-100 p-4"
+    >
+        <div class="mx-auto max-w-4xl flex-grow">
+            <!-- Header -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl font-bold text-gray-800">
+                    Completed Analysis
+                </h1>
+            </header>
+
+            <!-- Save & Exit -->
+            <div class="mb-8">
+                <a
+                    href="/"
+                    class="btn-hover-effect inline-block rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
+                >
+                    Save & Exit
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <!-- Left Column -->
+                <div class="space-y-6 lg:col-span-1">
+                    <div class="rounded-lg bg-white p-6 shadow">
+                        <h3 class="mb-4 text-xl font-bold text-gray-800">
+                            Notes
+                        </h3>
+                        <textarea
+                            class="h-32 w-full rounded border border-gray-300 p-3 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                            placeholder="Add notes about your analyses here..."
+                        ></textarea>
+                        <button
+                            class="btn-hover-effect mt-3 w-full rounded bg-green-500 px-4 py-2 font-semibold text-white hover:bg-green-600"
+                        >
+                            Save Notes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column - Completed Analyses -->
+                <div class="space-y-4 lg:col-span-2">
+                    {
+                        analyses.map((a) => (
+                            <div class="analysis-box bg-white p-6 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-gray-800">
+                                            {a.title}
+                                        </h3>
+                                        <p class="mt-1 font-bold text-green-600">
+                                            COMPLETED
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <a
+                                            href={`/analysis-detail?type=${a.type}`}
+                                            class="btn-hover-effect rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
+                                        >
+                                            Edit
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Arrow Button Navigation -->
+        <div class="mt-10 mb-8 text-center">
+            <a
+                href="/analysis-results"
+                class="inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100 transition-all hover:bg-gray-200"
+                title="Go to Results"
+            >
+                <span class="text-2xl text-gray-600">→</span>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="py-6 text-center text-sm text-gray-500">
+            <p>HTPLC Compound Matcher v1.0 | Completed Analysis</p>
+        </footer>
+    </body>
+</Layout>

@@ -1,5 +1,6 @@
 ---
 import Header from '../components/Header.astro';
+import Layout from "@/layouts/Layout.astro";
 
 // ✅ Step 1: Dynamically load algorithm output (auto-updated file or API)
 let sampleData;
@@ -21,39 +22,34 @@ try {
 const compounds = sampleData ? Object.values(sampleData) : [];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
     <title>Detailed Results</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <script>
-      function colorByHue(cell, hueValue) {
+</head>
+
+<script>
+    function colorByHue(cell, hueValue) {
         if (!hueValue || isNaN(hueValue)) return;
         const hue = parseFloat(hueValue);
         const color = `hsl(${hue}, 70%, 45%)`;
         cell.style.backgroundColor = color;
         cell.style.color = "white";
         cell.style.fontWeight = "600";
-      }
+    }
 
-      function applyHueColors() {
+    function applyHueColors() {
         document.querySelectorAll("[data-hue]").forEach((cell) => {
-          colorByHue(cell, cell.dataset.hue);
+            colorByHue(cell, cell.dataset.hue);
         });
-      }
+    }
 
-      function goBack() {
+    function goBack() {
         window.history.back();
-      }
+    }
 
-      window.addEventListener("DOMContentLoaded", applyHueColors);
-    </script>
-  </head>
+    window.addEventListener("DOMContentLoaded", applyHueColors);
+</script>
 
+<Layout>
   <body class="bg-gray-100 min-h-screen flex flex-col items-center">
     <Header title="Detailed Results" />
 
@@ -144,4 +140,4 @@ const compounds = sampleData ? Object.values(sampleData) : [];
       </div>
     </main>
   </body>
-</html>
+</Layout>

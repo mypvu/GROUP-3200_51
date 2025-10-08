@@ -1,85 +1,83 @@
 ---
-
+import Layout from "@/layouts/Layout.astro";
 const savedAnalyses = [
-  { id: 1, name: "Saved Analysis 1", date: "2025-10-08T10:32:00" },
-  { id: 2, name: "Saved Analysis 2", date: "2025-10-08T11:15:00" },
-  { id: 3, name: "Saved Analysis 3", date: "2025-10-07T17:42:00" },
+    { id: 1, name: "Saved Analysis 1", date: "2025-10-08T10:32:00" },
+    { id: 2, name: "Saved Analysis 2", date: "2025-10-08T11:15:00" },
+    { id: 3, name: "Saved Analysis 3", date: "2025-10-07T17:42:00" },
 ];
 
 // format readable date/time
 function formatDateTime(iso) {
-  const d = new Date(iso);
-  return d.toLocaleString("en-AU", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+    const d = new Date(iso);
+    return d.toLocaleString("en-AU", {
+        dateStyle: "medium",
+        timeStyle: "short",
+    });
 }
 ---
 
-
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
     <title>Saved Analyses - HTPLC Compound Matcher</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      .btn-hover-effect {
-        transition: all 0.3s ease;
-      }
-      .btn-hover-effect:hover {
-        transform: translateY(-2px);
-      }
-    </style>
-  </head>
+</head>
 
-  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center">
-    <!-- Header -->
-    <header class="text-center mt-10 mb-8">
-      <h1 class="text-4xl font-bold text-gray-800">Saved Analyses</h1>
-      <p class="text-gray-600 mt-2">View and continue your previously saved analyses</p>
-    </header>
-
-    <!-- Back Button -->
-    <a
-      href="/"
-      class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg btn-hover-effect font-semibold inline-block mb-8"
+<Layout>
+    <body
+        class="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-50 to-indigo-100"
     >
-      ← Back to Home
-    </a>
+        <!-- Header -->
+        <header class="mt-10 mb-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-800">Saved Analyses</h1>
+            <p class="mt-2 text-gray-600">
+                View and continue your previously saved analyses
+            </p>
+        </header>
 
-    <!-- Saved Analyses List -->
-    <main class="w-full max-w-2xl bg-white shadow-lg rounded-2xl p-8">
-      {savedAnalyses.length === 0 ? (
-        <p class="text-gray-500 text-center">No saved analyses found.</p>
-      ) : (
-        <ul class="space-y-6">
-          {savedAnalyses.map((item) => (
-            <li class="border border-gray-300 rounded-xl p-6 flex justify-between items-center hover:shadow-md transition">
-              <div>
-                <h3 class="text-2xl font-bold text-gray-800">{item.name}</h3>
-                <p class="text-gray-600 mt-1">
-                  Saved on <span class="font-semibold text-gray-700">{formatDateTime(item.date)}</span>
-                </p>
-              </div>
-              <a
-                href={`/analysis-detail?id=${item.id}`}
-                class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg btn-hover-effect font-semibold"
-              >
-                Continue
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+        <!-- Back Button -->
+        <a
+            href="/"
+            class="btn-hover-effect mb-8 inline-block rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
+        >
+            ← Back to Home
+        </a>
 
-    <!-- Footer -->
-    <footer class="text-center py-6 text-gray-500 text-sm mt-10">
-      <p>HTPLC Compound Matcher v1.0 | Saved Analyses</p>
-    </footer>
-  </body>
-</html>
+        <!-- Saved Analyses List -->
+        <main class="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
+            {
+                savedAnalyses.length === 0 ? (
+                    <p class="text-center text-gray-500">
+                        No saved analyses found.
+                    </p>
+                ) : (
+                    <ul class="space-y-6">
+                        {savedAnalyses.map((item) => (
+                            <li class="flex items-center justify-between rounded-xl border border-gray-300 p-6 transition hover:shadow-md">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-800">
+                                        {item.name}
+                                    </h3>
+                                    <p class="mt-1 text-gray-600">
+                                        Saved on{" "}
+                                        <span class="font-semibold text-gray-700">
+                                            {formatDateTime(item.date)}
+                                        </span>
+                                    </p>
+                                </div>
+                                <a
+                                    href={`/analysis/details?id=${item.id}`}
+                                    class="btn-hover-effect rounded-lg bg-blue-500 px-5 py-2 font-semibold text-white hover:bg-blue-600"
+                                >
+                                    Continue
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                )
+            }
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-10 py-6 text-center text-sm text-gray-500">
+            <p>HTPLC Compound Matcher v1.0 | Saved Analyses</p>
+        </footer>
+    </body>
+</Layout>
