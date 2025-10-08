@@ -30,7 +30,7 @@ export default class CompoundFilter {
 
         return {
             ids: res_ds.ids(),
-            compounds: res_ds,
+            candidates: res_ds,
             version: ver
         }
     }

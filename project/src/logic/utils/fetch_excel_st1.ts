@@ -124,6 +124,11 @@ export async function parse_excel(buf: ArrayBuffer, label: DBLabel): Promise<Com
 
 function mapRowToCompound(row: Record<string, string>, label: DBLabel): Compound {
 	const rfHeader = label === "NK" || label === "VK" ? H.rf_mpb : H.rf_mpa;
+	let name = get(row, H.name);
+	name = name.includes(",")
+		? name.slice(0, name.lastIndexOf(",")).trim()
+		: name.trim();
+	
 	const id = toNumber(get(row, H.code));
 	const RF = toNumber(get(row, rfHeader));
 
@@ -150,6 +155,7 @@ function mapRowToCompound(row: Record<string, string>, label: DBLabel): Compound
 
 	return {
 		id,
+		name,
 		db_label: label,
 		RF,
 		DEV_254nm,

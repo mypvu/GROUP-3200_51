@@ -4,7 +4,7 @@ import type DataSets from "./datasets.model"
 
 export type ResultStage1 = {
     ids: DataSetsID,
-    compounds: DataSets,
+    candidates: DataSets,
     version: string
 }
 
