@@ -1,5 +1,24 @@
 ---
 import Header from '../components/Header.astro';
+
+// ✅ Step 1: Dynamically load algorithm output (auto-updated file or API)
+let sampleData;
+
+// OPTION 1: If your algorithm writes to a JSON file in /src/data
+// sampleData = (await import('../data/sample-output.json')).default;
+
+// OPTION 2: If your algorithm exposes results through an API
+// Uncomment below to fetch from /api/results
+try {
+  const response = await fetch('http://localhost:4321/api/results'); // or your server endpoint
+  sampleData = await response.json();
+} catch (e) {
+  console.error('Failed to load algorithm output:', e);
+  sampleData = {}; // fallback empty object
+}
+
+// Safety: Ensure we’re rendering something iterable
+const compounds = sampleData ? Object.values(sampleData) : [];
 ---
 
 <html lang="en">
@@ -12,7 +31,6 @@ import Header from '../components/Header.astro';
       rel="stylesheet"
     />
     <script>
-      // Utility to color a cell based on hue value
       function colorByHue(cell, hueValue) {
         if (!hueValue || isNaN(hueValue)) return;
         const hue = parseFloat(hueValue);
@@ -22,16 +40,10 @@ import Header from '../components/Header.astro';
         cell.style.fontWeight = "600";
       }
 
-      // Apply hue-based colors on page load
       function applyHueColors() {
         document.querySelectorAll("[data-hue]").forEach((cell) => {
           colorByHue(cell, cell.dataset.hue);
         });
-      }
-
-      // Dummy download
-      function downloadResults() {
-        alert("Downloading results...");
       }
 
       function goBack() {
@@ -46,27 +58,17 @@ import Header from '../components/Header.astro';
     <Header title="Detailed Results" />
 
     <main class="w-full max-w-6xl p-10">
-      <!-- Title and Download -->
+      <!-- Header and Actions -->
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-4xl font-bold text-gray-900">Detailed Results:</h1>
         <button
-          onclick="downloadResults()"
+          onclick="window.location.href='/api/download-results'"
           class="flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-900 px-5 py-2 rounded-2xl shadow transition"
         >
           <span>Download</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
           </svg>
         </button>
       </div>
@@ -93,78 +95,45 @@ import Header from '../components/Header.astro';
           </thead>
 
           <tbody class="text-gray-800">
-            <!-- Row 1 -->
-            <tr>
-              <td class="p-3 border font-semibold">Test Compound A</td>
-              <td class="p-3 border">0.580</td>
-              <td class="p-3 border" data-hue="137">137</td>
-              <td class="p-3 border" data-hue="180">180</td>
-              <td class="p-3 border" data-hue="204">204</td>
-              <td class="p-3 border" data-hue="14">14</td>
-              <td class="p-3 border"></td>
-              <td class="p-3 border"></td>
-              <td class="p-3 border">277</td>
-              <td class="p-3 border">0</td>
-              <td class="p-3 border">0</td>
-              <td class="p-3 border">251</td>
-              <td class="p-3 border">354</td>
-            </tr>
+            {compounds.length === 0 ? (
+              <tr>
+                <td colspan="13" class="p-6 text-gray-500">
+                  No data available. Run the algorithm to generate results.
+                </td>
+              </tr>
+            ) : (
+              compounds.map((compound) => (
+                <tr class="odd:bg-gray-50">
+                  <td class="p-3 border font-semibold">{compound.id}</td>
+                  <td class="p-3 border">{compound.RF}</td>
+                  <td class="p-3 border" data-hue={compound.DEV_254nm}>{compound.DEV_254nm}</td>
+                  <td class="p-3 border" data-hue={compound.DEV_366nm}>{compound.DEV_366nm}</td>
+                  <td class="p-3 border" data-hue={compound.VSNP_366nm}>{compound.VSNP_366nm}</td>
+                  <td class="p-3 border" data-hue={compound.T ?? ""}>{compound.T ?? ""}</td>
 
-            <!-- Row 2 -->
-            <tr class="bg-gray-50">
-              <td class="p-3 border font-semibold">Number of Potential Matches</td>
-              <td class="p-3 border">32</td>
-              <td class="p-3 border">32</td>
-              <td class="p-3 border">32</td>
-              <td class="p-3 border">29</td>
-              <td class="p-3 border">27</td>
-              <td class="p-3 border">27</td>
-              <td class="p-3 border">22</td>
-              <td class="p-3 border">8</td>
-              <td class="p-3 border">5</td>
-              <td class="p-3 border">5</td>
-              <td class="p-3 border">5</td>
-              <td class="p-3 border">2</td>
-            </tr>
+                  <!-- FL Peaks -->
+                  <td class="p-3 border">
+                    {compound.FL_Peaks?.[0] ?? ""}
+                  </td>
+                  <td class="p-3 border">
+                    {compound.FL_Peaks?.[1] ?? ""}
+                  </td>
 
-            <!-- Row 3 -->
-            <tr>
-              <td class="p-3 border font-semibold">Methyl Syringate, (48)</td>
-              <td class="p-3 border">0.610</td>
-              <td class="p-3 border" data-hue="138">138</td>
-              <td class="p-3 border" data-hue="175">175</td>
-              <td class="p-3 border" data-hue="219">219</td>
-              <td class="p-3 border" data-hue="43">43</td>
-              <td class="p-3 border">237</td>
-              <td class="p-3 border">258</td>
-              <td class="p-3 border">277</td>
-              <td class="p-3 border">0</td>
-              <td class="p-3 border">0</td>
-              <td class="p-3 border">248</td>
-              <td class="p-3 border">351</td>
-            </tr>
+                  <!-- UV Peaks -->
+                  {(compound.UV_Peaks ?? []).slice(0, 3).map((peak) => (
+                    <td class="p-3 border">{peak}</td>
+                  ))}
 
-            <!-- Row 4 -->
-            <tr class="bg-gray-50">
-              <td class="p-3 border font-semibold">Syringic Acid, (58)</td>
-              <td class="p-3 border">0.577</td>
-              <td class="p-3 border" data-hue="137">137</td>
-              <td class="p-3 border" data-hue="192">192</td>
-              <td class="p-3 border" data-hue="218">218</td>
-              <td class="p-3 border" data-hue="28">28</td>
-              <td class="p-3 border">225</td>
-              <td class="p-3 border">258</td>
-              <td class="p-3 border">277</td>
-              <td class="p-3 border">0</td>
-              <td class="p-3 border">0</td>
-              <td class="p-3 border">247</td>
-              <td class="p-3 border">351</td>
-            </tr>
+                  <!-- FI VS and UV VS λ -->
+                  <td class="p-3 border">{compound.FL_Peaks?.[0] ?? ""}</td>
+                  <td class="p-3 border">{compound.FL_Peaks?.[1] ?? ""}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
-      <!-- Go Back Button -->
       <div class="flex justify-center mt-10">
         <button
           onclick="goBack()"
