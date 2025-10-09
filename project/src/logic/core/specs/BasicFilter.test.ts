@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi, test } from "vitest";
 import BasicFilter from '../algorithms/BasicFilter'
 import { ds, sample as i_sample } from '../../utils/csvLoader'
 import test_case from './case.json'
+import CompoundFilter from "../algorithms/filter";
 
 
 const bf = new BasicFilter(i_sample, ds)
@@ -97,15 +98,16 @@ describe("BasicFilter tests from case.json", () => {
   });
 
   for (const [section, tests] of Object.entries(test_case)) {
-    describe(`${section} testing`, () => {
+    describe(`${section} testing`, async () => {
       for (const [name, { input, expected }] of Object.entries(tests)) {
-        it(name, () => {
+        it(name,async () => {
           const { key, db_label } = sampleMap[section];
 
           // Fill sample with current test case
           // If it's a V-compound, include T field
           (sample as any)[key] = {
             db_label,
+            name,
             RF: input.rf,
             DEV_254nm: input.colour1,
             DEV_366nm: input.colour2,
@@ -117,7 +119,9 @@ describe("BasicFilter tests from case.json", () => {
             ...(input.t !== undefined ? { T: input.t } : {}),
           };
 
-          const res = bf.set(sample, ds).extract();
+
+          const cf = new CompoundFilter({samples: sample, version: "1"})
+          const res =  (await cf.st1()).candidates
 
           // compare expected
           const simpleResult = res.ids()[db_label as keyof ReturnType<typeof res.ids>];

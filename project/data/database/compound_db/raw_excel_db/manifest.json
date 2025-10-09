@@ -1,7 +1,7 @@
 {
   "version": "compound_db",
   "stage": "raw_excel_db",
-  "updatedAt": "2025-08-21T16:40:53.000Z",
+  "updatedAt": "2025-10-08T04:21:51.962Z",
   "files": [
     {
       "name": "Database KDS NP Newest.xlsx",
@@ -9,7 +9,7 @@
       "url": "/compound_db/raw_excel_db/Database%20KDS%20NP%20Newest.xlsx",
       "size": 216721,
       "sha256": "115c3a339bf0c61bac181d337026af794ce8e918e528189c1a0feca3b449c369",
-      "lastModified": "2025-08-21T16:40:53.000Z"
+      "lastModified": "2025-10-08T04:21:51.958Z"
     },
     {
       "name": "Database KDS VS. Newest.xlsx",
@@ -17,7 +17,7 @@
       "url": "/compound_db/raw_excel_db/Database%20KDS%20VS.%20Newest.xlsx",
       "size": 162209,
       "sha256": "c25910db5d502dc1864ade2f8272de799f5b0a93f5af3a283e11a6b0e2c938ab",
-      "lastModified": "2025-08-21T16:40:53.000Z"
+      "lastModified": "2025-10-08T04:21:51.959Z"
     },
     {
       "name": "Database New LDS NP Newest.xlsx",
@@ -25,7 +25,7 @@
       "url": "/compound_db/raw_excel_db/Database%20New%20LDS%20NP%20Newest.xlsx",
       "size": 233038,
       "sha256": "fbf9df8630e71e42e2962d6f2b5b6253da87125700ae000174c046706c479fb8",
-      "lastModified": "2025-08-21T16:40:53.000Z"
+      "lastModified": "2025-10-08T04:21:51.960Z"
     },
     {
       "name": "Database new LDS VS Newest.xlsx",
@@ -33,7 +33,7 @@
       "url": "/compound_db/raw_excel_db/Database%20new%20LDS%20VS%20Newest.xlsx",
       "size": 209013,
       "sha256": "9257c8a90462018284fd9a6edb1f11115e35834727f3362f1ca4b637a318903a",
-      "lastModified": "2025-08-21T16:40:53.000Z"
+      "lastModified": "2025-10-08T04:21:51.962Z"
     }
   ]
 }

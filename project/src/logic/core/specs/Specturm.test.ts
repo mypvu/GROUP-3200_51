@@ -1,11 +1,10 @@
-
-import { ds } from "@/logic/utils/csvLoader";
 import { parse_excel } from "@/logic/utils/fetch_excel_st1";
+import { fetchAndParseXY } from "@/logic/utils/fetch_excel_st2";
 import download_from_url from "@/logic/utils/network";
 import { describe, it, expect, beforeEach, vi, test } from "vitest";
 
 
-const excelLink = "http://10.135.234.220/v1/stage_1/Database_KDS_NP.xlsx"
+const excelLink = "http://10.135.234.220/v1/stage_2/DEV_FL/2-Hydroxyacetophenone.xlsx"
 
 const el = new URL(excelLink)
 
@@ -13,10 +12,8 @@ describe("testing parse the excel file", () => {
 
     it("test fetching dataset", async () => {
 
-        const excel = await download_from_url(el)
-        const nk_row_one = (await parse_excel(excel,"NK"))[0]
+        console.log( await fetchAndParseXY(el))
 
-        // expect(ds.NP_KDS[0]).toEqual(nk_row_one)
     })
 
 }) 
