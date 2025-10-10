@@ -344,7 +344,7 @@ const isVsType = HelperService.isVsType(type);
 
             if (HelperService.isVsType(type)) {
                 this.viewController.addNumberInput("input-t-vsa",
-                    () => this.inputCompound!.T ?? 0, e => this.inputCompound!.T = e);
+                    () => this.inputCompound?.T, e => this.inputCompound!.T = e);
             }
 
             this.viewController.addNumberInput("input-uv-vis-peaks-count",
