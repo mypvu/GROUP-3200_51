@@ -66,12 +66,12 @@ export default class CompoundHelper {
         if (c.DEV_254nm === undefined) return false;
         if (c.DEV_366nm === undefined) return false;
         if (c.VSNP_366nm === undefined) return false;
-        //if (c.UV_Peaks === undefined) return false;
-        //if (c.FL_Peaks === undefined) return false;
+        if (c.UV_Peaks === undefined) return false;
+        if (c.FL_Peaks === undefined) return false;
         if (c.UV_Peaks_num === undefined) return false;
         if (c.FL_Peaks_num === undefined) return false;
-        //if (c.UV_Peaks_num != c.UV_Peaks.length) return false;
-        //if (c.FL_Peaks_num != c.FL_Peaks.length) return false;
+        if (c.UV_Peaks_num > c.UV_Peaks.length) return false;
+        if (c.FL_Peaks_num > c.FL_Peaks.length) return false;
 
         return true;
     }
