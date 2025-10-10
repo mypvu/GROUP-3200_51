@@ -5,7 +5,6 @@ import SessionService, {
 } from "@/logic/session/session_service.ts";
 import { useEffect, useRef, useState } from "preact/hooks";
 import CompoundHelper from "@/logic/compound_helper.ts";
-import "./AnalysisViewController.ts";
 import type { Compound } from "@core/models/compund.model.ts";
 
 type Props = {
