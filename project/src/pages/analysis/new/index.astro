@@ -3,7 +3,7 @@
 import Layout from "@/layouts/Layout.astro";
 import CompoundStatus from "@/components/analysis/new/CompoundStatus.astro";
 import CompoundList from "@/components/analysis/new/CompoundList";
-import SampleList from "@/components/analysis/new/details/SampleList";
+import RunAlgorithmButton from "@/components/analysis/new/RunAlgorithmButton";
 ---
 
 <head>
@@ -50,6 +50,8 @@ import SampleList from "@/components/analysis/new/details/SampleList";
 
                 <!-- Right Column - Analysis Boxes -->
                 <CompoundList client:load />
+
+                <RunAlgorithmButton client:load/>
             </div>
         </div>
 

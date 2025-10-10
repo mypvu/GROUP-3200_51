@@ -1,7 +1,7 @@
 ﻿import "styles/global.css";
 import SessionService, { Session } from "@/logic/session/session_service.ts";
 import CompoundItem from "./CompoundItem";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 export default function CompoundList() {
     let sessionService = new SessionService();
@@ -11,9 +11,11 @@ export default function CompoundList() {
     );
 
     if (session === undefined) {
-        (async () => {
-            setSession(await sessionService.createNewSession());
-        })();
+        useEffect(() => {
+            (async () => {
+                setSession(await sessionService.createNewSession());
+            })();
+        }, []);
     }
 
     return (

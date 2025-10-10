@@ -68,4 +68,18 @@ export class SessionAlgorithmInputs implements InputParams {
         }
         return undefined;
     }
+
+    public allCompoundsComplete(): boolean {
+        if (this.samples.NP_KDS === undefined) return false;
+        if (!CompoundHelper.isCompoundComplete(this.samples.NP_KDS))
+            return false;
+        if (this.samples.NP_LDS === undefined) return false;
+        if (!CompoundHelper.isCompoundComplete(this.samples.NP_LDS))
+            return false;
+        if (this.samples.VS_KDS === undefined) return false;
+        if (!CompoundHelper.isCompoundComplete(this.samples.VS_KDS))
+            return false;
+        if (this.samples.VS_LDS === undefined) return false;
+        return CompoundHelper.isCompoundComplete(this.samples.VS_LDS);
+    }
 }

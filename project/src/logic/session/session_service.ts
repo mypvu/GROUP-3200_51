@@ -3,6 +3,7 @@ import type { InputParams } from "@core/models/search_parameters.model.ts";
 import type { ISampleContainer } from "@core/models/compund.model.ts";
 import { SessionAlgorithmInputs } from "./algorithm_input";
 import type { WritableAtom } from "nanostores";
+import type { FilterResult } from "@/logic/filter_service.ts";
 
 export class SessionAlgorithmData {
     private sessionId: string;
@@ -13,7 +14,7 @@ export class SessionAlgorithmData {
         this.sessionId = sessionId;
 
         this.atom = persistentAtom<SessionAlgorithmInputs | undefined>(
-            `session-${this.sessionId}`,
+            `inputs-${this.sessionId}`,
             undefined,
 
             {
@@ -41,6 +42,39 @@ export class SessionAlgorithmData {
     }
 }
 
+export class SessionAlgorithmResult {
+    private sessionId: string;
+    public data?: FilterResult;
+    private atom: WritableAtom<FilterResult | undefined>;
+
+    constructor(sessionId: string) {
+        this.sessionId = sessionId;
+
+        this.atom = persistentAtom<FilterResult | undefined>(
+            `result-${this.sessionId}`,
+            undefined,
+            {
+                encode: JSON.stringify,
+                decode: JSON.parse,
+            },
+        );
+    }
+
+    public async save() {
+        this.atom.set(this.data);
+    }
+
+    public async load(): Promise<boolean> {
+        let newData = this.atom.get();
+        if (newData !== undefined) {
+            this.data = newData!;
+            return true;
+        }
+
+        return false;
+    }
+}
+
 interface ISession {
     id: string;
     createdAt: Date;
@@ -53,6 +87,7 @@ export class Session implements ISession {
     public lastSavedAt?: Date;
 
     private algorithmData?: SessionAlgorithmData;
+    private algorithmResult?: SessionAlgorithmResult;
 
     /**
      * Create a new session.
@@ -70,6 +105,15 @@ export class Session implements ISession {
         this.algorithmData = new SessionAlgorithmData(this.id);
         await this.algorithmData.load();
         return this.algorithmData;
+    }
+
+    public async getAlgorithmResult(): Promise<SessionAlgorithmResult> {
+        if (this.algorithmResult !== undefined) {
+            return this.algorithmResult;
+        }
+        this.algorithmResult = new SessionAlgorithmResult(this.id);
+        await this.algorithmResult.load();
+        return this.algorithmResult;
     }
 }
 

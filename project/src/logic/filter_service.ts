@@ -8,9 +8,8 @@ import type {
     ResultStage2,
 } from "./algo.interface.ts";
 import CompoundFilter from "./core/algorithms/filter.ts";
-import type { StoredFilterInput } from "@/logic/input_service.ts";
 
-interface FilterResult {
+export interface FilterResult {
     // Inputs
     input: InputParams;
 
@@ -30,22 +29,22 @@ export default class FilterService {
     /**
      * Get the previous filtering results from local storage.
      */
-    public static async getAllPreviousResults(): Promise<FilterResult[]> {
+    /*public static async getAllPreviousResults(): Promise<FilterResult[]> {
         return persistentResultStorage.get();
-    }
+    }*/
 
     /**
      * Run the filtering algorithm on the given sample and datasets.
      * This method will also save the result to local storage.
      * @param input StoredFilterInput from the InputService
      */
-    public static async run(input: StoredFilterInput): Promise<FilterResult> {
+    public static async run(input: InputParams): Promise<FilterResult> {
         // Do calculations
-        const cf = new CompoundFilter(input.value);
+        const cf = new CompoundFilter(input);
 
         // Create a FilterResult
         let result: FilterResult = {
-            input: input.value,
+            input: input,
 
             result: {
                 stage1: await cf.st1(),
@@ -55,7 +54,7 @@ export default class FilterService {
 
         // Save the result to storage
         // TODO: do we need to give the results a name or an ID?
-        persistentResultStorage.set([...persistentResultStorage.get(), result]);
+        // persistentResultStorage.set([...persistentResultStorage.get(), result]);
 
         // Return
         return result;
