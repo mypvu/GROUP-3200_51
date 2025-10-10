@@ -2,6 +2,8 @@
 // src/pages/analysis/new.astro
 import Layout from "@/layouts/Layout.astro";
 import CompoundStatus from "@/components/analysis/new/CompoundStatus.astro";
+import CompoundList from "@/components/analysis/new/CompoundList";
+import SampleList from "@/components/analysis/new/details/SampleList";
 ---
 
 <head>
@@ -47,19 +49,7 @@ import CompoundStatus from "@/components/analysis/new/CompoundStatus.astro";
                 </div>
 
                 <!-- Right Column - Analysis Boxes -->
-                <div class="space-y-4 lg:col-span-2">
-                    <!-- KDS + NP -->
-                    <CompoundStatus type="kds-np"></CompoundStatus>
-
-                    <!-- LDS + NP -->
-                    <CompoundStatus type="lds-np"></CompoundStatus>
-
-                    <!-- KDS + VS -->
-                    <CompoundStatus type="kds-vs"></CompoundStatus>
-
-                    <!-- LDS + VS -->
-                    <CompoundStatus type="lds-vs"></CompoundStatus>
-                </div>
+                <CompoundList client:load />
             </div>
         </div>
 

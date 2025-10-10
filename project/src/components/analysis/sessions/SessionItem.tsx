@@ -1,4 +1,4 @@
-﻿import SessionService, { Session } from "@/logic/session_service.ts";
+﻿import SessionService, { Session } from "@/logic/session/session_service.ts";
 
 type Props = { session: Session; sessionService: SessionService };
 
@@ -26,12 +26,12 @@ export default function SessionItem({ session, sessionService }: Props) {
                         Analysis
                     </h3>
                     <p className="mt-1 text-gray-600">
-                        {session.last_saved_at === undefined
+                        {session.lastSavedAt === undefined
                             ? "Last saved on"
                             : "Created on"}
                         <span className="ml-1 font-semibold text-gray-700">
                             {formatDateTime(
-                                session.last_saved_at ?? session.created_at,
+                                session.lastSavedAt ?? session.createdAt,
                             )}
                         </span>
                     </p>

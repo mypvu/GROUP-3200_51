@@ -1,4 +1,4 @@
-﻿import SessionService, { Session } from "@/logic/session_service.ts";
+﻿import SessionService, { Session } from "@/logic/session/session_service.ts";
 import SessionItem from "./SessionItem";
 
 export default function SessionList() {

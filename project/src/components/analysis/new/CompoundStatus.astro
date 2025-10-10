@@ -1,8 +1,8 @@
 ---
 import "@/styles/global.css";
-import HelperService from "@/logic/helper_service.ts";
+import CompoundService from "@/logic/helper_service.ts";
 const { type = "unknown" } = Astro.props;
-const name = HelperService.getTypeDisplayName(type);
+const name = CompoundService.getTypeDisplayName(type);
 ---
 
 <style>
@@ -51,7 +51,7 @@ const name = HelperService.getTypeDisplayName(type);
 </div>
 
 <script>
-    import HelperService from "@/logic/helper_service.ts";
+    import CompoundService from "@/logic/helper_service.ts";
     import InputService from "@/logic/input_service.ts";
     import type { InputParams } from "@core/models/search_parameters.model.ts";
 
@@ -62,7 +62,7 @@ const name = HelperService.getTypeDisplayName(type);
 
             // Load input params from local storage
             let inputParams = await InputService.getInput();
-            let inputCompound = inputParams === undefined ? undefined : HelperService.getCompoundByType(type!, inputParams!.samples)!;
+            let inputCompound = inputParams === undefined ? undefined : CompoundService.getCompoundByType(type!, inputParams!.samples)!;
 
             // Load the compound inputs from local storage
             if (inputParams === undefined || inputCompound === undefined) {
@@ -71,7 +71,7 @@ const name = HelperService.getTypeDisplayName(type);
                 return;
             }
 
-            let isComplete = HelperService.isCompoundComplete(inputCompound);
+            let isComplete = CompoundService.isCompoundComplete(inputCompound);
             if (isComplete) {
                 status.classList.add("status-complete");
                 status.innerText = "Complete";

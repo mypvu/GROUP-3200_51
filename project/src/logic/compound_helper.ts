@@ -12,7 +12,7 @@ interface AnalysisType {
     isVsType: boolean;
 }
 
-export default class HelperService {
+export default class CompoundHelper {
     private static analysisTypes: Record<string, AnalysisType> = {
         "kds-np": {
             displayName: "KDS + NP",
@@ -101,43 +101,5 @@ export default class HelperService {
             T: null,
             db_label: this.getDbLabelForType(type)! as "VK" | "VL",
         };
-    }
-
-    public static getCompoundByType(
-        type: string,
-        sample: Sample,
-    ): Compound | undefined {
-        switch (type.toLowerCase()) {
-            case "kds-np":
-                return sample.NP_KDS;
-            case "lds-np":
-                return sample.NP_LDS;
-            case "kds-vs":
-                return sample.VS_KDS;
-            case "lds-vs":
-                return sample.VS_LDS;
-        }
-        return undefined;
-    }
-
-    public static getOrCreateCompoundByType(
-        type: string,
-        sample: Sample,
-    ): Compound | undefined {
-        switch (type.toLowerCase()) {
-            case "kds-np":
-                sample.NP_KDS ??= this.createEmptyCompoundNByType(type);
-                return sample.NP_KDS;
-            case "lds-np":
-                sample.NP_LDS ??= this.createEmptyCompoundNByType(type);
-                return sample.NP_LDS;
-            case "kds-vs":
-                sample.VS_KDS ??= this.createEmptyCompoundVByType(type);
-                return sample.VS_KDS;
-            case "lds-vs":
-                sample.VS_LDS ??= this.createEmptyCompoundVByType(type);
-                return sample.VS_LDS;
-        }
-        return undefined;
     }
 }
