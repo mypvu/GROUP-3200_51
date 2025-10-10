@@ -1,0 +1,47 @@
+{
+  "base": "/",
+  "build": "",
+  "latest": {
+    "version": "v1",
+    "stage": "stage_2",
+    "manifest": "v1/stage_2/manifest.json",
+    "updatedAt": "2025-10-08T05:58:19.345Z"
+  },
+  "versions": [
+    {
+      "name": "cleaned_csv_db",
+      "manifest": "cleaned_csv_db/manifest.json",
+      "updatedAt": null,
+      "stages": []
+    },
+    {
+      "name": "compound_db",
+      "manifest": "compound_db/manifest.json",
+      "updatedAt": "2025-10-08T04:21:51.962Z",
+      "stages": [
+        {
+          "name": "raw_excel_db",
+          "manifest": "compound_db/raw_excel_db/manifest.json",
+          "updatedAt": "2025-10-08T04:21:51.962Z"
+        }
+      ]
+    },
+    {
+      "name": "v1",
+      "manifest": "v1/manifest.json",
+      "updatedAt": "2025-10-08T05:58:19.345Z",
+      "stages": [
+        {
+          "name": "stage_1",
+          "manifest": "v1/stage_1/manifest.json",
+          "updatedAt": "2025-10-08T04:21:51.966Z"
+        },
+        {
+          "name": "stage_2",
+          "manifest": "v1/stage_2/manifest.json",
+          "updatedAt": "2025-10-08T05:58:19.345Z"
+        }
+      ]
+    }
+  ]
+}

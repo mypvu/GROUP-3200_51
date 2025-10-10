@@ -8,10 +8,11 @@ import { fetchAndParseXY } from "@/logic/utils/fetch_excel_st2";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
+    public un: Specturm
     private baseUrl: string
     private version: Version
 
-    constructor(candidates: Compound[], version = "1") {
+    constructor(unknown: Specturm, candidates: Compound[], version = "1") {
         this.candidates = candidates
         this.version = version
         this.baseUrl = conf.database_url +
@@ -19,8 +20,9 @@ export default class SpecturmFilter {
             "/stage_2"
     }
 
-    set(candidates: Compound[], version = "1") {
+    set(unknown: Specturm, candidates: Compound[], version = "1") {
         this.candidates = candidates
+        this.un = unknown
         this.version = version
         this.baseUrl = conf.database_url +
             "/v" + version +
@@ -29,15 +31,13 @@ export default class SpecturmFilter {
 
     async extract(): Promise<ResultStage2> {
 
-        // Build a list of fetch promises for all (candidate, method) pairs
-        const jobs: Promise<Specturm | null>[] = []
+        const candidates: Compound[] = this.candidates
+        const results: Specturm[] = []
 
+        const 
         for (const c of this.candidates) {
-            if (!c.name) continue // skip if we don't have a name to query
-            for (const method of Stage2Methods) {
-                jobs.push(await this.fetchSpecturm(this.makeUrl(method, c.name)))
-                
-            }
+            if (!c?.name) continue
+            allJobs.push(this.fetchSpecturmMethods(c))
         }
 
         return {
@@ -70,6 +70,7 @@ export default class SpecturmFilter {
 
         const settled = await Promise.allSettled(jobs)
         const results: Specturm[] = []
+        
         for (const s of settled) {
             if (s.status === "fulfilled" && s.value) results.push(s.value)
         }

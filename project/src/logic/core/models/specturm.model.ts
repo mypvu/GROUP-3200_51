@@ -6,6 +6,7 @@ export default interface Specturm {
     compound: Compound
     method: MethodsType
     plot: Plot
+    confidence?: number
 }
 
 export interface CompoundSpecturms {
