@@ -205,7 +205,7 @@ const isVsType = HelperService.isVsType(type);
                                     >UV Vis Peaks</label
                                     >
                                     <input
-                                        id="uv-vis-peaks"
+                                        id="input-uv-vis-peaks-count"
                                         type="text"
                                         class="input-field w-20"
                                         placeholder="___"
@@ -244,7 +244,7 @@ const isVsType = HelperService.isVsType(type);
                                     >FI Peaks</label
                                     >
                                     <input
-                                        id="fi-peaks"
+                                        id="input-fl-peaks-count"
                                         type="text"
                                         class="input-field w-20"
                                         placeholder="___"
@@ -298,7 +298,7 @@ const isVsType = HelperService.isVsType(type);
     import InputService from "@/logic/input_service.ts";
     import HelperService from "@/logic/helper_service.ts";
     import AnalysisViewController from "./AnalysisViewController.ts";
-    import { type Compound, getCompoundByType, type Sample } from "@core/models/compund.model.ts";
+    import { type Compound, type Sample } from "@core/models/compund.model.ts";
     import type { InputParams } from "@core/models/search_parameters.model.ts";
 
     class AnalysisInput extends HTMLElement {
@@ -317,32 +317,42 @@ const isVsType = HelperService.isVsType(type);
 
             // Load input params from local storage
             this.inputParams = await InputService.getOrCreateInput();
-            this.inputCompound = getCompoundByType(type!, this.inputParams!.samples)!;
+            this.inputCompound = HelperService.getCompoundByType(type!, this.inputParams.samples)!;
 
             // Prepare the view controller so we can start adding inputs
-            this.viewController = new AnalysisViewController(() => {
+            this.viewController = new AnalysisViewController();
+            this.viewController.setPreSave(() => {
+                this.inputCompound ??= HelperService.getOrCreateCompoundByType(type!, this.inputParams!.samples);
+            });
+            this.viewController.setPostSave(() => {
                 InputService.saveInput(this.inputParams!);
-            })
+            });
 
             document.getElementById("save-and-exit")!.addEventListener("click", () => this.saveAndExit())
 
             this.viewController.addNumberInput("rf",
-                () => this.inputCompound!.RF, e => this.inputCompound!.RF = e);
+                () => this.inputCompound?.RF, e => this.inputCompound!.RF = e);
 
             this.viewController.addNumberInput("input-rgb1-dev_254nm",
-                () => this.inputCompound!.DEV_254nm, e => this.inputCompound!.DEV_254nm = e);
+                () => this.inputCompound?.DEV_254nm, e => this.inputCompound!.DEV_254nm = e);
 
             this.viewController.addNumberInput("input-rgb2-dev_366nm",
-                () => this.inputCompound!.DEV_366nm, e => this.inputCompound!.DEV_366nm = e);
+                () => this.inputCompound?.DEV_366nm, e => this.inputCompound!.DEV_366nm = e);
 
             this.viewController.addNumberInput("input-rgb3-vsnp_366nm",
-                () => this.inputCompound!.VSNP_366nm, e => this.inputCompound!.VSNP_366nm = e);
+                () => this.inputCompound?.VSNP_366nm, e => this.inputCompound!.VSNP_366nm = e);
 
             if (HelperService.isVsType(type)) {
                 this.viewController.addNumberInput("input-t-vsa",
                     () => this.inputCompound!.T ?? 0, e => this.inputCompound!.T = e);
             }
-            
+
+            this.viewController.addNumberInput("input-uv-vis-peaks-count",
+                () => this.inputCompound?.UV_Peaks_num, e => this.inputCompound!.UV_Peaks_num = e);
+
+            this.viewController.addNumberInput("input-fl-peaks-count",
+                () => this.inputCompound?.FL_Peaks_num, e => this.inputCompound!.FL_Peaks_num = e);
+
             try {
                 this.viewController.load();
             } catch (e) {
@@ -350,8 +360,8 @@ const isVsType = HelperService.isVsType(type);
 
                 // Reset input params
                 this.inputParams = await InputService.createEmptyInput();
-                this.inputCompound = getCompoundByType(type!, this.inputParams!.samples)!;
-                await InputService.saveInput(this.inputParams!);
+                //this.inputCompound = getCompoundByType(type!, this.inputParams!.samples)!;
+                //await InputService.saveInput(this.inputParams!);
 
                 // Reload
                 this.viewController.load();

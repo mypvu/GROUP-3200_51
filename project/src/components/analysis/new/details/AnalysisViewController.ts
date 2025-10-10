@@ -16,11 +16,19 @@ export default class AnalysisViewController {
 
     private timeout: any | undefined;
 
-    private onSave: () => void = () => {};
+    private preSave: () => void = () => {};
+    private postSave: () => void = () => {};
 
-    constructor(onSave: () => void) {
-        this.onSave = onSave;
-        this.resetTimer();
+    constructor() {
+        // this.resetTimer();
+    }
+
+    public setPreSave(preSave: () => void) {
+        this.preSave = preSave;
+    }
+
+    public setPostSave(postSave: () => void) {
+        this.postSave = postSave;
     }
 
     /**
@@ -45,12 +53,14 @@ export default class AnalysisViewController {
     }
 
     public async save() {
+        this.preSave();
+
         this.elements.forEach((i) => {
             let newValue = i.getElementValue(i.element);
             i.setBackingValue(newValue);
         });
 
-        this.onSave();
+        this.postSave();
     }
 
     public load() {
@@ -62,10 +72,10 @@ export default class AnalysisViewController {
 
     public addInput<T extends HTMLElement>(
         id: string,
-        getBackingValue: () => any,
-        setBackingValue: (value: any) => void,
-        getElementValue: (element: T) => any,
-        setElementValue: (element: T, value: any) => void,
+        getBackingValue: () => any | undefined,
+        setBackingValue: (value?: any) => void,
+        getElementValue: (element: T) => any | undefined,
+        setElementValue: (element: T, value?: any) => void,
     ) {
         let element = document.getElementById(id)!;
 
@@ -91,8 +101,8 @@ export default class AnalysisViewController {
 
     public addNumberInput<T extends HTMLInputElement = HTMLInputElement>(
         id: string,
-        getValue: () => number,
-        setValue: (value: number) => void,
+        getValue: () => number | undefined,
+        setValue: (value?: number) => void,
     ) {
         this.addInput<T>(
             id,
@@ -100,11 +110,13 @@ export default class AnalysisViewController {
             () => getValue(),
             (value) => setValue(Number(value)),
             (element) => {
-                let valueAsNumber = Number(element.value);
+                let valueAsNumber = Number(element?.value);
                 return isNaN(valueAsNumber) ? 0 : valueAsNumber;
             },
             (element, value) => {
-                element.value = value.toString();
+                if (value !== undefined) {
+                    element.value = value?.toString();
+                }
             },
         );
     }
