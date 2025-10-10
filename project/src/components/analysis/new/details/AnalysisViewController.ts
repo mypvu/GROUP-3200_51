@@ -69,6 +69,10 @@ export default class AnalysisViewController {
     ) {
         let element = document.getElementById(id)!;
 
+        if (element === null) {
+            throw new Error(`Element with id ${id} not found`);
+        }
+
         if (element instanceof HTMLInputElement) {
             (element as HTMLInputElement).oninput = () => {
                 this.markDirty();

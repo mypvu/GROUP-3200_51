@@ -3,7 +3,7 @@ import HelperService from "@/logic/helper_service.ts";
 const { type = "unknown" } = Astro.props;
 
 const name = HelperService.getTypeDisplayName(type);
-const isVsType = type == "kds-vs" || type == "lds-vs";
+const isVsType = HelperService.isVsType(type);
 
 ---
 
@@ -108,14 +108,14 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                                     >RGB 1 (H° DEV 254 nm):</label
                                     >
                                     <input
-                                        id="rgb-1"
+                                        id="input-rgb1-dev_254nm"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
                                     />
                                     <!--<span class="font-semibold">CF1:</span>
                                     <input
-                                        id="rgb-1-cf1"
+                                        id="input-rgb1-dev_254nm-cf1"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
@@ -131,14 +131,14 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                                     >RGB2 (H° DEV 366 nm):</label
                                     >
                                     <input
-                                        id="rgb-2"
+                                        id="input-rgb2-dev_366nm"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
                                     />
                                     <!--<span class="font-semibold">CF2:</span>
                                     <input
-                                        id="rgb-2-cf2"
+                                        id="input-rgb2-dev_366nm-cf2"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
@@ -154,14 +154,14 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                                     >RGB3 (H° NP 366 nm):</label
                                     >
                                     <input
-                                        id="rgb-3"
+                                        id="input-rgb3-vsnp_366nm"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
                                     />
                                     <!--<span class="font-semibold">CF3:</span>
                                     <input
-                                        id="rgb-3-cf3"
+                                        id="input-rgb1-vsnp_366nm-cf3"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
@@ -180,7 +180,7 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                                         T VSA (H° and C):
                                     </label>
                                     <input
-                                        id="t-vsa"
+                                        id="input-t-vsa"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
@@ -296,6 +296,7 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
 
 <script>
     import InputService from "@/logic/input_service.ts";
+    import HelperService from "@/logic/helper_service.ts";
     import AnalysisViewController from "./AnalysisViewController.ts";
     import { type Compound, getCompoundByType, type Sample } from "@core/models/compund.model.ts";
     import type { InputParams } from "@core/models/search_parameters.model.ts";
@@ -325,22 +326,23 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
 
             document.getElementById("save-and-exit")!.addEventListener("click", () => this.saveAndExit())
 
-            this.viewController.addNumberInput("rf", () => this.inputCompound!.RF, e => {
-                this.inputCompound!.RF = e;
-            });
+            this.viewController.addNumberInput("rf",
+                () => this.inputCompound!.RF, e => this.inputCompound!.RF = e);
 
-            this.viewController.addNumberInput("rgb-1", () => this.inputCompound!.DEV_254nm, e => {
-                this.inputCompound!.DEV_254nm = e;
-            });
+            this.viewController.addNumberInput("input-rgb1-dev_254nm",
+                () => this.inputCompound!.DEV_254nm, e => this.inputCompound!.DEV_254nm = e);
 
-            this.viewController.addNumberInput("rgb-2", () => this.inputCompound!.DEV_366nm, e => {
-                this.inputCompound!.DEV_366nm = e;
-            });
+            this.viewController.addNumberInput("input-rgb2-dev_366nm",
+                () => this.inputCompound!.DEV_366nm, e => this.inputCompound!.DEV_366nm = e);
 
-            this.viewController.addNumberInput("rgb-3", () => this.inputCompound!.VSNP_366nm, e => {
-                this.inputCompound!.VSNP_366nm = e;
-            });
+            this.viewController.addNumberInput("input-rgb3-vsnp_366nm",
+                () => this.inputCompound!.VSNP_366nm, e => this.inputCompound!.VSNP_366nm = e);
 
+            if (HelperService.isVsType(type)) {
+                this.viewController.addNumberInput("input-t-vsa",
+                    () => this.inputCompound!.T ?? 0, e => this.inputCompound!.T = e);
+            }
+            
             try {
                 this.viewController.load();
             } catch (e) {

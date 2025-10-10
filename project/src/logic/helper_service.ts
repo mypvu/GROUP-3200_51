@@ -13,4 +13,9 @@ export default class HelperService {
     public static doesTypeExist(type: string): boolean {
         return this.analysisTypes[type] !== undefined;
     }
+
+    public static isVsType(type: string | undefined): boolean {
+        if (type === undefined) return false;
+        return type.endsWith("-vs");
+    }
 }
