@@ -276,7 +276,7 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
                             <!-- Centered Arrow at Bottom -->
                             <div class="mt-8 text-center">
                                 <a
-                                    href="/analysis"
+                                    href="/analysis/new"
                                     title="Complete Analysis"
                                     class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
                                 >
@@ -296,11 +296,12 @@ const isVsType = type == "kds-vs" || type == "lds-vs";
 
 <script>
     import InputService from "@/logic/input_service.ts";
-    import { AnalysisViewController } from "./AnalysisInput.ts";
+    import AnalysisViewController from "./AnalysisViewController.ts";
     import { type Compound, getCompoundByType, type Sample } from "@core/models/compund.model.ts";
     import type { InputParams } from "@core/models/search_parameters.model.ts";
 
     class AnalysisInput extends HTMLElement {
+        // The input parameters are stored in here
         private inputParams: InputParams | undefined;
         private inputCompound: Compound | undefined;
         private viewController: AnalysisViewController | undefined;

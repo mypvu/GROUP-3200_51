@@ -11,7 +11,7 @@ interface RegisteredElement {
 // How long to wait (after the last input was changed) before saving the inputs
 const ELEMENT_SAVE_DELAY = 800;
 
-export class AnalysisViewController {
+export default class AnalysisViewController {
     private elements: RegisteredElement[] = [];
 
     private timeout: any | undefined;

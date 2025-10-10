@@ -79,6 +79,10 @@ export default class InputService {
         return persistentInputStorage.get()!;
     }
 
+    public static async getInput(): Promise<InputParams | undefined> {
+        return persistentInputStorage.get()!;
+    }
+
     public static async saveInput(input: InputParams): Promise<void> {
         persistentInputStorage.set(input);
     }
