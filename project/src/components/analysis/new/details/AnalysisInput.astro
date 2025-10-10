@@ -90,7 +90,7 @@ const isVsType = HelperService.isVsType(type);
                                 >Rf:</label
                                 >
                                 <input
-                                    id="rf"
+                                    id="input-rf"
                                     type="text"
                                     class="input-field"
                                     placeholder="______"
@@ -330,7 +330,7 @@ const isVsType = HelperService.isVsType(type);
 
             document.getElementById("save-and-exit")!.addEventListener("click", () => this.saveAndExit())
 
-            this.viewController.addNumberInput("rf",
+            this.viewController.addNumberInput("input-rf",
                 () => this.inputCompound?.RF, e => this.inputCompound!.RF = e);
 
             this.viewController.addNumberInput("input-rgb1-dev_254nm",
