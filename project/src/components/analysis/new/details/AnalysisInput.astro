@@ -1,6 +1,10 @@
 ---
-// src/pages/analysis/details.astro
-import Layout from "@/layouts/Layout.astro";
+import HelperService from "@/logic/helper_service.ts";
+const { type = "unknown" } = Astro.props;
+
+const name = HelperService.getTypeDisplayName(type);
+const isVsType = HelperService.isVsType(type);
+
 ---
 
 <style>
@@ -28,21 +32,21 @@ import Layout from "@/layouts/Layout.astro";
     }
 </style>
 
-<head>
-    <title>Analysis Detail - HTPLC Compound Matcher</title>
-</head>
-
-<Layout>
-    <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+<analysis-input data-type={type}>
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <div class="mx-auto max-w-6xl">
             <!-- Left Column: Notes and Save & Exit stacked -->
             <div class="flex gap-8">
                 <!-- Left Side: Notes and Save & Exit -->
                 <div class="flex w-64 flex-col gap-4">
                     <!-- Save & Exit Button (Top) -->
+                    <!--
+                        NOTE:
+                        The save and exit button href is in the script below (in connectedCallback)
+                    -->
                     <a
-                        href="/analysis/new"
-                        class="btn-hover-effect rounded-lg bg-gray-500 px-6 py-2 text-center font-semibold text-white hover:bg-gray-600"
+                        id="save-and-exit"
+                        class="btn-hover-effect cursor-pointer rounded-lg bg-gray-500 px-6 py-2 text-center font-semibold text-white hover:bg-gray-600"
                     >
                         Save & Exit
                     </a>
@@ -72,7 +76,7 @@ import Layout from "@/layouts/Layout.astro";
                                 New Analysis
                             </h1>
                             <h2 class="text-2xl font-semibold text-gray-600">
-                                KDS NP
+                                {name}
                             </h2>
                         </div>
 
@@ -83,9 +87,10 @@ import Layout from "@/layouts/Layout.astro";
                             >
                                 <label
                                     class="w-32 text-right text-lg font-semibold text-gray-700"
-                                    >Rf:</label
+                                >Rf:</label
                                 >
                                 <input
+                                    id="input-rf"
                                     type="text"
                                     class="input-field"
                                     placeholder="______"
@@ -100,19 +105,21 @@ import Layout from "@/layouts/Layout.astro";
                                 >
                                     <label
                                         class="w-64 text-right text-lg font-semibold text-gray-700"
-                                        >RGB 1 (H° DEV 254 nm):</label
+                                    >RGB 1 (H° DEV 254 nm):</label
                                     >
                                     <input
+                                        id="input-rgb1-dev_254nm"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
                                     />
-                                    <span class="font-semibold">CF1:</span>
+                                    <!--<span class="font-semibold">CF1:</span>
                                     <input
+                                        id="input-rgb1-dev_254nm-cf1"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
-                                    />
+                                    />-->
                                 </div>
 
                                 <!-- RGB 2 -->
@@ -121,19 +128,21 @@ import Layout from "@/layouts/Layout.astro";
                                 >
                                     <label
                                         class="w-64 text-right text-lg font-semibold text-gray-700"
-                                        >RGB2 (H° DEV 366 nm):</label
+                                    >RGB2 (H° DEV 366 nm):</label
                                     >
                                     <input
+                                        id="input-rgb2-dev_366nm"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
                                     />
-                                    <span class="font-semibold">CF2:</span>
+                                    <!--<span class="font-semibold">CF2:</span>
                                     <input
+                                        id="input-rgb2-dev_366nm-cf2"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
-                                    />
+                                    />-->
                                 </div>
 
                                 <!-- RGB 3 -->
@@ -142,21 +151,49 @@ import Layout from "@/layouts/Layout.astro";
                                 >
                                     <label
                                         class="w-64 text-right text-lg font-semibold text-gray-700"
-                                        >RGB3 (H° NP 366 nm):</label
+                                    >RGB3 (H° NP 366 nm):</label
                                     >
                                     <input
+                                        id="input-rgb3-vsnp_366nm"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
                                     />
-                                    <span class="font-semibold">CF3:</span>
+                                    <!--<span class="font-semibold">CF3:</span>
                                     <input
+                                        id="input-rgb1-vsnp_366nm-cf3"
                                         type="text"
                                         class="input-field"
                                         placeholder="______"
-                                    />
+                                    />-->
                                 </div>
                             </div>
+
+                            {isVsType ? (
+                                <!-- T VSA -->
+                                <div
+                                    class="flex items-center justify-center space-x-4 mt-4"
+                                >
+                                    <label
+                                        class="text-lg font-semibold text-gray-700 w-64 text-right"
+                                    >
+                                        T VSA (H° and C):
+                                    </label>
+                                    <input
+                                        id="input-t-vsa"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />
+                                    <!--<span class="font-semibold">CF4:</span>
+                                    <input
+                                        id="t-vsa-cf4"
+                                        type="text"
+                                        class="input-field"
+                                        placeholder="______"
+                                    />-->
+                                </div>
+                            ) : (<div/>)}
 
                             <!-- UV Vis Peaks -->
                             <div class="space-y-3">
@@ -165,27 +202,31 @@ import Layout from "@/layouts/Layout.astro";
                                 >
                                     <label
                                         class="w-32 text-right text-lg font-semibold text-gray-700"
-                                        >UV Vis Peaks</label
+                                    >UV Vis Peaks</label
                                     >
                                     <input
+                                        id="input-uv-vis-peaks-count"
                                         type="text"
                                         class="input-field w-20"
                                         placeholder="___"
                                     />
                                     <span class="font-semibold">UV λ.1:</span>
                                     <input
+                                        id="uv-vis-d1"
                                         type="text"
                                         class="input-field"
                                         placeholder="___"
                                     />
                                     <span class="font-semibold">UV λ.2:</span>
                                     <input
+                                        id="uv-vis-d2"
                                         type="text"
                                         class="input-field"
                                         placeholder="___"
                                     />
                                     <span class="font-semibold">UV λ.3:</span>
                                     <input
+                                        id="uv-vis-d3"
                                         type="text"
                                         class="input-field"
                                         placeholder="___"
@@ -200,27 +241,31 @@ import Layout from "@/layouts/Layout.astro";
                                 >
                                     <label
                                         class="w-32 text-right text-lg font-semibold text-gray-700"
-                                        >FI Peaks</label
+                                    >FI Peaks</label
                                     >
                                     <input
+                                        id="input-fl-peaks-count"
                                         type="text"
                                         class="input-field w-20"
                                         placeholder="___"
                                     />
                                     <span class="font-semibold">FI λ.1:</span>
                                     <input
+                                        id="fi-d1"
                                         type="text"
                                         class="input-field"
                                         placeholder="___"
                                     />
                                     <span class="font-semibold">FI λ.2:</span>
                                     <input
+                                        id="fi-d2"
                                         type="text"
                                         class="input-field"
                                         placeholder="___"
                                     />
                                     <span class="font-semibold">FI λ.3:</span>
                                     <input
+                                        id="fi-d3"
                                         type="text"
                                         class="input-field"
                                         placeholder="___"
@@ -228,35 +273,101 @@ import Layout from "@/layouts/Layout.astro";
                                 </div>
                             </div>
 
-                            <!-- Action Buttons -->
-                            <div class="flex justify-center space-x-4 pt-6">
-                                <button
-                                    class="btn-hover-effect rounded-lg bg-blue-500 px-8 py-3 font-semibold text-white hover:bg-blue-600"
-                                >
-                                    Save Analysis
-                                </button>
+                            <!-- Centered Arrow at Bottom -->
+                            <div class="mt-8 text-center">
                                 <a
-                                    href="/results"
-                                    class="btn-hover-effect inline-flex items-center rounded-lg bg-green-500 px-8 py-3 font-semibold text-white hover:bg-green-600"
+                                    href="/analysis/new"
+                                    title="Complete Analysis"
+                                    class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
                                 >
-                                    View Results
+                                        <span
+                                            class="text-2xl font-bold text-gray-600"
+                                        >→</span
+                                        >
                                 </a>
-                            </div>
-                        </div>
-
-                        <!-- Centered Arrow at Bottom -->
-                        <div class="mt-8 text-center">
-                            <div
-                                class="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
-                            >
-                                <span class="text-2xl font-bold text-gray-600"
-                                    >→</span
-                                >
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-</Layout>
+    </div>
+</analysis-input>
+
+<script>
+    import InputService from "@/logic/input_service.ts";
+    import HelperService from "@/logic/helper_service.ts";
+    import AnalysisViewController from "./AnalysisViewController.ts";
+    import { type Compound, type Sample } from "@core/models/compund.model.ts";
+    import type { InputParams } from "@core/models/search_parameters.model.ts";
+
+    class AnalysisInput extends HTMLElement {
+        // The input parameters are stored in here
+        private inputParams: InputParams | undefined;
+        private inputCompound: Compound | undefined;
+        private viewController: AnalysisViewController | undefined;
+
+        async saveAndExit() {
+            await this.viewController?.save();
+            location.href = "/analysis/new";
+        }
+
+        async connectedCallback() {
+            const type = this.dataset.type;
+
+            // Load input params from local storage
+            this.inputParams = await InputService.getOrCreateInput();
+            this.inputCompound = HelperService.getCompoundByType(type!, this.inputParams.samples)!;
+
+            // Prepare the view controller so we can start adding inputs
+            this.viewController = new AnalysisViewController();
+            this.viewController.setPreSave(() => {
+                this.inputCompound ??= HelperService.getOrCreateCompoundByType(type!, this.inputParams!.samples);
+            });
+            this.viewController.setPostSave(() => {
+                InputService.saveInput(this.inputParams!);
+            });
+
+            document.getElementById("save-and-exit")!.addEventListener("click", () => this.saveAndExit())
+
+            this.viewController.addNumberInput("input-rf",
+                () => this.inputCompound?.RF, e => this.inputCompound!.RF = e);
+
+            this.viewController.addNumberInput("input-rgb1-dev_254nm",
+                () => this.inputCompound?.DEV_254nm, e => this.inputCompound!.DEV_254nm = e);
+
+            this.viewController.addNumberInput("input-rgb2-dev_366nm",
+                () => this.inputCompound?.DEV_366nm, e => this.inputCompound!.DEV_366nm = e);
+
+            this.viewController.addNumberInput("input-rgb3-vsnp_366nm",
+                () => this.inputCompound?.VSNP_366nm, e => this.inputCompound!.VSNP_366nm = e);
+
+            if (HelperService.isVsType(type)) {
+                this.viewController.addNumberInput("input-t-vsa",
+                    () => this.inputCompound?.T ?? undefined, e => this.inputCompound!.T = e);
+            }
+
+            this.viewController.addNumberInput("input-uv-vis-peaks-count",
+                () => this.inputCompound?.UV_Peaks_num, e => this.inputCompound!.UV_Peaks_num = e);
+
+            this.viewController.addNumberInput("input-fl-peaks-count",
+                () => this.inputCompound?.FL_Peaks_num, e => this.inputCompound!.FL_Peaks_num = e);
+
+            try {
+                this.viewController.load();
+            } catch (e) {
+                console.warn("Stored input params failed to load, will be recreated", e);
+
+                // Reset input params
+                this.inputParams = await InputService.createEmptyInput();
+                //this.inputCompound = getCompoundByType(type!, this.inputParams!.samples)!;
+                //await InputService.saveInput(this.inputParams!);
+
+                // Reload
+                this.viewController.load();
+            }
+        }
+    }
+
+    customElements.define("analysis-input", AnalysisInput);
+</script>

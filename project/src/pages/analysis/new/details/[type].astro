@@ -1,0 +1,37 @@
+---
+// src/pages/analysis/new/details/[type].astro
+// NOTE!: This is a *dynamic route* (see how it's called [type].astro)
+// This means that type is a parameter - for example, analysis/new/details/kds-np would be this page with the type "kds-np"
+// This lets us reuse the same page for different analysis types
+// Keep in mind that it's not really dynamic, as we are building the site statically - we need to manually add the different types to the static paths below
+
+export async function getStaticPaths() {
+    return [
+        { params: { type: "kds-np" } },
+        { params: { type: "lds-np" } },
+        { params: { type: "kds-vs" } },
+        { params: { type: "lds-vs" } },
+    ];
+}
+
+import AnalysisInput from "@/components/analysis/new/details/AnalysisInput.astro";
+import Layout from "@/layouts/Layout.astro";
+import HelperService from "@/logic/helper_service.ts";
+
+const { type } = Astro.params;
+
+if (type === undefined || !HelperService.doesTypeExist(type)) {
+    // TODO: graceful error
+    throw new Error("Invalid analysis type");
+}
+---
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Analysis Detail - HTPLC Compound Matcher</title>
+</head>
+
+<Layout>
+    <!-- The code for this page is in components/analysis/new/details/AnalysisInput.astro now -->
+    <AnalysisInput type={type} />
+</Layout>

@@ -3,28 +3,52 @@ import Header from "../components/Header.astro";
 import Layout from "@/layouts/Layout.astro";
 ---
 
-<head>
-    <title>View Database</title>
-</head>
+<script>
+    // Placeholder for download functionality
+    function downloadDatabase(name) {
+        alert(`Downloading database: ${name}`);
+        // Example: window.location.href = `/api/download?db=${name}`;
+    }
+</script>
 
 <Layout>
-    <div class="flex min-h-screen flex-col bg-gray-100">
+    <head>
+        <meta charset="UTF-8" />
+        <title>View Database</title>
+    </head>
+
+    <body class="flex min-h-screen flex-col bg-gray-100">
         <Header title="View Database" />
 
         <main class="flex flex-col gap-6 p-10">
+            <!-- Header -->
+            <div class="mb-4 flex items-center justify-between">
+                <h1 class="text-3xl font-bold text-gray-800">View Databases</h1>
+            </div>
+
+            <!-- Spectral Overlays Section -->
             <div class="rounded-2xl bg-white p-6 shadow">
                 <h2 class="mb-4 text-2xl font-semibold">Spectral Overlays</h2>
                 <p class="text-gray-600">Placeholder for overlay previews</p>
                 <button
+                    onclick="downloadDatabase('SpectralOverlays')"
                     class="mt-4 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow-lg hover:bg-blue-700"
-                    >Download</button
                 >
+                    Download
+                </button>
             </div>
 
+            <!-- Match Candidates Section -->
             <div class="rounded-2xl bg-white p-6 shadow">
                 <h2 class="mb-4 text-2xl font-semibold">Match Candidates</h2>
                 <p class="text-gray-600">Placeholder for candidate table</p>
+                <button
+                    onclick="downloadDatabase('MatchCandidates')"
+                    class="mt-4 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow-lg hover:bg-blue-700"
+                >
+                    Download
+                </button>
             </div>
         </main>
-    </div>
+    </body>
 </Layout>
