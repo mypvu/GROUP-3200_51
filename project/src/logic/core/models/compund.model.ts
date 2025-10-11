@@ -37,6 +37,8 @@ export interface Sample {
     VS_LDS?: CompoundVL;
 }
 
+export type ISampleContainer = Sample;
+
 export type Compound = CompoundN | CompoundV;
 
 export function isCompoundN(c: Compound): c is CompoundN {

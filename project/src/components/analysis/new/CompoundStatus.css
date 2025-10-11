@@ -1,0 +1,13 @@
+﻿@import "tailwindcss";
+
+.status-empty {
+    color: var(--color-gray-500);
+}
+
+.status-incomplete {
+    color: var(--color-red-500);
+}
+
+.status-complete {
+    color: var(--color-green-500);
+}
