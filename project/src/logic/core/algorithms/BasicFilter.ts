@@ -24,7 +24,6 @@ export default class BasicFilter {
     private res: DataSets
     private bfh: BasicFilterHelper
 
-
     constructor(private samples: Sample) {
         this.datasets = new DataSets([],[],[],[])
         this.res = new DataSets([],[],[],[])

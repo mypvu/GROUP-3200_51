@@ -5,9 +5,12 @@ import type { InputParams } from "../models/search_parameters.model";
 import { fetch_dataset } from "@/logic/utils/fetch_excel_st1";
 import conf from "../../config/conf.json"
 import type DataSets from "../models/datasets.model";
+import { parseXYFromArrayBuffer } from "@/logic/utils/fetch_excel_st2";
+import SpecturmFilter from "./SpecturmFilter";
 
 export default class CompoundFilter {
     private bf: BasicFilter
+    private sf: SpecturmFilter
     private input: InputParams
     // specturm filter
 
@@ -16,6 +19,7 @@ export default class CompoundFilter {
             threshold?: FilterBounds) {
                 this.input = input
                 this.bf = new BasicFilter(input.samples)
+                this.sf = new SpecturmFilter([])
     }
   
     async st1(ver = this.input.version): Promise<ResultStage1> {
@@ -35,9 +39,12 @@ export default class CompoundFilter {
         }
     }
 
-    async st2(candidates: DataSets): Promise<ResultStage2> {
+    async st2(candidates: DataSets, unknowSpecturm: ArrayBuffer): Promise<ResultStage2> {
         
-
+        const point = parseXYFromArrayBuffer(unknowSpecturm)
+        
+        
+        
         return {
             version: ver
         }

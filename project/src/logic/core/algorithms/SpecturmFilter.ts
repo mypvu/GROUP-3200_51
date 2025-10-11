@@ -4,15 +4,15 @@ import conf from "../../config/conf.json"
 import type { Version } from "../models/version.model";
 import type Specturm from "../models/specturm.model";
 import { Stage2Methods, type MethodsType } from "../models/specturm.model";
-import { fetchAndParseXY } from "@/logic/utils/fetch_excel_st2";
+import { fetchAndParseXY, type Point } from "@/logic/utils/fetch_excel_st2";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
-    public un: Specturm
+    public un: Point
     private baseUrl: string
     private version: Version
 
-    constructor(unknown: Specturm, candidates: Compound[], version = "1") {
+    constructor(candidates: Compound[], version = "1") {
         this.candidates = candidates
         this.version = version
         this.baseUrl = conf.database_url +
@@ -20,28 +20,33 @@ export default class SpecturmFilter {
             "/stage_2"
     }
 
-    set(unknown: Specturm, candidates: Compound[], version = "1") {
+    public set(candidates: Compound[], version = "1", unknown?: Point[]): SpecturmFilter {
+        // this.un = unknown
         this.candidates = candidates
-        this.un = unknown
         this.version = version
         this.baseUrl = conf.database_url +
             "/v" + version +
             "/stage_2"
+
+        return this
     }
 
     async extract(): Promise<ResultStage2> {
+        let currentSpecturms: Specturm[] = []
+        let specturms: Specturm[] = []
 
-        const candidates: Compound[] = this.candidates
-        const results: Specturm[] = []
+        // testing propose
+        this.candidates = [this.candidates[0]]
+        this.candidates[0].name = "pyrogallol"
 
-        const 
         for (const c of this.candidates) {
             if (!c?.name) continue
-            allJobs.push(this.fetchSpecturmMethods(c))
+                currentSpecturms = await this.fetchSpecturmMethods(c)
+                specturms = specturms.concat(currentSpecturms)
         }
 
         return {
-            specturms: [],
+            specturms,
             version: this.version
         }
     }
@@ -52,7 +57,7 @@ export default class SpecturmFilter {
 
     public compare(candidate: Specturm, target: Specturm): boolean {
 
-        return false
+        return true
     }
 
 
@@ -67,14 +72,15 @@ export default class SpecturmFilter {
         const jobs = (Stage2Methods as MethodsType[]).map((method) =>
             this.fetchSpecturm(compound, method)
         )
+        
 
         const settled = await Promise.allSettled(jobs)
         const results: Specturm[] = []
         
         for (const s of settled) {
-            if (s.status === "fulfilled" && s.value) results.push(s.value)
+            if (s.status === "fulfilled" && s.value) 
+                results.push(s.value)
         }
-
         return results
     }
 
@@ -83,7 +89,7 @@ export default class SpecturmFilter {
      * Assumes fetchAndParseXY(url) returns { Xs: number[], Ys: number[] }.
      */
     private async fetchSpecturm(compound: Compound, method: MethodsType): Promise<Specturm> {
-        const name = compound?.name
+        const name = compound?.name + ".xlsx"
 
         if (!name) 
             throw new Error("Compound name is required")

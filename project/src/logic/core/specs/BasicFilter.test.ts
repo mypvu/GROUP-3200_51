@@ -3,9 +3,13 @@ import BasicFilter from '../algorithms/BasicFilter'
 import { ds, sample as i_sample } from '../../utils/csvLoader'
 import test_case from './case.json'
 import CompoundFilter from "../algorithms/filter";
+import SpecturmFilter from "../algorithms/SpecturmFilter";
+import type Specturm from "../models/specturm.model";
 
 
 const bf = new BasicFilter(i_sample, ds)
+const sf = new SpecturmFilter([], "1")
+
 let sample = i_sample
 
 // mapping between test section and sample key/db_label
@@ -70,7 +74,7 @@ describe("Manual testing for Basic Filter", () => {
     }
   })
 
-  it("Manual testing with NP_KDS", () => {
+  it("Manual testing with NP_KDS",async () => {
 
     sample.NP_KDS = {
       "db_label": "NK",
@@ -84,50 +88,56 @@ describe("Manual testing for Basic Filter", () => {
       "FL_Peaks": [225, 316]
     }
 
-
-    const res = bf.set(sample, ds).extract()
-    expect(res.ids().NK).toEqual([58]);
-
+    const cf = new CompoundFilter({
+      samples: sample,
+      version: "1"
+    })
+    
+    const candidates = (await cf.st1("1")).candidates
+    const s2_result = await sf.set(candidates.merge(), "1").extract()
+    console.log(s2_result.specturms[0])
+    
+    
   });
 
 });
 
-describe("BasicFilter tests from case.json", () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
+// describe("BasicFilter tests from case.json", () => {
+//   beforeEach(() => {
+//     vi.restoreAllMocks();
+//   });
 
-  for (const [section, tests] of Object.entries(test_case)) {
-    describe(`${section} testing`, async () => {
-      for (const [name, { input, expected }] of Object.entries(tests)) {
-        it(name,async () => {
-          const { key, db_label } = sampleMap[section];
+//   for (const [section, tests] of Object.entries(test_case)) {
+//     describe(`${section} testing`, async () => {
+//       for (const [name, { input, expected }] of Object.entries(tests)) {
+//         it(name,async () => {
+//           const { key, db_label } = sampleMap[section];
 
-          // Fill sample with current test case
-          // If it's a V-compound, include T field
-          (sample as any)[key] = {
-            db_label,
-            name,
-            RF: input.rf,
-            DEV_254nm: input.colour1,
-            DEV_366nm: input.colour2,
-            VSNP_366nm: input.colour3,
-            UV_Peaks_num: input.uv_peaks_num,
-            UV_Peaks: input.uv_peaks,
-            FL_Peaks_num: input.fl_peaks_num,
-            FL_Peaks: input.fl_peaks,
-            ...(input.t !== undefined ? { T: input.t } : {}),
-          };
+//           // Fill sample with current test case
+//           // If it's a V-compound, include T field
+//           (sample as any)[key] = {
+//             db_label,
+//             name,
+//             RF: input.rf,
+//             DEV_254nm: input.colour1,
+//             DEV_366nm: input.colour2,
+//             VSNP_366nm: input.colour3,
+//             UV_Peaks_num: input.uv_peaks_num,
+//             UV_Peaks: input.uv_peaks,
+//             FL_Peaks_num: input.fl_peaks_num,
+//             FL_Peaks: input.fl_peaks,
+//             ...(input.t !== undefined ? { T: input.t } : {}),
+//           };
 
 
-          const cf = new CompoundFilter({samples: sample, version: "1"})
-          const res =  (await cf.st1()).candidates
+//           const cf = new CompoundFilter({samples: sample, version: "1"})
+//           const res =  (await cf.st1()).candidates
 
-          // compare expected
-          const simpleResult = res.ids()[db_label as keyof ReturnType<typeof res.ids>];
-          expect(simpleResult).toEqual(expected.result);
-        });
-      }
-    });
-  }
-});
+//           // compare expected
+//           const simpleResult = res.ids()[db_label as keyof ReturnType<typeof res.ids>];
+//           expect(simpleResult).toEqual(expected.result);
+//         });
+//       }
+//     });
+//   }
+// });

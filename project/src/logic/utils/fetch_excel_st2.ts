@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx"
 import type { Compound, DBLabel } from "../core/models/compund.model";
-import type { Plot } from "../core/models/specturm.model";
+import type { MethodsType, Plot } from "../core/models/specturm.model";
 import type Specturm from "../core/models/specturm.model";
 
 
@@ -15,21 +15,7 @@ type Cell = string | number | null | undefined;
  * - Stops when the first column is no longer numeric
  */
 
-export async function fetchSpecturmMethods(compound: Compound) : Promise<Specturm[]> {
-    const name = compound.name
 
-    return {
-
-    }
-}
-
-export async function fetchSpecturm(compound: Compound): Promise<Specturm> {
-    const name = compound.name
-
-    return {
-        
-    }
-}
 
 export function parseXYFromArrayBuffer(
     data: ArrayBuffer | Buffer,
