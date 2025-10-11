@@ -4,19 +4,19 @@ import CompoundItem from "./CompoundItem";
 import { useEffect, useState } from "preact/hooks";
 
 export default function CompoundList() {
-    let sessionService = new SessionService();
+    let [session, setSession] = useState<Session | undefined>();
 
-    let [session, setSession] = useState<Session | undefined>(
-        sessionService.getCurrentSession(),
-    );
-
-    if (session === undefined) {
-        useEffect(() => {
+    useEffect(() => {
+        const sessionService = new SessionService();
+        let currentSession = sessionService.getCurrentSession();
+        if (currentSession === undefined) {
             (async () => {
                 setSession(await sessionService.createNewSession());
             })();
-        }, []);
-    }
+        } else {
+            setSession(currentSession);
+        }
+    }, []);
 
     return (
         <>

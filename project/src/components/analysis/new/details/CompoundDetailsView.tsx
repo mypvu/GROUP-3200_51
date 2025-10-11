@@ -11,15 +11,16 @@ import type { Compound } from "@/lib/core/models/compunds.ts";
 type Props = { compoundType: string };
 
 export default function CompoundDetailsView({ compoundType }: Props) {
-    let [session, setSession] = useState<Session | undefined>(
-        new SessionService().getCurrentSession(),
-    );
-
     let [sessionAlgorithmData, setSessionAlgorithmData] = useState<
         SessionAlgorithmData | undefined
     >();
 
+    let session: Session | undefined = undefined;
+
     useEffect(() => {
+        // Set the session clientside only
+        session = new SessionService().getCurrentSession();
+
         if (session === undefined) {
             console.log("No session found!");
             window.location.href = "/analysis/new";

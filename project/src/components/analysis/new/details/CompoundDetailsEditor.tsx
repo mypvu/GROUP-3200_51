@@ -18,21 +18,28 @@ export default function CompoundDetailsEditor({
     sessionAlgorithmData,
     compoundType,
 }: Props) {
-    let [compound, setCompound] = useState<Compound | undefined>(
-        sessionAlgorithmData.inputs.getOrCreateCompoundByType(compoundType)
-    );
+    const compoundDisplayName =
+        CompoundHelper.getTypeDisplayName(compoundType) ?? "Compound";
+    const isVsType = CompoundHelper.isVsType(compoundType);
 
+    const [compound, setCompound] = useState<Compound | undefined>();
+    const [local, setLocal] = useState<Compound | undefined>(compound);
     let currentlySaving = false;
 
     useEffect(() => {
-        if (compound === undefined) {
+        let newCompound =
+            sessionAlgorithmData.inputs.getOrCreateCompoundByType(compoundType);
+
+        setCompound(newCompound);
+
+        if (newCompound === undefined) {
             console.log("No compound found!");
             window.location.href = "/analysis/new";
             return;
         }
-    }, []);
 
-    const [local, setLocal] = useState(compound);
+        setLocal(newCompound);
+    }, []);
 
     function saveCompoundToSessionData() {
         if (currentlySaving) return;
@@ -122,9 +129,9 @@ export default function CompoundDetailsEditor({
         saveCompoundToSessionData();
     }
 
-    const compoundDisplayName =
-        CompoundHelper.getTypeDisplayName(compoundType) ?? "Compound";
-    const isVsType = CompoundHelper.isVsType(compoundType);
+    if (local === undefined) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <>
@@ -141,6 +148,7 @@ export default function CompoundDetailsEditor({
                         */}
                             <a
                                 id="save-and-exit"
+                                href={"/analysis/new"}
                                 className="btn-hover-effect cursor-pointer rounded-lg bg-gray-500 px-6 py-2 text-center font-semibold text-white hover:bg-gray-600"
                             >
                                 Save & Exit
