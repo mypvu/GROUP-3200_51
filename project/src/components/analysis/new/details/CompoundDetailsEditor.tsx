@@ -18,14 +18,19 @@ export default function CompoundDetailsEditor({
     sessionAlgorithmData,
     compoundType,
 }: Props) {
+    let [compound, setCompound] = useState<Compound | undefined>(
+        sessionAlgorithmData.inputs.getOrCreateCompoundByType(compoundType)
+    );
+
     let currentlySaving = false;
-    let compound =
-        sessionAlgorithmData.inputs.getOrCreateCompoundByType(compoundType);
-    if (compound === undefined) {
-        location.href = "/analysis/new";
-        console.error("Compound not found!");
-        return <></>;
-    }
+
+    useEffect(() => {
+        if (compound === undefined) {
+            console.log("No compound found!");
+            window.location.href = "/analysis/new";
+            return;
+        }
+    }, []);
 
     const [local, setLocal] = useState(compound);
 
