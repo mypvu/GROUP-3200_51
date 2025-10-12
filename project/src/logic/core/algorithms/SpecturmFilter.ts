@@ -3,14 +3,14 @@ import type { ResultStage2 } from "../models/result_parameters.model";
 import conf from "../../config/conf.json"
 import type { Version } from "../models/version.model";
 import type Specturm from "../models/specturm.model";
-import { Stage2Methods, type MethodsType } from "../models/specturm.model";
+import { Stage2Methods, type MethodsType, type Plot } from "../models/specturm.model";
 import { fetchAndParseXY, type Point } from "@/logic/utils/fetch_excel_st2";
 import { getConfidence } from "@/logic/utils/get_spectrum_confidence";
 import { getImageNameFromExcel } from "@/logic/utils/naming_mapping";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
-    public un: Point
+    public un: Plot
     private baseUrl: string
     private version: Version
 
@@ -22,8 +22,8 @@ export default class SpecturmFilter {
             "/stage_2"
     }
 
-    public set(candidates: Compound[], version = "1", unknown?: Point[]): SpecturmFilter {
-        // this.un = unknown
+    public set(candidates: Compound[], version = "1", unknown: Plot): SpecturmFilter {
+        this.un = unknown
         this.candidates = candidates
         this.version = version
         this.baseUrl = conf.database_url +
@@ -39,17 +39,17 @@ export default class SpecturmFilter {
 
         for (const c of this.candidates) {
             if (!c?.name) continue
-                currentSpecturms = await this.fetchSpecturmMethods(c)
-                specturms = specturms.concat(currentSpecturms)
-                for (const s of specturms) {
-                    s.confidence = getConfidence(s.plot, this.un)
+            currentSpecturms = await this.fetchSpecturmMethods(c)
+            specturms = specturms.concat(currentSpecturms)
+            for (const s of specturms) {
+                s.confidence = getConfidence(s.plot, this.un)
 
-        }   
-
+            }
+        }
+        
         return {
             specturms,
             version: this.version
-        }
         }
     }
 
@@ -74,15 +74,15 @@ export default class SpecturmFilter {
         const jobs = (Stage2Methods as MethodsType[]).map((method) =>
             this.fetchSpecturm(compound, method)
         )
-        
+
 
         const settled = await Promise.allSettled(jobs)
         const results: Specturm[] = []
-        
+
         for (const s of settled) {
-            if (s.status === "fulfilled" && s.value) 
+            if (s.status === "fulfilled" && s.value)
                 results.push(s.value)
-                // console.log(s.value.compound)
+            // console.log(s.value.compound)
         }
         return results
     }
@@ -94,7 +94,7 @@ export default class SpecturmFilter {
     private async fetchSpecturm(compound: Compound, method: MethodsType): Promise<Specturm> {
         const name = getImageNameFromExcel(compound.name) + ".xlsx"
 
-        if (!name) 
+        if (!name)
             throw new Error("Compound name is required")
 
         const url = this.makeUrl(method, name)

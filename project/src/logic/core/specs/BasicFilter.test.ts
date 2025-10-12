@@ -5,6 +5,8 @@ import test_case from './case.json'
 import CompoundFilter from "../algorithms/filter";
 import SpecturmFilter from "../algorithms/SpecturmFilter";
 import type Specturm from "../models/specturm.model";
+import type { Plot } from "../models/specturm.model";
+import UnknownSpecturm from "./Unknown.json"
 
 
 const bf = new BasicFilter(i_sample, ds)
@@ -112,11 +114,14 @@ describe("Manual testing for Basic Filter", () => {
     })
 
     const candidates = (await cf.st1("1")).candidates
+    const unknownPlot: Plot = UnknownSpecturm
     console.log(candidates)
-    const s2_result = await sf.set(candidates.merge(), "1").extract()
-    console.log(s2_result.specturms.filter( (s: Specturm) => {
+    const s2_result = await sf.set(candidates.merge(), "1", unknownPlot).extract()
+    console.log(s2_result.specturms.filter((s: Specturm) => {
       return s.compound.db_label === "NL"
-    } ))
+    }))
+
+    
 
 
   });
