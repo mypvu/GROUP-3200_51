@@ -41,15 +41,20 @@ export default function CompoundDetailsEditor({
         setLocal(newCompound);
     }, []);
 
-    function saveCompoundToSessionData() {
-        if (currentlySaving) return;
-        currentlySaving = true;
-        (async () => {
-            sessionAlgorithmData.inputs.setCompoundByType(compoundType, local);
-            console.log("saving!");
-            console.log("result: ", await sessionAlgorithmData.save());
-            currentlySaving = false;
-        })();
+    function saveCompoundData(data: any) {
+        // update the local state
+        setLocal(data);
+
+        // update the session data
+        if (!currentlySaving) {
+            (async () => {
+                sessionAlgorithmData.inputs.setCompoundByType(
+                    compoundType,
+                    data,
+                );
+                currentlySaving = false;
+            })();
+        }
     }
 
     function updateAsNumber<K extends keyof Compound>(
@@ -72,9 +77,7 @@ export default function CompoundDetailsEditor({
         }
 
         const updated = { ...local, [key]: valueAsNumber };
-        setLocal(updated);
-
-        saveCompoundToSessionData();
+        saveCompoundData(updated);
     }
 
     function updateAsArrayCount<K extends keyof Compound>(
@@ -102,9 +105,7 @@ export default function CompoundDetailsEditor({
             [countKey]: valueAsNumber,
             [arrayKey]: newArray,
         };
-        setLocal(updated);
-
-        saveCompoundToSessionData();
+        saveCompoundData(updated);
     }
 
     function updateAsArrayEntry<K extends keyof Compound>(
@@ -124,9 +125,7 @@ export default function CompoundDetailsEditor({
             ...local,
             [arrayKey]: newArray,
         };
-        setLocal(updated);
-
-        saveCompoundToSessionData();
+        saveCompoundData(updated);
     }
 
     if (local === undefined) {
