@@ -1,6 +1,6 @@
 ﻿import SessionService, { Session } from "@/logic/session/session_service.ts";
 
-type Props = { session: Session; sessionService: SessionService };
+type Props = { session: Session };
 
 function formatDateTime(iso: Date) {
     return iso.toLocaleString("en-AU", {
@@ -9,13 +9,13 @@ function formatDateTime(iso: Date) {
     });
 }
 
-export default function SessionItem({ session, sessionService }: Props) {
+export default function SessionItem({ session }: Props) {
     const onSessionContinueClicked = () => {
         // Continue was clicked, change to that session
-        sessionService.setCurrentSession(session);
+        new SessionService().setCurrentSession(session);
 
         // Redirect to the new analysis page
-        window.location.href = "/analysis/new";
+        window.location.href = import.meta.env.BASE_URL + "/analysis/new";
     };
 
     return (
