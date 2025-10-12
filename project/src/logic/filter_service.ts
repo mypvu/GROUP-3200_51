@@ -28,13 +28,19 @@ export default class FilterService {
         // Do calculations
         const cf = new CompoundFilter(input);
 
+        // first stage database filtering -> candidates
+        const st1_result = await cf.st1()
+        
+        // second stage specturm overlay -> confidence
+        const st2_result = await cf.st2(st1_result.candidates, input.specturmBuffer)
+
         // Return
         return {
             input: input,
 
             result: {
-                stage1: await cf.st1(),
-                stage2: undefined,
+                stage1: st1_result,
+                stage2: st2_result,
             },
         };
     }
