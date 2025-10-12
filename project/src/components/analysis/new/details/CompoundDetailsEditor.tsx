@@ -44,6 +44,7 @@ export default function CompoundDetailsEditor({
     function saveCompoundData(data: any) {
         // update the local state
         setLocal(data);
+        console.log("Updating local state...", data);
 
         // update the session data
         if (!currentlySaving) {
@@ -52,7 +53,9 @@ export default function CompoundDetailsEditor({
                     compoundType,
                     data,
                 );
+                console.log("Saving compound data...", data);
                 currentlySaving = false;
+                await sessionAlgorithmData.save();
             })();
         }
     }
@@ -189,6 +192,10 @@ export default function CompoundDetailsEditor({
                                         </label>
                                         <input
                                             id="input-rf"
+                                            type="number"
+                                            min={0}
+                                            max={1}
+                                            step={0.01}
                                             value={local.RF ?? 0}
                                             onChange={(e) =>
                                                 updateAsNumber(
@@ -198,7 +205,6 @@ export default function CompoundDetailsEditor({
                                                     1,
                                                 )
                                             }
-                                            type="text"
                                             className="input-field"
                                             placeholder="______"
                                         />
