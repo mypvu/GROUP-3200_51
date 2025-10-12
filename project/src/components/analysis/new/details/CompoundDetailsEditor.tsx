@@ -41,15 +41,23 @@ export default function CompoundDetailsEditor({
         setLocal(newCompound);
     }, []);
 
-    function saveCompoundToSessionData() {
-        if (currentlySaving) return;
-        currentlySaving = true;
-        (async () => {
-            sessionAlgorithmData.inputs.setCompoundByType(compoundType, local);
-            console.log("saving!");
-            console.log("result: ", await sessionAlgorithmData.save());
-            currentlySaving = false;
-        })();
+    function saveCompoundData(data: any) {
+        // update the local state
+        setLocal(data);
+        console.log("Updating local state...", data);
+
+        // update the session data
+        if (!currentlySaving) {
+            (async () => {
+                sessionAlgorithmData.inputs.setCompoundByType(
+                    compoundType,
+                    data,
+                );
+                console.log("Saving compound data...", data);
+                currentlySaving = false;
+                await sessionAlgorithmData.save();
+            })();
+        }
     }
 
     function updateAsNumber<K extends keyof Compound>(
@@ -72,9 +80,7 @@ export default function CompoundDetailsEditor({
         }
 
         const updated = { ...local, [key]: valueAsNumber };
-        setLocal(updated);
-
-        saveCompoundToSessionData();
+        saveCompoundData(updated);
     }
 
     function updateAsArrayCount<K extends keyof Compound>(
@@ -102,9 +108,7 @@ export default function CompoundDetailsEditor({
             [countKey]: valueAsNumber,
             [arrayKey]: newArray,
         };
-        setLocal(updated);
-
-        saveCompoundToSessionData();
+        saveCompoundData(updated);
     }
 
     function updateAsArrayEntry<K extends keyof Compound>(
@@ -124,9 +128,7 @@ export default function CompoundDetailsEditor({
             ...local,
             [arrayKey]: newArray,
         };
-        setLocal(updated);
-
-        saveCompoundToSessionData();
+        saveCompoundData(updated);
     }
 
     if (local === undefined) {
@@ -190,6 +192,10 @@ export default function CompoundDetailsEditor({
                                         </label>
                                         <input
                                             id="input-rf"
+                                            type="number"
+                                            min={0}
+                                            max={1}
+                                            step={0.01}
                                             value={local.RF ?? 0}
                                             onChange={(e) =>
                                                 updateAsNumber(
@@ -199,7 +205,6 @@ export default function CompoundDetailsEditor({
                                                     1,
                                                 )
                                             }
-                                            type="text"
                                             className="input-field"
                                             placeholder="______"
                                         />
@@ -328,6 +333,10 @@ export default function CompoundDetailsEditor({
                                             </label>
                                             <input
                                                 id="input-uv-vis-peaks-count"
+                                                type="number"
+                                                min={0}
+                                                max={6}
+                                                step={1}
                                                 value={local.UV_Peaks_num}
                                                 onInput={(e) =>
                                                     updateAsArrayCount(
@@ -336,7 +345,6 @@ export default function CompoundDetailsEditor({
                                                         e.currentTarget.value,
                                                     )
                                                 }
-                                                type="text"
                                                 className="input-field w-20"
                                                 placeholder="___"
                                             />
@@ -375,6 +383,10 @@ export default function CompoundDetailsEditor({
                                             </label>
                                             <input
                                                 id="input-fl-peaks-count"
+                                                type="number"
+                                                min={0}
+                                                max={6}
+                                                step={1}
                                                 value={local.FL_Peaks_num}
                                                 onInput={(e) =>
                                                     updateAsArrayCount(
@@ -383,7 +395,6 @@ export default function CompoundDetailsEditor({
                                                         e.currentTarget.value,
                                                     )
                                                 }
-                                                type="text"
                                                 className="input-field w-20"
                                                 placeholder="___"
                                             />
