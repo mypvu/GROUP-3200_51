@@ -90,7 +90,7 @@ export default function CompoundDetailsEditor({
     ) {
         let valueAsNumber = Number(value);
         valueAsNumber = isNaN(valueAsNumber) ? 0 : valueAsNumber;
-        valueAsNumber = Math.min(5, valueAsNumber);
+        valueAsNumber = Math.min(3, valueAsNumber);
 
         // @ts-ignore
         let newArray: number[] = local[arrayKey] ?? [];
