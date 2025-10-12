@@ -150,7 +150,7 @@ export default function CompoundDetailsEditor({
                         */}
                             <a
                                 id="save-and-exit"
-                                href={"/analysis/new"}
+                                href={"/GROUP-3200_51/"}
                                 className="btn-hover-effect cursor-pointer rounded-lg bg-gray-500 px-6 py-2 text-center font-semibold text-white hover:bg-gray-600"
                             >
                                 Save & Exit

@@ -49,7 +49,7 @@ export default function CompoundItem({ session, compoundType }: Props) {
                         </p>
                     </div>
                     <a
-                        href={`/analysis/new/details/${compoundType}`}
+                        href={`/GROUP-3200_51/analysis/new/details/${compoundType}`}
                         class="btn-hover-effect rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
                     >
                         Edit
