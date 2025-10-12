@@ -14,7 +14,7 @@ async function runAlgorithm() {
 
     // run algorithm
     console.log("running...");
-    let result = await FilterService.run(sessionAlgorithmData.inputs);
+    let result = await FilterService.run_stage1(sessionAlgorithmData.inputs);
     console.log("result: ", result);
 
     // save to session data
