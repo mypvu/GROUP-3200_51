@@ -429,7 +429,7 @@ export default function CompoundDetailsEditor({
                                     {/* Centered Arrow at Bottom */}
                                     <div className="mt-8 text-center">
                                         <a
-                                            href="/analysis/new"
+                                            href="/GROUP-3200_51/analysis/new"
                                             title="Complete Analysis"
                                             className="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
                                         >
