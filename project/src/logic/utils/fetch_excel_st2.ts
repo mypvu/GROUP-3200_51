@@ -1,7 +1,5 @@
 import * as XLSX from "xlsx"
-import type { Compound, DBLabel } from "../core/models/compund.model";
-import type { MethodsType, Plot } from "../core/models/specturm.model";
-import type Specturm from "../core/models/specturm.model";
+import type { Plot } from "../core/models/specturm.model";
 
 
 export type Point = { x: number; y: number };
@@ -78,6 +76,10 @@ export function parseXYFromArrayBuffer(
 /** Convenience: fetch one Excel by URL and return XY points */
 export async function fetchAndParseXY(url: URL, sheetName = "1"): Promise<Plot> {
     const res = await fetch(url);
+    // if (!res.ok) {
+    //     console.log(res.status)
+    //     console.log(url)
+    // }
 
     if (!res.ok)
         throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);

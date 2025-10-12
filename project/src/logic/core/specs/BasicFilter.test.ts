@@ -74,7 +74,7 @@ describe("Manual testing for Basic Filter", () => {
     }
   })
 
-  it("Manual testing with NP_KDS",async () => {
+  it("Manual testing with NP_KDS", async () => {
 
     sample.NP_KDS = {
       "db_label": "NK",
@@ -88,16 +88,37 @@ describe("Manual testing for Basic Filter", () => {
       "FL_Peaks": [225, 316]
     }
 
+    sample.NP_LDS = {
+      "db_label": "NL",
+      "RF": 0.685,
+      "DEV_254nm": 121.3,
+      "DEV_366nm": 151.9,
+      "VSNP_366nm": 147.1,
+      "UV_Peaks_num": 2,
+      "UV_Peaks": [
+        269,
+        367
+      ],
+      "FL_Peaks_num": 2,
+      "FL_Peaks": [
+        223,
+        362
+      ]
+    }
+
     const cf = new CompoundFilter({
       samples: sample,
       version: "1"
     })
-    
+
     const candidates = (await cf.st1("1")).candidates
+    console.log(candidates)
     const s2_result = await sf.set(candidates.merge(), "1").extract()
-    console.log(s2_result.specturms[0])
-    
-    
+    console.log(s2_result.specturms.filter( (s: Specturm) => {
+      return s.compound.db_label === "NL"
+    } ))
+
+
   });
 
 });
@@ -136,6 +157,10 @@ describe("Manual testing for Basic Filter", () => {
 //           // compare expected
 //           const simpleResult = res.ids()[db_label as keyof ReturnType<typeof res.ids>];
 //           expect(simpleResult).toEqual(expected.result);
+
+//           // const s2_result = await sf.set(res.merge(), "1").extract()
+//           // console.log(s2_result)
+
 //         });
 //       }
 //     });
