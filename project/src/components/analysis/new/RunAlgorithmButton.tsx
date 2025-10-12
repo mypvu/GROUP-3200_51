@@ -1,4 +1,4 @@
-﻿import "styles/global.css";
+﻿import "@/styles/global.css";
 import SessionService, { Session } from "@/logic/session/session_service.ts";
 import CompoundItem from "./CompoundItem";
 import { useEffect, useState } from "preact/hooks";
