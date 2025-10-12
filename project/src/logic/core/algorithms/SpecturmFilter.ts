@@ -5,6 +5,7 @@ import type { Version } from "../models/version.model";
 import type Specturm from "../models/specturm.model";
 import { Stage2Methods, type MethodsType } from "../models/specturm.model";
 import { fetchAndParseXY, type Point } from "@/logic/utils/fetch_excel_st2";
+import { getConfidence } from "@/logic/utils/get_spectrum_confidence";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
@@ -43,11 +44,15 @@ export default class SpecturmFilter {
             if (!c?.name) continue
                 currentSpecturms = await this.fetchSpecturmMethods(c)
                 specturms = specturms.concat(currentSpecturms)
-        }
+                for (const s of specturms) {
+                    s.confidence = getConfidence(s.plot, this.un)
+
+        }   
 
         return {
             specturms,
             version: this.version
+        }
         }
     }
 
