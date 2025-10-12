@@ -28,6 +28,7 @@ export class SessionAlgorithmData {
     }
 
     public async save() {
+        this.inputs.version = "1";
         this.atom.set(this.inputs);
     }
 
@@ -35,6 +36,7 @@ export class SessionAlgorithmData {
         let newData = this.atom.get();
         if (newData !== undefined) {
             this.inputs = newData!;
+            this.inputs.version = "1";
             return true;
         }
 
