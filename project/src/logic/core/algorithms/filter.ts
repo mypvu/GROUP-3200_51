@@ -41,6 +41,11 @@ export default class CompoundFilter {
 
     async st2(candidates: DataSets, unknowSpecturm: ArrayBuffer): Promise<ResultStage2> {
         
+        if(!unknowSpecturm) 
+        {
+            throw new Error("There is no unknown specturm provided")
+        }
+
         const unknownPlot = parseXYFromArrayBuffer(unknowSpecturm)
         
         this.sf.set(candidates.merge(), "1", unknownPlot)

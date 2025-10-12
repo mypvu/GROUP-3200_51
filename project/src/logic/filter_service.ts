@@ -13,10 +13,7 @@ export interface FilterResult {
     input: InputParams;
 
     // Outputs
-    result: {
-        stage1?: ResultStage1;
-        stage2?: ResultStage2;
-    };
+    result: ResultStage1 | ResultStage2
 }
 
 export default class FilterService {
@@ -24,24 +21,34 @@ export default class FilterService {
      * Run the filtering algorithm on the given sample and datasets.
      * @param input StoredFilterInput from the InputService
      */
-    public static async run(input: InputParams): Promise<FilterResult> {
+
+    
+
+    public static async run_stage1(input: InputParams): Promise<FilterResult> {
         // Do calculations
         const cf = new CompoundFilter(input);
 
         // first stage database filtering -> candidates
         const st1_result = await cf.st1()
         
-        // second stage specturm overlay -> confidence
-        const st2_result = await cf.st2(st1_result.candidates, input.specturmBuffer)
 
         // Return
         return {
             input: input,
+            result: st1_result,
+        };
+    }
 
-            result: {
-                stage1: st1_result,
-                stage2: st2_result,
-            },
+    public static async run_stage2(input: InputParams, st1: ResultStage1): Promise<FilterResult> {
+        const cf = new CompoundFilter(input);
+
+        // second stage specturm overlay -> confidence
+        // const st2_result = await cf.st2(st1_result.candidates, input.specturmBuffer)
+        const st2_result = await cf.st2(st1.candidates, input.specturmBuffer)
+
+        return {
+            input: input,
+            result: st2_result,
         };
     }
 }
