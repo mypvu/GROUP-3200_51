@@ -335,7 +335,7 @@ export default function CompoundDetailsEditor({
                                                 id="input-uv-vis-peaks-count"
                                                 type="number"
                                                 min={0}
-                                                max={6}
+                                                max={3}
                                                 step={1}
                                                 value={local.UV_Peaks_num}
                                                 onInput={(e) =>
@@ -385,7 +385,7 @@ export default function CompoundDetailsEditor({
                                                 id="input-fl-peaks-count"
                                                 type="number"
                                                 min={0}
-                                                max={6}
+                                                max={3}
                                                 step={1}
                                                 value={local.FL_Peaks_num}
                                                 onInput={(e) =>
