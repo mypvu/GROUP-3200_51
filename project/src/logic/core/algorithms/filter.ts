@@ -41,12 +41,15 @@ export default class CompoundFilter {
 
     async st2(candidates: DataSets, unknowSpecturm: ArrayBuffer): Promise<ResultStage2> {
         
-        const point = parseXYFromArrayBuffer(unknowSpecturm)
+        const unknownPlot = parseXYFromArrayBuffer(unknowSpecturm)
         
-        
+        this.sf.set(candidates.merge(), "1", unknownPlot)
+
+        const res = await this.sf.extract()
         
         return {
-            version: ver
+            specturms: res.specturms,
+            version: res.version
         }
     }
 
