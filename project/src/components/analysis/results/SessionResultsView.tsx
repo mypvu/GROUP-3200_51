@@ -1,8 +1,9 @@
 ﻿import "styles/global.css";
 import SessionService, { Session } from "@/logic/session/session_service.ts";
 import { useState, useEffect } from "preact/hooks";
+import StageOneResults from "@/components/analysis/results/StageOneResults.tsx";
 
-export default function StageOneResults() {
+export default function SessionResultsView() {
     let [session, setSession] = useState<Session | undefined>();
 
     useEffect(() => {

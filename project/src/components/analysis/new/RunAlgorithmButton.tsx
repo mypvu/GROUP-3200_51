@@ -7,7 +7,9 @@ import FilterService from "@/logic/filter_service.ts";
 // NOTE
 // This component is only usable for debugging at the moment
 
-async function runAlgorithm(session: Session, sessionService: SessionService) {
+async function runAlgorithm() {
+    let sessionService = SessionService.getInstance();
+    let session = sessionService.getCurrentSession();
     const sessionAlgorithmData = await session.getAlgorithmData();
 
     // run algorithm
@@ -24,16 +26,18 @@ async function runAlgorithm(session: Session, sessionService: SessionService) {
     await sessionAlgorithmResult.save();
 
     console.log(result);
+
+    window.location.href = import.meta.env.BASE_URL + "/analysis/results";
 }
 
 export default function RunAlgorithmButton() {
     let sessionService = SessionService.getInstance();
 
-    let [session, setSession] = useState<Session | undefined>();
     let [ready, setReady] = useState<Boolean | undefined>();
 
     // TODO: clean up
     async function canComplete(): Promise<Boolean> {
+        let session = sessionService.getCurrentSession();
         if (session === undefined) return false;
         const sessionAlgorithmData = await session.getAlgorithmData();
         if (sessionAlgorithmData === undefined) return false;
@@ -42,8 +46,6 @@ export default function RunAlgorithmButton() {
     }
 
     useEffect(() => {
-        setSession(sessionService.getCurrentSession());
-
         (async () => {
             setReady(await canComplete());
         })();
@@ -54,7 +56,7 @@ export default function RunAlgorithmButton() {
             {ready !== undefined ? (
                 ready ? (
                     <div
-                        onClick={() => runAlgorithm(session, sessionService)}
+                        onClick={() => runAlgorithm()}
                         className="flex cursor-pointer flex-col gap-3 bg-green-500 p-4 lg:col-span-2"
                     >
                         DEBUG BUTTON: ready to run algorithm, click here
