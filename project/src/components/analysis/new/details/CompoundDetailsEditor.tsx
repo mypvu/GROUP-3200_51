@@ -333,6 +333,10 @@ export default function CompoundDetailsEditor({
                                             </label>
                                             <input
                                                 id="input-uv-vis-peaks-count"
+                                                type="number"
+                                                min={0}
+                                                max={6}
+                                                step={1}
                                                 value={local.UV_Peaks_num}
                                                 onInput={(e) =>
                                                     updateAsArrayCount(
@@ -341,7 +345,6 @@ export default function CompoundDetailsEditor({
                                                         e.currentTarget.value,
                                                     )
                                                 }
-                                                type="text"
                                                 className="input-field w-20"
                                                 placeholder="___"
                                             />
@@ -380,6 +383,10 @@ export default function CompoundDetailsEditor({
                                             </label>
                                             <input
                                                 id="input-fl-peaks-count"
+                                                type="number"
+                                                min={0}
+                                                max={6}
+                                                step={1}
                                                 value={local.FL_Peaks_num}
                                                 onInput={(e) =>
                                                     updateAsArrayCount(
@@ -388,7 +395,6 @@ export default function CompoundDetailsEditor({
                                                         e.currentTarget.value,
                                                     )
                                                 }
-                                                type="text"
                                                 className="input-field w-20"
                                                 placeholder="___"
                                             />
