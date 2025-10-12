@@ -12,7 +12,7 @@ function formatDateTime(iso: Date) {
 export default function SessionItem({ session }: Props) {
     const onSessionContinueClicked = () => {
         // Continue was clicked, change to that session
-        new SessionService().setCurrentSession(session);
+        SessionService.getInstance().setCurrentSession(session);
 
         // Redirect to the new analysis page
         window.location.href = import.meta.env.BASE_URL + "/analysis/new";

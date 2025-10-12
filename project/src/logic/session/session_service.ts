@@ -141,6 +141,13 @@ export default class SessionService {
     private sessions: Session[];
     private currentSession?: Session;
 
+    private static singleton?: SessionService;
+
+    public static getInstance(): SessionService {
+        this.singleton ??= new SessionService();
+        return this.singleton!;
+    }
+
     constructor() {
         // Get the list of sessions from local storage
         this.sessions = persistentSessionList.get() ?? [];

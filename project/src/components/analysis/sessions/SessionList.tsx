@@ -6,7 +6,7 @@ export default function SessionList() {
     let [sessions, setSessions] = useState<Session[] | undefined>();
 
     useEffect(() => {
-        const sessionService = new SessionService();
+        const sessionService = SessionService.getInstance();
         setSessions(sessionService.getSessions());
     }, []);
 

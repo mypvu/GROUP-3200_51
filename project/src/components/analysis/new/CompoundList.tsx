@@ -7,7 +7,7 @@ export default function CompoundList() {
     let [session, setSession] = useState<Session | undefined>();
 
     useEffect(() => {
-        const sessionService = new SessionService();
+        const sessionService = SessionService.getInstance();
         let currentSession = sessionService.getCurrentSession();
         if (currentSession === undefined) {
             (async () => {

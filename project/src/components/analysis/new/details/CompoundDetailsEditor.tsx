@@ -34,7 +34,7 @@ export default function CompoundDetailsEditor({
 
         if (newCompound === undefined) {
             console.log("No compound found!");
-            window.location.href = "/analysis/new";
+            window.location.href = import.meta.env.BASE_URL + "/analysis/new";
             return;
         }
 
