@@ -24,7 +24,7 @@ export default function StageOneResults({ session }: Props) {
 
         (async () => {
             let result = await session.getAlgorithmResult();
-            let results = result?.data?.result?.stage1;
+            let results = result?.data?.result as ResultStage1 | undefined;
             if (results === undefined) {
                 console.log("No data found!");
                 window.location.href =
