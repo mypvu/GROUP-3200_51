@@ -121,7 +121,10 @@ export const compoundMappings: CompoundMapping[] = [
 ];
 
 // helper lookup
-export function getImageNameFromExcel(excelName: string): string | undefined {
+export function getImageNameFromExcel(excelName?: string): string | undefined {
+  if (!excelName)
+    return ""
+  
   const entry = compoundMappings.find(
     (item) => item.excelName.toLowerCase() === excelName.toLowerCase()
   );

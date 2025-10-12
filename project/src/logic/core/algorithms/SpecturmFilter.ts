@@ -6,6 +6,7 @@ import type Specturm from "../models/specturm.model";
 import { Stage2Methods, type MethodsType } from "../models/specturm.model";
 import { fetchAndParseXY, type Point } from "@/logic/utils/fetch_excel_st2";
 import { getConfidence } from "@/logic/utils/get_spectrum_confidence";
+import { getImageNameFromExcel } from "@/logic/utils/naming_mapping";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
@@ -35,10 +36,6 @@ export default class SpecturmFilter {
     async extract(): Promise<ResultStage2> {
         let currentSpecturms: Specturm[] = []
         let specturms: Specturm[] = []
-
-        // testing propose
-        this.candidates = [this.candidates[0]]
-        this.candidates[0].name = "pyrogallol"
 
         for (const c of this.candidates) {
             if (!c?.name) continue
@@ -85,6 +82,7 @@ export default class SpecturmFilter {
         for (const s of settled) {
             if (s.status === "fulfilled" && s.value) 
                 results.push(s.value)
+                // console.log(s.value.compound)
         }
         return results
     }
@@ -94,7 +92,7 @@ export default class SpecturmFilter {
      * Assumes fetchAndParseXY(url) returns { Xs: number[], Ys: number[] }.
      */
     private async fetchSpecturm(compound: Compound, method: MethodsType): Promise<Specturm> {
-        const name = compound?.name + ".xlsx"
+        const name = getImageNameFromExcel(compound.name) + ".xlsx"
 
         if (!name) 
             throw new Error("Compound name is required")
