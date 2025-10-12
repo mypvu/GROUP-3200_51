@@ -1,4 +1,4 @@
 {
-    "database_url": "http://192.168.1.15",
+    "database_url": "https://mypvu.github.io/GROUP-3200_51/data/database",
     "timeout": 2000
 }

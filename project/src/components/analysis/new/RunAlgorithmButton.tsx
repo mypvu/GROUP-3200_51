@@ -1,4 +1,4 @@
-﻿import "styles/global.css";
+﻿import "@/styles/global.css";
 import SessionService, { Session } from "@/logic/session/session_service.ts";
 import CompoundItem from "./CompoundItem";
 import { useEffect, useState } from "preact/hooks";
@@ -27,12 +27,9 @@ async function runAlgorithm(session: Session, sessionService: SessionService) {
 }
 
 export default function RunAlgorithmButton() {
-    let sessionService = new SessionService();
+    let sessionService = SessionService.getInstance();
 
-    let [session, setSession] = useState<Session | undefined>(
-        sessionService.getCurrentSession(),
-    );
-
+    let [session, setSession] = useState<Session | undefined>();
     let [ready, setReady] = useState<Boolean | undefined>();
 
     // TODO: clean up
@@ -45,6 +42,8 @@ export default function RunAlgorithmButton() {
     }
 
     useEffect(() => {
+        setSession(sessionService.getCurrentSession());
+
         (async () => {
             setReady(await canComplete());
         })();
@@ -54,7 +53,10 @@ export default function RunAlgorithmButton() {
         <>
             {ready !== undefined ? (
                 ready ? (
-                    <div onClick={() => runAlgorithm(session, sessionService)} className="flex cursor-pointer flex-col gap-3 bg-green-500 p-4 lg:col-span-2">
+                    <div
+                        onClick={() => runAlgorithm(session, sessionService)}
+                        className="flex cursor-pointer flex-col gap-3 bg-green-500 p-4 lg:col-span-2"
+                    >
                         DEBUG BUTTON: ready to run algorithm, click here
                     </div>
                 ) : (

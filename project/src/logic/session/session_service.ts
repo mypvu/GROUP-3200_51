@@ -28,6 +28,7 @@ export class SessionAlgorithmData {
     }
 
     public async save() {
+        this.inputs.version = "1";
         this.atom.set(this.inputs);
     }
 
@@ -35,6 +36,7 @@ export class SessionAlgorithmData {
         let newData = this.atom.get();
         if (newData !== undefined) {
             this.inputs = newData!;
+            this.inputs.version = "1";
             return true;
         }
 
@@ -138,6 +140,13 @@ const persistentSessionCurrentId = persistentAtom<string | undefined>(
 export default class SessionService {
     private sessions: Session[];
     private currentSession?: Session;
+
+    private static singleton?: SessionService;
+
+    public static getInstance(): SessionService {
+        this.singleton ??= new SessionService();
+        return this.singleton!;
+    }
 
     constructor() {
         // Get the list of sessions from local storage

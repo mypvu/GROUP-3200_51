@@ -34,7 +34,7 @@ export default function CompoundDetailsEditor({
 
         if (newCompound === undefined) {
             console.log("No compound found!");
-            window.location.href = "/analysis/new";
+            window.location.href = import.meta.env.BASE_URL + "/analysis/new";
             return;
         }
 
@@ -90,7 +90,7 @@ export default function CompoundDetailsEditor({
     ) {
         let valueAsNumber = Number(value);
         valueAsNumber = isNaN(valueAsNumber) ? 0 : valueAsNumber;
-        valueAsNumber = Math.min(5, valueAsNumber);
+        valueAsNumber = Math.min(3, valueAsNumber);
 
         // @ts-ignore
         let newArray: number[] = local[arrayKey] ?? [];
@@ -150,7 +150,7 @@ export default function CompoundDetailsEditor({
                         */}
                             <a
                                 id="save-and-exit"
-                                href={"/analysis/new"}
+                                href={"/GROUP-3200_51/"}
                                 className="btn-hover-effect cursor-pointer rounded-lg bg-gray-500 px-6 py-2 text-center font-semibold text-white hover:bg-gray-600"
                             >
                                 Save & Exit
@@ -335,7 +335,7 @@ export default function CompoundDetailsEditor({
                                                 id="input-uv-vis-peaks-count"
                                                 type="number"
                                                 min={0}
-                                                max={6}
+                                                max={3}
                                                 step={1}
                                                 value={local.UV_Peaks_num}
                                                 onInput={(e) =>
@@ -385,7 +385,7 @@ export default function CompoundDetailsEditor({
                                                 id="input-fl-peaks-count"
                                                 type="number"
                                                 min={0}
-                                                max={6}
+                                                max={3}
                                                 step={1}
                                                 value={local.FL_Peaks_num}
                                                 onInput={(e) =>
@@ -429,7 +429,7 @@ export default function CompoundDetailsEditor({
                                     {/* Centered Arrow at Bottom */}
                                     <div className="mt-8 text-center">
                                         <a
-                                            href="/analysis/new"
+                                            href="/GROUP-3200_51/analysis/new"
                                             title="Complete Analysis"
                                             className="arrow-hover inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-2 border-gray-300 bg-gray-100"
                                         >

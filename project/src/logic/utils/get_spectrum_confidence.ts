@@ -1,4 +1,4 @@
-import { type Plot } from "../core/models/specturm.model";
+import type { Plot } from "@/logic/core/models/specturm.model";
 import { DEFAULT_BOUNDS_SPEC } from "./rw";
 
 export function getUpperLowerBound(standard: Plot, bounds = DEFAULT_BOUNDS_SPEC): { lower: Plot; upper: Plot } {

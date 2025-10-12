@@ -1,23 +1,25 @@
 ﻿import SessionService, { Session } from "@/logic/session/session_service.ts";
 import SessionItem from "./SessionItem";
+import { useEffect, useState } from "preact/hooks";
 
 export default function SessionList() {
-    let sessionService = new SessionService();
+    let [sessions, setSessions] = useState<Session[] | undefined>();
+
+    useEffect(() => {
+        const sessionService = SessionService.getInstance();
+        setSessions(sessionService.getSessions());
+    }, []);
 
     return (
         <>
-            {!sessionService.hasAnySessions() ? (
+            {sessions === undefined || sessions.length === 0 ? (
                 <p className="text-center text-gray-500">
                     No saved analyses found.
                 </p>
             ) : (
                 <main className="flex w-full max-w-2xl flex-col gap-4 rounded-2xl bg-white p-8 shadow-lg">
-                    {sessionService.getSessions().map((session: Session) => (
-                        <SessionItem
-                            key={session.id}
-                            session={session}
-                            sessionService={sessionService}
-                        />
+                    {sessions.map((session: Session) => (
+                        <SessionItem key={session.id} session={session} />
                     ))}
                 </main>
             )}

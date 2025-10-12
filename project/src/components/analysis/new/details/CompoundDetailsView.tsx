@@ -19,11 +19,11 @@ export default function CompoundDetailsView({ compoundType }: Props) {
 
     useEffect(() => {
         // Set the session clientside only
-        session = new SessionService().getCurrentSession();
+        session = SessionService.getInstance().getCurrentSession();
 
         if (session === undefined) {
             console.log("No session found!");
-            window.location.href = "/analysis/new";
+            window.location.href = import.meta.env.BASE_URL + "/analysis/new";
             return;
         }
 
@@ -36,7 +36,7 @@ export default function CompoundDetailsView({ compoundType }: Props) {
         <>
             {sessionAlgorithmData !== undefined ? (
                 <CompoundDetailsEditor
-                    session={session}
+                    session={session!}
                     sessionAlgorithmData={sessionAlgorithmData}
                     compoundType={compoundType}
                 ></CompoundDetailsEditor>

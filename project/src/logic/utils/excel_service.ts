@@ -16,7 +16,8 @@ export default class ExcelService{
     }
 
     async pull_datasets(): Promise<DataSets> {
-        return await fetch_dataset(this.config.url)
+        // TODO: fix this (databaseUrl argument is wrong)
+        return await fetch_dataset(this.config.url, this.config.url);
     }
 
     

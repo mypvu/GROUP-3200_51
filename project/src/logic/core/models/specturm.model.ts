@@ -22,7 +22,7 @@ export interface CompoundSpecturms {
 export type Plot = Point[]
 
 export enum MethodsType {
-    DF = "DEV_FL",
+    FD = "FL_DEV",
     UD = "UV_DEV",
     FDN = "FL_DER_NP",
     FDV = "FL_DER_VSA",
@@ -31,5 +31,5 @@ export enum MethodsType {
 }
 
 export const Stage2Methods: string[] = [
-    MethodsType.DF, MethodsType.UD, MethodsType.FDN, 
+    MethodsType.FD, MethodsType.UD, MethodsType.FDN, 
     MethodsType.FDV, MethodsType.UDP, MethodsType.UDV]
