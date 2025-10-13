@@ -21,7 +21,7 @@ export default function AnalysisNewCompoundList() {
     return (
         <>
             {session !== undefined ? (
-                <div className="flex flex-col gap-3 transition-opacity delay-150 ease-in-out">
+                <div className="flex flex-col gap-3">
                     <CompoundItem
                         session={session}
                         compoundType="kds-np"
