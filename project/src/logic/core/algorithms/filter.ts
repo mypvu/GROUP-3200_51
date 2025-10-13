@@ -31,7 +31,7 @@ export default class CompoundFilter {
         this.bf.set(this.input.samples,ds)
 
         // extract result from sample provided
-        const res_ds = this.bf.extract()
+        const res_ds = this.bf.extract().filterPaired()
 
         return {
             ids: res_ds.ids(),
