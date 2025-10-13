@@ -1,3 +1,7 @@
+---
+// plotspectra.astro
+---
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -25,10 +29,12 @@
         border: 2px solid #d1d5db;
         border-radius: 1rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        max-width: 95vw;
+        max-width: 1400px;
+        width: 95%;
         margin: 0 auto;
         padding: 2rem;
         position: relative;
+        overflow: hidden;
       }
       
       .download-btn {
@@ -196,6 +202,8 @@
       
       .results-container {
         display: none;
+        width: 100%;
+        max-width: 100%;
       }
       
       .results-container.visible {
@@ -213,6 +221,8 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
+        width: 100%;
+        max-width: 100%;
       }
       
       @media (min-width: 1024px) {
@@ -227,6 +237,10 @@
         border-radius: 0.75rem;
         padding: 1rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        position: relative;
       }
       
       .chart-card h3 {
@@ -238,7 +252,17 @@
       }
       
       .chart-card canvas {
-        height: 200px !important;
+        max-width: 100%;
+      }
+      
+      .chart-card.full-width {
+        grid-column: 1 / -1;
+        height: 500px;
+      }
+      
+      .chart-card.full-width .chart-wrapper {
+        height: 440px;
+        position: relative;
       }
       
       input[type="file"] {
@@ -296,7 +320,7 @@
       </div>
     </div>
 
-    <script>
+    <script is:inline>
       const fileInput = document.getElementById("fileInput");
       const fileList = document.getElementById("fileList");
       const fileCount = document.getElementById("fileCount");
@@ -314,7 +338,7 @@
         const files = Array.from(e.target.files);
         
         if (spectraData.length + files.length > MAX_FILES) {
-          alert(`You can only upload up to ${MAX_FILES} files. Currently have ${spectraData.length} file(s).`);
+          alert('You can only upload up to ' + MAX_FILES + ' files. Currently have ' + spectraData.length + ' file(s).');
           fileInput.value = "";
           return;
         }
@@ -322,7 +346,7 @@
         for (const file of files) {
           const fileName = file.name;
           if (spectraData.some(s => s.originalName === fileName)) {
-            alert(`File "${fileName}" has already been uploaded.`);
+            alert('File "' + fileName + '" has already been uploaded.');
             continue;
           }
           
@@ -345,7 +369,7 @@
               });
             }
           } catch (err) {
-            alert(`Error reading file ${fileName}: ${err.message}`);
+            alert('Error reading file ' + fileName + ': ' + err.message);
           }
         }
         updateFileDisplay();
@@ -361,14 +385,14 @@
         fileList.innerHTML = "";
         if (spectraData.length === 0) {
           fileList.innerHTML = '<li class="empty">No files uploaded</li>';
-          fileCount.textContent = `0 / ${MAX_FILES} files uploaded`;
+          fileCount.textContent = '0 / ' + MAX_FILES + ' files uploaded';
           return;
         }
 
         spectraData.forEach((s, i) => {
           const li = document.createElement("li");
           const span = document.createElement("span");
-          span.textContent = `${i + 1}. ${s.name}`;
+          span.textContent = (i + 1) + '. ' + s.name;
           
           const deleteBtn = document.createElement("button");
           deleteBtn.textContent = "Delete";
@@ -380,22 +404,72 @@
           fileList.appendChild(li);
         });
 
-        fileCount.textContent = `${spectraData.length} / ${MAX_FILES} files uploaded`;
+        fileCount.textContent = spectraData.length + ' / ' + MAX_FILES + ' files uploaded';
       }
 
-      runBtn.addEventListener("click", () => {
-        if (spectraData.length === 0) {
+      function prepareAlgorithmInput(spectra) {
+        return {
+          unknownSpecturms: spectra.map(s => ({
+            name: s.name,
+            data: s.plot,
+            wavelengths: s.plot.map(p => p.x),
+            absorbances: s.plot.map(p => p.y)
+          })),
+          sampleCount: spectra.length,
+          metadata: {
+            timestamp: new Date().toISOString(),
+            fileNames: spectra.map(s => s.originalName)
+          }
+        };
+      }
+
+      async function runSpectralOverlayAnalysis(inputParams) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const normalizedSpectra = inputParams.unknownSpecturms.map(spectrum => {
+          const maxAbs = Math.max(...spectrum.absorbances);
+          return {
+            name: spectrum.name,
+            wavelengths: spectrum.wavelengths,
+            absorbances: spectrum.absorbances,
+            normalizedAbs: spectrum.absorbances.map(a => a / (maxAbs || 1)),
+            maxAbsorbance: maxAbs
+          };
+        });
+
+        createOverlayChart(normalizedSpectra);
+        
+        if (normalizedSpectra.length <= 3) {
+          normalizedSpectra.forEach(spec => createIndividualChart(spec));
+        }
+      }
+
+      runBtn.addEventListener("click", async () => {
+        const dataLength = spectraData.length;
+        if (dataLength === 0) {
           alert("Please upload sample spectra!");
           return;
         }
 
-        chartInstances.forEach(chart => chart.destroy());
-        chartInstances = [];
-        chartsContainer.innerHTML = "";
+        runBtn.disabled = true;
+        runBtn.textContent = "⏳ Processing...";
 
-        createOverlayChart(spectraData);
+        try {
+          chartInstances.forEach(chart => chart.destroy());
+          chartInstances = [];
+          chartsContainer.innerHTML = "";
 
-        resultsContainer.classList.add("visible");
+          const inputParams = prepareAlgorithmInput(spectraData);
+          
+          await runSpectralOverlayAnalysis(inputParams);
+
+          resultsContainer.classList.add("visible");
+        } catch (err) {
+          alert('Analysis error: ' + (err.message || 'Unknown error'));
+        } finally {
+          runBtn.disabled = false;
+          runBtn.textContent = "▶️ Run Analysis";
+        }
       });
 
       function createOverlayChart(spectra) {
@@ -405,42 +479,129 @@
         ];
 
         const chartDiv = document.createElement("div");
-        chartDiv.className = "chart-card";
-        chartDiv.style.gridColumn = "1 / -1";
+        chartDiv.className = "chart-card full-width";
         
-        chartDiv.innerHTML = `
-          <h3>Spectral Overlay (${spectra.length} samples)</h3>
-          <canvas id="overlayChart"></canvas>
-        `;
+        chartDiv.innerHTML = '<h3>Spectral Overlay Analysis (' + spectra.length + ' samples)</h3><div class="chart-wrapper"><canvas id="overlayChart"></canvas></div>';
         chartsContainer.appendChild(chartDiv);
 
         const canvas = document.getElementById("overlayChart");
         const ctx = canvas.getContext("2d");
 
         const datasets = spectra.map((spec, idx) => ({
-          label: spec.name,
-          data: spec.plot,
+          label: spec.name + ' (max: ' + spec.maxAbsorbance.toFixed(3) + ')',
+          data: spec.wavelengths.map((wl, i) => ({ 
+            x: wl, 
+            y: spec.absorbances[i] 
+          })),
           borderColor: colors[idx % colors.length],
-          borderWidth: 2,
+          backgroundColor: colors[idx % colors.length] + '20',
+          borderWidth: 2.5,
           fill: false,
-          tension: 0.1,
+          tension: 0.2,
           pointRadius: 0,
+          pointHitRadius: 5,
         }));
 
         const chart = new Chart(ctx, {
           type: "line",
-          data: { datasets },
+          data: { datasets: datasets },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
             plugins: {
               legend: { 
                 position: "top",
                 labels: { 
                   font: { size: 11 },
-                  color: '#374151'
+                  color: '#374151',
+                  padding: 12,
+                  usePointStyle: true
                 }
               },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.dataset.label + ': ' + context.parsed.y.toFixed(4) + ' ABS';
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                type: "linear",
+                title: { 
+                  display: true, 
+                  text: "Wavelength (λ nm)", 
+                  font: { size: 13, weight: 'bold' },
+                  color: '#374151'
+                },
+                ticks: { 
+                  color: '#6b7280',
+                  font: { size: 10 }
+                },
+                grid: { color: '#e5e7eb' }
+              },
+              y: {
+                title: { 
+                  display: true, 
+                  text: "Absorbance (ABS)", 
+                  font: { size: 13, weight: 'bold' },
+                  color: '#374151'
+                },
+                ticks: { 
+                  color: '#6b7280',
+                  font: { size: 10 }
+                },
+                grid: { color: '#e5e7eb' }
+              },
+            },
+          },
+        });
+
+        chartInstances.push(chart);
+      }
+
+      function createIndividualChart(spectrum) {
+        const colors = {
+          0: "#2b7de9", 1: "#ef4444", 2: "#10b981"
+        };
+        const idx = chartInstances.length - 1;
+
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "chart-card";
+        
+        chartDiv.innerHTML = '<h3>' + spectrum.name + '</h3><canvas id="chart_' + idx + '"></canvas>';
+        chartsContainer.appendChild(chartDiv);
+
+        const canvas = document.getElementById('chart_' + idx);
+        const ctx = canvas.getContext("2d");
+
+        const chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            datasets: [{
+              label: spectrum.name,
+              data: spectrum.wavelengths.map((wl, i) => ({ 
+                x: wl, 
+                y: spectrum.absorbances[i] 
+              })),
+              borderColor: colors[idx % 3],
+              backgroundColor: colors[idx % 3] + '15',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.2,
+              pointRadius: 0,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
             },
             scales: {
               x: {
@@ -448,27 +609,26 @@
                 title: { 
                   display: true, 
                   text: "λ nm", 
-                  font: { size: 12 },
+                  font: { size: 11 },
                   color: '#374151'
                 },
-                ticks: { color: '#6b7280' },
+                ticks: { color: '#6b7280', font: { size: 9 } },
                 grid: { color: '#e5e7eb' }
               },
               y: {
                 title: { 
                   display: true, 
                   text: "ABS", 
-                  font: { size: 12 },
+                  font: { size: 11 },
                   color: '#374151'
                 },
-                ticks: { color: '#6b7280' },
+                ticks: { color: '#6b7280', font: { size: 9 } },
                 grid: { color: '#e5e7eb' }
               },
             },
           },
         });
 
-        canvas.style.height = '400px';
         chartInstances.push(chart);
       }
 
