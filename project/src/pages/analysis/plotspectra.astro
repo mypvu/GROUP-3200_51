@@ -2,353 +2,330 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spectral Overlay Visualizer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        min-height: 100vh;
+        background-color: #e8eef5;
+        padding: 2rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      }
+      
+      .container {
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 95vw;
+        margin: 0 auto;
+        padding: 2rem;
+        position: relative;
+      }
+      
+      .download-btn {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        border: 2px solid #d1d5db;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #374151;
+      }
+      
+      .download-btn:hover {
+        background: #f9fafb;
+      }
+      
+      .download-btn svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+      
+      h1 {
+        font-size: 1.875rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #1f2937;
+      }
+      
+      .stage-section {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 0.75rem;
+      }
+      
+      .stage-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+      
+      .upload-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .upload-btn {
+        background: #2b7de9;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        display: inline-block;
+      }
+      
+      .upload-btn:hover {
+        background: #1a6dd6;
+      }
+      
+      .file-list {
+        list-style: none;
+        background: #f9fafb;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        width: 20rem;
+        min-height: 60px;
+        max-height: 100px;
+        overflow-y: auto;
+        font-size: 0.875rem;
+        color: #374151;
+      }
+      
+      .file-list li {
+        padding: 0.25rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .file-list .empty {
+        text-align: center;
+        font-style: italic;
+        color: #9ca3af;
+        display: block;
+      }
+      
+      .delete-file-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      .delete-file-btn:hover {
+        background: #dc2626;
+      }
+      
+      .file-count {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #6b7280;
+      }
+      
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .btn-run {
+        background: #2b7de9;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      .btn-run:hover {
+        background: #1a6dd6;
+      }
+      
+      .btn-clear {
+        background: #6b7280;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      
+      .btn-clear:hover {
+        background: #4b5563;
+      }
+      
+      .results-container {
+        display: none;
+      }
+      
+      .results-container.visible {
+        display: block;
+      }
+      
+      .results-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+      
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      @media (min-width: 1024px) {
+        .charts-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      .chart-card {
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      
+      .chart-card h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        color: #1f2937;
+      }
+      
+      .chart-card canvas {
+        height: 200px !important;
+      }
+      
+      input[type="file"] {
+        display: none;
+      }
+    </style>
   </head>
 
-  <body class="min-h-screen bg-gray-100 p-4">
-    <!-- Main Container -->
-    <div class="bg-white border-[4px] border-black rounded-3xl shadow-2xl w-full max-w-[95vw] mx-auto p-6 relative">
+  <body>
+    <div class="container">
       
-      <!-- Download Button -->
-      <button
-        id="downloadBtn"
-        class="absolute top-6 right-8 border-2 border-gray-800 rounded-xl px-5 py-2.5 bg-white hover:bg-gray-100 flex items-center space-x-2 font-bold transition shadow-md"
-      >
-        <span class="text-lg">Download</span>
+      <button id="downloadBtn" class="download-btn">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-          stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+          stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
         </svg>
+        <span>Download</span>
       </button>
 
-      <h1 class="text-3xl font-bold text-center mb-6">Spectral Overlays</h1>
+      <h1>Spectral Overlay Visualizer</h1>
 
-      <!-- Upload Section -->
-      <div class="flex flex-col items-center mb-6 space-y-3">
-        <label
-          for="excelInput"
-          class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold shadow-lg hover:bg-indigo-700 cursor-pointer transition text-sm"
-        >
-          📁 Select Excel Files (up to 6 total)
-        </label>
+      <div class="stage-section">
+        <h2 class="stage-title">Upload Sample Spectra</h2>
+        
+        <div class="upload-area">
+          <label for="fileInput" class="upload-btn">
+            📁 Upload Sample Spectra (Max 6 files)
+          </label>
+          <input id="fileInput" type="file" accept=".xlsx,.xls" multiple />
 
-        <input
-          id="excelInput"
-          type="file"
-          accept=".xlsx,.xls"
-          multiple
-          class="hidden"
-        />
+          <ul id="fileList" class="file-list">
+            <li class="empty">No files uploaded</li>
+          </ul>
 
-        <!-- File List -->
-        <ul
-          id="fileList"
-          class="text-gray-700 text-xs bg-gray-50 border-2 border-gray-300 rounded-lg p-3 w-80 min-h-[60px] max-h-[100px] overflow-y-auto"
-        >
-          <li class="text-gray-400 italic text-center">No files selected</li>
-        </ul>
-
-        <!-- Counter -->
-        <div id="fileCount" class="text-xs font-bold text-gray-600">
-          0 / 6 files uploaded
-        </div>
-
-        <!-- Buttons -->
-        <div class="flex space-x-3 mt-2">
-          <button
-            id="runBtn"
-            class="bg-green-600 text-white px-5 py-2 rounded-lg shadow-lg hover:bg-green-700 transition font-bold text-sm"
-          >
-            ▶️ Run Analysis
-          </button>
-
-          <button
-            id="clearBtn"
-            class="bg-red-500 text-white px-5 py-2 rounded-lg shadow-lg hover:bg-red-600 transition font-bold text-sm"
-          >
-            🗑️ Clear
-          </button>
+          <div id="fileCount" class="file-count">
+            0 / 6 files uploaded
+          </div>
         </div>
       </div>
 
-      <!-- Charts Grid -->
-      <div id="chartsContainer" class="grid grid-cols-1 gap-4">
-        <!-- Charts will be dynamically generated here -->
+      <div class="action-buttons">
+        <button id="runBtn" class="btn-run">
+          ▶️ Run Analysis
+        </button>
+
+        <button id="clearBtn" class="btn-clear">
+          🗑️ Clear All
+        </button>
+      </div>
+
+      <div id="resultsContainer" class="results-container">
+        <h2 class="results-title">Analysis Results</h2>
+        <div id="chartsContainer" class="charts-grid"></div>
       </div>
     </div>
 
     <script>
-      const input = document.getElementById("excelInput");
+      const fileInput = document.getElementById("fileInput");
       const fileList = document.getElementById("fileList");
       const fileCount = document.getElementById("fileCount");
       const runBtn = document.getElementById("runBtn");
       const clearBtn = document.getElementById("clearBtn");
       const downloadBtn = document.getElementById("downloadBtn");
+      const resultsContainer = document.getElementById("resultsContainer");
       const chartsContainer = document.getElementById("chartsContainer");
 
       let spectraData = [];
       let chartInstances = [];
+      const MAX_FILES = 6;
 
-      // ---------- Matching Logic ----------
-      function calculateMatch(unknown, standard) {
-        if (!unknown || !standard || !unknown.length || !standard.length) {
-          return { percentage: 0, peakWithinRange: false };
-        }
-
-        const peakStd = standard.reduce((a, b) => (b.y > a.y ? b : a), standard[0]);
-        const peakUnk = unknown.reduce((a, b) => (b.y > a.y ? b : a), unknown[0]);
-        const peakDiff = Math.abs(peakStd.x - peakUnk.x) / peakStd.x;
-        const peakWithinRange = peakDiff <= 0.02;
-
-        let matchCount = 0;
-        let totalCount = 0;
-
-        for (const std of standard) {
-          const unk = unknown.find((u) => Math.abs(u.x - std.x) < 0.5);
-          if (unk) {
-            const lower = std.y * 0.75;
-            const upper = std.y * 1.25;
-            totalCount++;
-            if (unk.y >= lower && unk.y <= upper) matchCount++;
-          }
-        }
-
-        const percentage = totalCount ? ((matchCount / totalCount) * 100).toFixed(1) : 0;
-        return { percentage: parseFloat(percentage), peakWithinRange };
-      }
-
-      // ---------- Grouping ----------
-      function groupByCompound(spectra) {
-        const groups = {};
-        for (const s of spectra) {
-          const compound = s.name.split("_")[0];
-          if (!groups[compound]) groups[compound] = [];
-          groups[compound].push(s);
-        }
-        return groups;
-      }
-
-      // ---------- Color Palette ----------
-      function getColor(i) {
-        const palette = [
-          "#3b82f6", "#ef4444", "#10b981", "#f59e0b", 
-          "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"
-        ];
-        return palette[i % palette.length];
-      }
-
-      // ---------- Plot All Spectra ----------
-      function plotAllSpectra(spectra) {
-        // Clear existing charts
-        chartInstances.forEach(chart => chart.destroy());
-        chartInstances = [];
-        chartsContainer.innerHTML = "";
-
-        const grouped = groupByCompound(spectra);
+      fileInput.addEventListener("change", async (e) => {
+        const files = Array.from(e.target.files);
         
-        // Create overlay chart at the top
-        createOverlayChart(grouped);
-
-        // Create individual compound charts
-        for (const [compound, files] of Object.entries(grouped)) {
-          if (files.length >= 2) {
-            createCompoundChart(compound, files);
-          }
-        }
-      }
-
-      // ---------- Create Overlay Chart (Top) ----------
-      function createOverlayChart(grouped) {
-        const chartDiv = document.createElement("div");
-        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-4 shadow-lg";
-        chartDiv.innerHTML = `<canvas id="overlayChart"></canvas>`;
-        chartsContainer.appendChild(chartDiv);
-
-        const canvas = document.getElementById("overlayChart");
-        const ctx = canvas.getContext("2d");
-        const datasets = [];
-
-        for (const [compound, files] of Object.entries(grouped)) {
-          files.forEach((file, idx) => {
-            datasets.push({
-              label: file.name,
-              data: file.plot,
-              borderColor: getColor(Object.keys(grouped).indexOf(compound) * 2 + idx),
-              borderWidth: 2,
-              fill: false,
-              tension: 0.1,
-              pointRadius: 0,
-            });
-          });
-        }
-
-        const chart = new Chart(ctx, {
-          type: "line",
-          data: { datasets },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            aspectRatio: 3.5,
-            plugins: {
-              legend: { 
-                position: "right",
-                labels: { 
-                  font: { size: 10 },
-                  boxWidth: 12,
-                  padding: 8
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: (ctx) => {
-                    const x = ctx.parsed.x.toFixed(1);
-                    const y = ctx.parsed.y.toFixed(3);
-                    return `${ctx.dataset.label}: (${x}, ${y})`;
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                type: "linear",
-                title: { display: true, text: "λ nm", font: { size: 11, weight: 'bold' } },
-                ticks: { font: { size: 9 } }
-              },
-              y: {
-                title: { display: true, text: "ABS", font: { size: 11, weight: 'bold' } },
-                ticks: { font: { size: 9 } }
-              },
-            },
-          },
-        });
-
-        chartInstances.push(chart);
-      }
-
-      // ---------- Create Individual Compound Chart ----------
-      function createCompoundChart(compound, files) {
-        const standard = files[0];
-        const matches = [];
-
-        const chartDiv = document.createElement("div");
-        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-4 shadow-lg";
-        
-        const canvasId = `chart_${compound.replace(/\s/g, '_')}`;
-        chartDiv.innerHTML = `
-          <h3 class="text-base font-bold text-center mb-2">${compound}</h3>
-          <canvas id="${canvasId}"></canvas>
-        `;
-        chartsContainer.appendChild(chartDiv);
-
-        const canvas = document.getElementById(canvasId);
-        const ctx = canvas.getContext("2d");
-        const datasets = [];
-
-        // Add standard
-        datasets.push({
-          label: standard.name,
-          data: standard.plot,
-          borderColor: "#ef4444",
-          borderWidth: 2.5,
-          fill: false,
-          tension: 0.1,
-          pointRadius: 0,
-        });
-
-        // Add samples with match percentages
-        for (let i = 1; i < files.length; i++) {
-          const unknown = files[i];
-          const { percentage, peakWithinRange } = calculateMatch(
-            unknown.plot,
-            standard.plot
-          );
-          matches.push(percentage);
-
-          datasets.push({
-            label: `${unknown.name} - ${percentage}% ${peakWithinRange ? "✓" : ""}`,
-            data: unknown.plot,
-            borderColor: getColor(i + 2),
-            borderWidth: 2,
-            fill: false,
-            tension: 0.1,
-            pointRadius: 0,
-          });
-        }
-
-        const avgMatch = matches.length > 0
-          ? (matches.reduce((a, b) => a + b, 0) / matches.length).toFixed(0)
-          : 0;
-
-        // Update title with average match
-        chartDiv.querySelector("h3").textContent = `${compound}: ${avgMatch}%`;
-
-        const chart = new Chart(ctx, {
-          type: "line",
-          data: { datasets },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            aspectRatio: 2.2,
-            plugins: {
-              legend: { 
-                position: "top",
-                labels: { 
-                  font: { size: 9 },
-                  boxWidth: 10,
-                  padding: 6
-                }
-              },
-              tooltip: {
-                callbacks: {
-                  label: (ctx) => {
-                    const x = ctx.parsed.x.toFixed(1);
-                    const y = ctx.parsed.y.toFixed(3);
-                    return `(${x}, ${y})`;
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                type: "linear",
-                title: { display: true, text: "λ nm", font: { size: 10, weight: 'bold' } },
-                ticks: { font: { size: 8 } }
-              },
-              y: {
-                title: { display: true, text: "ABS", font: { size: 10, weight: 'bold' } },
-                ticks: { font: { size: 8 } }
-              },
-            },
-          },
-        });
-
-        chartInstances.push(chart);
-      }
-
-      // ---------- File Upload Handler ----------
-      input.addEventListener("change", async (e) => {
-        const newFiles = Array.from(e.target.files);
-        if (newFiles.length === 0) return;
-
-        const remainingSlots = 6 - spectraData.length;
-        if (remainingSlots <= 0) {
-          alert("⚠️ You've already uploaded 6 files. Please clear or remove some.");
-          input.value = "";
+        if (spectraData.length + files.length > MAX_FILES) {
+          alert(`You can only upload up to ${MAX_FILES} files. Currently have ${spectraData.length} file(s).`);
+          fileInput.value = "";
           return;
         }
-
-        const existingNames = new Set(spectraData.map((s) => s.name));
-        const uniqueFiles = newFiles.filter(
-          (f) => !existingNames.has(f.name.replace(/\.[^/.]+$/, ""))
-        );
-
-        const allowedFiles = uniqueFiles.slice(0, remainingSlots);
-
-        for (const file of allowedFiles) {
+        
+        for (const file of files) {
+          const fileName = file.name;
+          if (spectraData.some(s => s.originalName === fileName)) {
+            alert(`File "${fileName}" has already been uploaded.`);
+            continue;
+          }
+          
           try {
             const buffer = await file.arrayBuffer();
             const workbook = XLSX.read(buffer, { type: "array" });
@@ -363,72 +340,153 @@
             if (points.length > 0) {
               spectraData.push({
                 name: file.name.replace(/\.[^/.]+$/, ""),
+                originalName: fileName,
                 plot: points,
               });
             }
           } catch (err) {
-            console.error(`Error reading file ${file.name}:`, err);
-            alert(`Error reading file ${file.name}`);
+            alert(`Error reading file ${fileName}: ${err.message}`);
           }
         }
-
         updateFileDisplay();
-        input.value = "";
+        fileInput.value = "";
       });
 
-      // ---------- Update File Display ----------
+      function deleteFile(index) {
+        spectraData.splice(index, 1);
+        updateFileDisplay();
+      }
+
       function updateFileDisplay() {
         fileList.innerHTML = "";
-        
         if (spectraData.length === 0) {
-          fileList.innerHTML = '<li class="text-gray-400 italic text-center">No files selected</li>';
-          fileCount.textContent = "0 / 6 files uploaded";
+          fileList.innerHTML = '<li class="empty">No files uploaded</li>';
+          fileCount.textContent = `0 / ${MAX_FILES} files uploaded`;
           return;
         }
 
         spectraData.forEach((s, i) => {
           const li = document.createElement("li");
-          li.textContent = `${i + 1}. ${s.name}`;
-          li.className = "text-sm text-gray-800 py-1";
+          const span = document.createElement("span");
+          span.textContent = `${i + 1}. ${s.name}`;
+          
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.className = "delete-file-btn";
+          deleteBtn.onclick = () => deleteFile(i);
+          
+          li.appendChild(span);
+          li.appendChild(deleteBtn);
           fileList.appendChild(li);
         });
 
-        fileCount.textContent = `${spectraData.length} / 6 files uploaded`;
-        fileCount.classList.remove("text-gray-600");
-        fileCount.classList.add("text-indigo-600");
+        fileCount.textContent = `${spectraData.length} / ${MAX_FILES} files uploaded`;
       }
 
-      // ---------- Run Overlay Analysis ----------
       runBtn.addEventListener("click", () => {
-        if (spectraData.length < 2) {
-          alert("Please upload at least 2 Excel files.");
+        if (spectraData.length === 0) {
+          alert("Please upload sample spectra!");
           return;
         }
-        try {
-          plotAllSpectra(spectraData);
-        } catch (err) {
-          console.error("Error plotting spectra:", err);
-          alert("Error while plotting. Check console for details.");
-        }
+
+        chartInstances.forEach(chart => chart.destroy());
+        chartInstances = [];
+        chartsContainer.innerHTML = "";
+
+        createOverlayChart(spectraData);
+
+        resultsContainer.classList.add("visible");
       });
 
-      // ---------- Clear All Files ----------
+      function createOverlayChart(spectra) {
+        const colors = [
+          "#2b7de9", "#ef4444", "#10b981", "#f59e0b", 
+          "#8b5cf6", "#ec4899"
+        ];
+
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "chart-card";
+        chartDiv.style.gridColumn = "1 / -1";
+        
+        chartDiv.innerHTML = `
+          <h3>Spectral Overlay (${spectra.length} samples)</h3>
+          <canvas id="overlayChart"></canvas>
+        `;
+        chartsContainer.appendChild(chartDiv);
+
+        const canvas = document.getElementById("overlayChart");
+        const ctx = canvas.getContext("2d");
+
+        const datasets = spectra.map((spec, idx) => ({
+          label: spec.name,
+          data: spec.plot,
+          borderColor: colors[idx % colors.length],
+          borderWidth: 2,
+          fill: false,
+          tension: 0.1,
+          pointRadius: 0,
+        }));
+
+        const chart = new Chart(ctx, {
+          type: "line",
+          data: { datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                position: "top",
+                labels: { 
+                  font: { size: 11 },
+                  color: '#374151'
+                }
+              },
+            },
+            scales: {
+              x: {
+                type: "linear",
+                title: { 
+                  display: true, 
+                  text: "λ nm", 
+                  font: { size: 12 },
+                  color: '#374151'
+                },
+                ticks: { color: '#6b7280' },
+                grid: { color: '#e5e7eb' }
+              },
+              y: {
+                title: { 
+                  display: true, 
+                  text: "ABS", 
+                  font: { size: 12 },
+                  color: '#374151'
+                },
+                ticks: { color: '#6b7280' },
+                grid: { color: '#e5e7eb' }
+              },
+            },
+          },
+        });
+
+        canvas.style.height = '400px';
+        chartInstances.push(chart);
+      }
+
       clearBtn.addEventListener("click", () => {
         spectraData = [];
         updateFileDisplay();
         chartInstances.forEach(chart => chart.destroy());
         chartInstances = [];
         chartsContainer.innerHTML = "";
+        resultsContainer.classList.remove("visible");
       });
 
-      // ---------- Download as PNG ----------
       downloadBtn.addEventListener("click", () => {
         if (chartInstances.length === 0) {
-          alert("Please run the overlay analysis first!");
+          alert("Please run analysis first!");
           return;
         }
         
-        // Download the first chart (overlay)
         const link = document.createElement('a');
         link.download = 'Spectral_Overlay.png';
         link.href = chartInstances[0].toBase64Image();
