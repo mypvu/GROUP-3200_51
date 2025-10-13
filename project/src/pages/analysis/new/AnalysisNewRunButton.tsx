@@ -1,8 +1,9 @@
 ﻿import "@/styles/global.css";
 import SessionService, { Session } from "@/logic/session/session_service.ts";
-import CompoundItem from "./CompoundItem";
+import CompoundItem from "@/components/analysis/new/CompoundItem";
 import { useEffect, useState } from "preact/hooks";
 import FilterService from "@/logic/filter_service.ts";
+import { navigate } from "astro:transitions/client";
 
 // NOTE
 // This component is only usable for debugging at the moment
@@ -27,10 +28,10 @@ async function runAlgorithm() {
 
     console.log(result);
 
-    window.location.href = import.meta.env.BASE_URL + "/analysis/results";
+    navigate(import.meta.env.BASE_URL + "/analysis/results");
 }
 
-export default function RunAlgorithmButton() {
+export default function AnalysisNewRunButton() {
     let sessionService = SessionService.getInstance();
 
     let [ready, setReady] = useState<Boolean | undefined>();
@@ -53,22 +54,26 @@ export default function RunAlgorithmButton() {
 
     return (
         <>
-            {ready !== undefined ? (
-                ready ? (
-                    <div
-                        onClick={() => runAlgorithm()}
-                        className="flex cursor-pointer flex-col gap-3 bg-green-500 p-4 lg:col-span-2"
-                    >
-                        DEBUG BUTTON: ready to run algorithm, click here
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-3 lg:col-span-2">
-                        DEBUG BUTTON: not ready to run algorithm
-                    </div>
-                )
-            ) : (
-                <div>loading...</div>
-            )}
+            <div class="flex flex-row items-center gap-3">
+                <a
+                    onClick={() => {
+                        if (ready) runAlgorithm();
+                    }}
+                    className={
+                        ready
+                            ? "btn-hover-effect inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
+                            : "inline-block cursor-default rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white opacity-45"
+                    }
+                >
+                    Run Analysis
+                </a>
+
+                <span class="text-gray-500">
+                    {ready
+                        ? "Ready to run"
+                        : "More input is required to run the analysis"}
+                </span>
+            </div>
         </>
     );
 }

@@ -5,6 +5,56 @@ import { SessionAlgorithmInputs } from "./algorithm_input";
 import type { WritableAtom } from "nanostores";
 import type { FilterResult } from "@/logic/filter_service.ts";
 
+interface ISessionData {
+    save(): Promise<void>;
+    load(): Promise<boolean>;
+    erase(): Promise<void>;
+}
+
+export class SessionData<T> implements ISessionData {
+    private atom: WritableAtom<T | undefined>;
+    public data?: T;
+
+    constructor(sessionId: string, name: string) {
+        this.atom = persistentAtom<T | undefined>(
+            `session-${name}-${sessionId}`,
+            undefined,
+
+            {
+                encode: JSON.stringify,
+
+                // Turn the generic object (from JSON.parse) into a T object
+                // decode: (x) => Object.assign(new T(), JSON.parse(x)),
+                decode: JSON.parse,
+            },
+        );
+    }
+
+    async erase(): Promise<void> {
+        this.atom.set(undefined);
+    }
+
+    async load(): Promise<boolean> {
+        const stored = this.atom.get();
+        if (stored !== undefined) {
+            this.data = stored;
+            return true;
+        }
+
+        return false;
+    }
+
+    async loadIfEmpty(): Promise<void> {
+        if (this.data === undefined) {
+            await this.load();
+        }
+    }
+
+    async save(): Promise<void> {
+        this.atom.set(this.data);
+    }
+}
+
 export class SessionAlgorithmData {
     private sessionId: string;
     public inputs: SessionAlgorithmInputs = new SessionAlgorithmInputs();
@@ -91,6 +141,8 @@ export class Session implements ISession {
     private algorithmData?: SessionAlgorithmData;
     private algorithmResult?: SessionAlgorithmResult;
 
+    private sessionNotes?: SessionData<string>;
+
     /**
      * Create a new session.
      */
@@ -116,6 +168,15 @@ export class Session implements ISession {
         this.algorithmResult = new SessionAlgorithmResult(this.id);
         await this.algorithmResult.load();
         return this.algorithmResult;
+    }
+
+    public async getSessionNotes(): Promise<SessionData<string>> {
+        if (this.sessionNotes !== undefined) {
+            return this.sessionNotes;
+        }
+        this.sessionNotes = new SessionData<string>(this.id, "notes");
+        await this.sessionNotes.load();
+        return this.sessionNotes;
     }
 }
 

@@ -7,10 +7,8 @@ import Layout from "@/layouts/Layout.astro";
     <title>HTPLC Compound Matcher</title>
 </head>
 
-<Layout>
-    <body
-        class="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-indigo-100"
-    >
+<Layout title="Home">
+    <div class="flex h-[90%] flex-col justify-center">
         <!-- Title -->
         <header class="mt-15 text-center">
             <img
@@ -81,22 +79,19 @@ import Layout from "@/layouts/Layout.astro";
                     </h2>
                     <a
                         id="start-new-analysis-button"
-                        class="cursor-pointer btn-hover-effect flex h-16 w-16 items-center justify-center rounded-full border-2 border-black bg-blue-100 hover:bg-blue-100"
+                        class="btn-hover-effect flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-black bg-blue-100 hover:bg-blue-100"
                     >
                         <span class="text-3xl font-bold">→</span>
                     </a>
                 </div>
             </div>
         </main>
-
-        <footer class="py-6 text-center text-sm text-gray-500">
-            <p>HTPLC Compound Matcher v1.0</p>
-        </footer>
-    </body>
+    </div>
 </Layout>
 
 <script>
     import SessionService from "@/logic/session/session_service.ts";
+    import { navigate } from "astro:transitions/client";
 
     async function startNewAnalysis() {
         const sessionService = SessionService.getInstance();
@@ -105,8 +100,9 @@ import Layout from "@/layouts/Layout.astro";
         await sessionService.createNewSession();
 
         // move to the new analysis page
-        window.location.href = import.meta.env.BASE_URL + "/analysis/new";
+        navigate(import.meta.env.BASE_URL + "/analysis/new");
     }
 
-    document.getElementById("start-new-analysis-button").onclick = startNewAnalysis;
+    document.getElementById("start-new-analysis-button").onclick =
+        startNewAnalysis;
 </script>

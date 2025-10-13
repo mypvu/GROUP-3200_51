@@ -49,7 +49,11 @@ export default class DataSets implements Iterable<Compound> {
         return Array.from(this)
     }
 
-    merge(): Compound[] {
+    public count(): number {
+        return this.NP_KDS.length + this.NP_LDS.length + this.VS_KDS.length + this.VS_LDS.length;
+    }
+
+    public merge(): Compound[] {
     return [
         ...this.NP_KDS,
         ...this.VS_KDS,
@@ -58,7 +62,7 @@ export default class DataSets implements Iterable<Compound> {
     ];}
 
     ids(): DataSetsID {
-        const toIds = (cs: Compound[]): number[] => 
+        const toIds = (cs: Compound[]): number[] =>
             cs.map(c => (c.id !== undefined ? c.id: NaN))
               .filter(id => !isNaN(id))
 
@@ -68,5 +72,5 @@ export default class DataSets implements Iterable<Compound> {
             VK: toIds(this.VS_KDS),
             VL: toIds(this.VS_LDS)
         }
-    } 
+    }
 }

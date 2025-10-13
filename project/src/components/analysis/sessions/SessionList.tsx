@@ -17,7 +17,7 @@ export default function SessionList() {
                     No saved analyses found.
                 </p>
             ) : (
-                <main className="flex w-full max-w-2xl flex-col gap-4 rounded-2xl bg-white p-8 shadow-lg">
+                <main className="flex flex-col gap-4 rounded-2xl bg-white p-8 shadow-lg">
                     {sessions.map((session: Session) => (
                         <SessionItem key={session.id} session={session} />
                     ))}

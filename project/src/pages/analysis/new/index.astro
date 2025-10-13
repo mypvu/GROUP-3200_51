@@ -1,8 +1,10 @@
 ---
 // src/pages/analysis/new.astro
 import Layout from "@/layouts/Layout.astro";
-import CompoundList from "@/components/analysis/new/CompoundList";
-import RunAlgorithmButton from "@/components/analysis/new/RunAlgorithmButton";
+import CenteredBoxLayout from "@/layouts/CenteredBoxLayout.astro";
+import AnalysisNewCompoundList from "@/pages/analysis/new/AnalysisNewCompoundList.tsx";
+import AnalysisNewRunButton from "@/pages/analysis/new/AnalysisNewRunButton.tsx";
+import AnalysisNewNotes from "@/pages/analysis/new/AnalysisNewNotes.tsx";
 ---
 
 <head>
@@ -10,53 +12,17 @@ import RunAlgorithmButton from "@/components/analysis/new/RunAlgorithmButton";
     <title>New Analysis - HTPLC Compound Matcher</title>
 </head>
 
-<Layout>
-    <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <div class="mx-auto max-w-4xl">
-            <!-- Header -->
-            <header class="mb-8 text-center">
-                <h1 class="text-4xl font-bold text-gray-800">New Analysis</h1>
-            </header>
+<CenteredBoxLayout title="New Analysis" subtitle="Edit and run your analysis">
+    <!-- Left view -->
+    <div class="" slot="side-view">
+        <!-- Left Column - Notes Only -->
+        <AnalysisNewNotes client:load />
+    </div>
 
-            <!-- Save & Exit Button -->
-            <div class="mb-8">
-                <a
-                    href="/GROUP-3200_51/"
-                    class="btn-hover-effect inline-block rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
-                >
-                    Save & Exit
-                </a>
-            </div>
+    <!-- Right Column - Analysis Boxes -->
+    <AnalysisNewCompoundList client:load />
 
-            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                <!-- Left Column - Notes Only -->
-                <div class="space-y-6 lg:col-span-1">
-                    <div class="rounded-lg bg-white p-6">
-                        <h3 class="mb-4 text-xl font-bold text-gray-800">
-                            Notes
-                        </h3>
-                        <textarea
-                            class="h-32 w-full rounded border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            placeholder="Add notes about your analyses here..."
-                        ></textarea>
-                        <button
-                            class="btn-hover-effect mt-3 w-full rounded bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
-                        >
-                            Save Notes
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Right Column - Analysis Boxes -->
-                <CompoundList client:load />
-
-                <RunAlgorithmButton client:load/>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="mt-8 py-6 text-center text-sm text-gray-500">
-            <p>HTPLC Compound Matcher v1.0 | New Analysis</p>
-        </footer>
-    </body>
-</Layout>
+    <div class="mt-8">
+        <AnalysisNewRunButton client:load />
+    </div>
+</CenteredBoxLayout>
