@@ -31,7 +31,7 @@ export default class CompoundFilter {
         this.bf.set(this.input.samples,ds)
 
         // extract result from sample provided
-        const res_ds = this.bf.extract().filterPaired()
+        const res_ds = this.bf.extract()
 
         return {
             ids: res_ds.ids(),
@@ -47,7 +47,7 @@ export default class CompoundFilter {
             throw new Error("There is no unknown specturm provided")
         }
         
-        this.sf.set(candidates.merge(), ver, unknowSpecturm)
+        this.sf.set(candidates.filterPaired().merge(), ver, unknowSpecturm)
 
         const res = await this.sf.extract()
         

@@ -54,7 +54,7 @@ async function fetch_datasets_from_manifest(
     const VK: Compound[] = [];
     const VL: Compound[] = [];
 
-    console.log("url", url);
+    // console.log("url", url);
 
     await Promise.all(
         files.map(async (f) => {
@@ -125,7 +125,7 @@ export async function fetch_excel(
     url: URL,
     label: DBLabel,
 ): Promise<Compound[]> {
-    console.log(url, label);
+    // console.log(url, label);
     const buf = await download_from_url(url);
 
     return await parse_excel(buf, label);
