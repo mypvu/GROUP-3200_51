@@ -60,7 +60,7 @@ export default function StageOneResults({ session }: Props) {
         <>
             {results !== undefined ? (
                 <>
-                    <div class="overflow-x-auto mb-3 rounded-2xl bg-white p-5 shadow-lg">
+                {/*<div class="overflow-x-auto mb-3 rounded-2xl bg-white p-5 shadow-lg">
                         DEBUG
                         <br/>
                         results version: {results.version}
@@ -68,7 +68,7 @@ export default function StageOneResults({ session }: Props) {
                         candidates: {JSON.stringify(results.candidates)}
                         <br />
                         ids: {JSON.stringify(results.ids)}
-                    </div>
+                    </div>*/}
                     <div class="overflow-x-auto rounded-2xl bg-white p-5 shadow-lg">
                         <table
                             ref={tableRef}
@@ -117,7 +117,7 @@ export default function StageOneResults({ session }: Props) {
                                         .map((compound) => (
                                             <tr className="odd:bg-gray-50">
                                                 <td className="border p-3 font-semibold">
-                                                    {compound.id}
+                                                    {compound.name ?? compound.id}
                                                 </td>
                                                 <td className="border p-3">
                                                     {compound.RF}
