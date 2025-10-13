@@ -235,6 +235,15 @@ export default class SessionService {
         return this.sessions;
     }
 
+    public async removeSession(s: Session) {
+        this.sessions = this.sessions.filter((x) => x.id != s.id);
+        persistentSessionList.set(this.sessions);
+        if (this.currentSession?.id == s.id) {
+            this.currentSession = undefined;
+            persistentSessionCurrentId.set(undefined);
+        }
+    }
+
     public hasAnySessions(): Boolean {
         return this.sessions.length != 0;
     }

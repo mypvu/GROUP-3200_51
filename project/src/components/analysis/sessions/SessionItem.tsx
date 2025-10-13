@@ -1,4 +1,5 @@
 ﻿import SessionService, { Session } from "@/logic/session/session_service.ts";
+import { navigate } from "astro:transitions/client";
 
 type Props = { session: Session };
 
@@ -16,6 +17,14 @@ export default function SessionItem({ session }: Props) {
 
         // Redirect to the new analysis page
         window.location.href = import.meta.env.BASE_URL + "/analysis/new";
+    };
+
+    const onSessionDeleteClicked = async () => {
+        // Continue was clicked, change to that session
+        await SessionService.getInstance().removeSession(session);
+
+        // Refresh
+        navigate(window.location.href);
     };
 
     return (
@@ -36,12 +45,20 @@ export default function SessionItem({ session }: Props) {
                         </span>
                     </p>
                 </div>
-                <a
-                    onClick={onSessionContinueClicked}
-                    className="btn-hover-effect cursor-pointer rounded-lg bg-blue-500 px-5 py-2 font-semibold text-white hover:bg-blue-600"
-                >
-                    Continue
-                </a>
+                <div>
+                    <a
+                        onClick={onSessionContinueClicked}
+                        className="btn-hover-effect mr-4 cursor-pointer rounded-lg bg-blue-500 px-5 py-2 font-semibold text-white hover:bg-blue-600"
+                    >
+                        Continue
+                    </a>
+                    <a
+                        onClick={onSessionDeleteClicked}
+                        className="btn-hover-effect cursor-pointer rounded-lg bg-blue-500 px-5 py-2 font-semibold text-white hover:bg-blue-600"
+                    >
+                        Delete
+                    </a>
+                </div>
             </li>
         </>
     );
