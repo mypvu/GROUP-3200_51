@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Spectral Overlay Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-gray-100 p-6">
+    <!-- Main Container -->
+    <div class="bg-white border-[4px] border-black rounded-3xl shadow-2xl w-full max-w-7xl mx-auto p-8 relative">
+      
+      <!-- Download Button -->
+      <button
+        id="downloadBtn"
+        class="absolute top-6 right-8 border-2 border-gray-800 rounded-xl px-5 py-2.5 bg-white hover:bg-gray-100 flex items-center space-x-2 font-bold transition shadow-md"
+      >
+        <span class="text-lg">Download</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+          stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+        </svg>
+      </button>
+
+      <h1 class="text-4xl font-bold text-center mb-8">Spectral Overlays</h1>
+
+      <!-- Upload Section -->
+      <div class="flex flex-col items-center mb-8 space-y-4">
+        <label
+          for="excelInput"
+          class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-indigo-700 cursor-pointer transition"
+        >
+          📁 Select Excel Files (up to 6 total)
+        </label>
+
+        <input
+          id="excelInput"
+          type="file"
+          accept=".xlsx,.xls"
+          multiple
+          class="hidden"
+        />
+
+        <!-- File List -->
+        <ul
+          id="fileList"
+          class="text-gray-700 text-sm bg-gray-50 border-2 border-gray-300 rounded-lg p-4 w-96 min-h-[80px]"
+        >
+          <li class="text-gray-400 italic text-center">No files selected</li>
+        </ul>
+
+        <!-- Counter -->
+        <div id="fileCount" class="text-sm font-bold text-gray-600">
+          0 / 6 files uploaded
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-4 mt-4">
+          <button
+            id="runBtn"
+            class="bg-green-600 text-white px-6 py-2.5 rounded-lg shadow-lg hover:bg-green-700 transition font-bold"
+          >
+            ▶️ Run Overlay Analysis
+          </button>
+
+          <button
+            id="clearBtn"
+            class="bg-red-500 text-white px-6 py-2.5 rounded-lg shadow-lg hover:bg-red-600 transition font-bold"
+          >
+            🗑️ Clear All
+          </button>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div id="chartsContainer" class="grid grid-cols-1 gap-6">
+        <!-- Charts will be dynamically generated here -->
+      </div>
+    </div>
+
+    <script>
+      const input = document.getElementById("excelInput");
+      const fileList = document.getElementById("fileList");
+      const fileCount = document.getElementById("fileCount");
+      const runBtn = document.getElementById("runBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const chartsContainer = document.getElementById("chartsContainer");
+
+      let spectraData = [];
+      let chartInstances = [];
+
+      // ---------- Matching Logic ----------
+      function calculateMatch(unknown, standard) {
+        if (!unknown || !standard || !unknown.length || !standard.length) {
+          return { percentage: 0, peakWithinRange: false };
+        }
+
+        const peakStd = standard.reduce((a, b) => (b.y > a.y ? b : a), standard[0]);
+        const peakUnk = unknown.reduce((a, b) => (b.y > a.y ? b : a), unknown[0]);
+        const peakDiff = Math.abs(peakStd.x - peakUnk.x) / peakStd.x;
+        const peakWithinRange = peakDiff <= 0.02;
+
+        let matchCount = 0;
+        let totalCount = 0;
+
+        for (const std of standard) {
+          const unk = unknown.find((u) => Math.abs(u.x - std.x) < 0.5);
+          if (unk) {
+            const lower = std.y * 0.75;
+            const upper = std.y * 1.25;
+            totalCount++;
+            if (unk.y >= lower && unk.y <= upper) matchCount++;
+          }
+        }
+
+        const percentage = totalCount ? ((matchCount / totalCount) * 100).toFixed(1) : 0;
+        return { percentage: parseFloat(percentage), peakWithinRange };
+      }
+
+      // ---------- Grouping ----------
+      function groupByCompound(spectra) {
+        const groups = {};
+        for (const s of spectra) {
+          const compound = s.name.split("_")[0];
+          if (!groups[compound]) groups[compound] = [];
+          groups[compound].push(s);
+        }
+        return groups;
+      }
+
+      // ---------- Color Palette ----------
+      function getColor(i) {
+        const palette = [
+          "#3b82f6", "#ef4444", "#10b981", "#f59e0b", 
+          "#8b5cf6", "#ec4899", "#06b6d4", "#84cc16"
+        ];
+        return palette[i % palette.length];
+      }
+
+      // ---------- Plot All Spectra ----------
+      function plotAllSpectra(spectra) {
+        // Clear existing charts
+        chartInstances.forEach(chart => chart.destroy());
+        chartInstances = [];
+        chartsContainer.innerHTML = "";
+
+        const grouped = groupByCompound(spectra);
+        
+        // Create overlay chart at the top
+        createOverlayChart(grouped);
+
+        // Create individual compound charts
+        for (const [compound, files] of Object.entries(grouped)) {
+          if (files.length >= 2) {
+            createCompoundChart(compound, files);
+          }
+        }
+      }
+
+      // ---------- Create Overlay Chart (Top) ----------
+      function createOverlayChart(grouped) {
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-6 shadow-lg";
+        chartDiv.innerHTML = `<canvas id="overlayChart"></canvas>`;
+        chartsContainer.appendChild(chartDiv);
+
+        const canvas = document.getElementById("overlayChart");
+        const ctx = canvas.getContext("2d");
+        const datasets = [];
+
+        for (const [compound, files] of Object.entries(grouped)) {
+          files.forEach((file, idx) => {
+            datasets.push({
+              label: file.name,
+              data: file.plot,
+              borderColor: getColor(Object.keys(grouped).indexOf(compound) * 2 + idx),
+              borderWidth: 2,
+              fill: false,
+              tension: 0.1,
+              pointRadius: 0,
+            });
+          });
+        }
+
+        const chart = new Chart(ctx, {
+          type: "line",
+          data: { datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 2.5,
+            plugins: {
+              legend: { 
+                position: "right",
+                labels: { 
+                  font: { size: 11 },
+                  boxWidth: 15
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const x = ctx.parsed.x.toFixed(1);
+                    const y = ctx.parsed.y.toFixed(3);
+                    return `${ctx.dataset.label}: (${x}, ${y})`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                type: "linear",
+                title: { display: true, text: "λ nm", font: { size: 12 } },
+                ticks: { font: { size: 10 } }
+              },
+              y: {
+                title: { display: true, text: "ABS", font: { size: 12 } },
+                ticks: { font: { size: 10 } }
+              },
+            },
+          },
+        });
+
+        chartInstances.push(chart);
+      }
+
+      // ---------- Create Individual Compound Chart ----------
+      function createCompoundChart(compound, files) {
+        const standard = files[0];
+        const matches = [];
+
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-6 shadow-lg";
+        
+        const canvasId = `chart_${compound.replace(/\s/g, '_')}`;
+        chartDiv.innerHTML = `
+          <h3 class="text-lg font-bold text-center mb-3">${compound}</h3>
+          <canvas id="${canvasId}"></canvas>
+        `;
+        chartsContainer.appendChild(chartDiv);
+
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext("2d");
+        const datasets = [];
+
+        // Add standard
+        datasets.push({
+          label: standard.name,
+          data: standard.plot,
+          borderColor: "#ef4444",
+          borderWidth: 2.5,
+          fill: false,
+          tension: 0.1,
+          pointRadius: 0,
+        });
+
+        // Add samples with match percentages
+        for (let i = 1; i < files.length; i++) {
+          const unknown = files[i];
+          const { percentage, peakWithinRange } = calculateMatch(
+            unknown.plot,
+            standard.plot
+          );
+          matches.push(percentage);
+
+          datasets.push({
+            label: `${unknown.name} - ${percentage}% ${peakWithinRange ? "✓" : ""}`,
+            data: unknown.plot,
+            borderColor: getColor(i + 2),
+            borderWidth: 2,
+            fill: false,
+            tension: 0.1,
+            pointRadius: 0,
+          });
+        }
+
+        const avgMatch = matches.length > 0
+          ? (matches.reduce((a, b) => a + b, 0) / matches.length).toFixed(0)
+          : 0;
+
+        // Update title with average match
+        chartDiv.querySelector("h3").textContent = `${compound}: ${avgMatch}%`;
+
+        const chart = new Chart(ctx, {
+          type: "line",
+          data: { datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 1.8,
+            plugins: {
+              legend: { 
+                position: "top",
+                labels: { 
+                  font: { size: 10 },
+                  boxWidth: 12
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const x = ctx.parsed.x.toFixed(1);
+                    const y = ctx.parsed.y.toFixed(3);
+                    return `(${x}, ${y})`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                type: "linear",
+                title: { display: true, text: "λ nm", font: { size: 11 } },
+                ticks: { font: { size: 9 } }
+              },
+              y: {
+                title: { display: true, text: "ABS", font: { size: 11 } },
+                ticks: { font: { size: 9 } }
+              },
+            },
+          },
+        });
+
+        chartInstances.push(chart);
+      }
+
+      // ---------- File Upload Handler ----------
+      input.addEventListener("change", async (e) => {
+        const newFiles = Array.from(e.target.files);
+        if (newFiles.length === 0) return;
+
+        const remainingSlots = 6 - spectraData.length;
+        if (remainingSlots <= 0) {
+          alert("⚠️ You've already uploaded 6 files. Please clear or remove some.");
+          input.value = "";
+          return;
+        }
+
+        const existingNames = new Set(spectraData.map((s) => s.name));
+        const uniqueFiles = newFiles.filter(
+          (f) => !existingNames.has(f.name.replace(/\.[^/.]+$/, ""))
+        );
+
+        const allowedFiles = uniqueFiles.slice(0, remainingSlots);
+
+        for (const file of allowedFiles) {
+          try {
+            const buffer = await file.arrayBuffer();
+            const workbook = XLSX.read(buffer, { type: "array" });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            const points = rows
+              .slice(1)
+              .map((r) => ({ x: parseFloat(r[0]), y: parseFloat(r[1]) }))
+              .filter((p) => !isNaN(p.x) && !isNaN(p.y));
+
+            if (points.length > 0) {
+              spectraData.push({
+                name: file.name.replace(/\.[^/.]+$/, ""),
+                plot: points,
+              });
+            }
+          } catch (err) {
+            console.error(`Error reading file ${file.name}:`, err);
+            alert(`Error reading file ${file.name}`);
+          }
+        }
+
+        updateFileDisplay();
+        input.value = "";
+      });
+
+      // ---------- Update File Display ----------
+      function updateFileDisplay() {
+        fileList.innerHTML = "";
+        
+        if (spectraData.length === 0) {
+          fileList.innerHTML = '<li class="text-gray-400 italic text-center">No files selected</li>';
+          fileCount.textContent = "0 / 6 files uploaded";
+          return;
+        }
+
+        spectraData.forEach((s, i) => {
+          const li = document.createElement("li");
+          li.textContent = `${i + 1}. ${s.name}`;
+          li.className = "text-sm text-gray-800 py-1";
+          fileList.appendChild(li);
+        });
+
+        fileCount.textContent = `${spectraData.length} / 6 files uploaded`;
+        fileCount.classList.remove("text-gray-600");
+        fileCount.classList.add("text-indigo-600");
+      }
+
+      // ---------- Run Overlay Analysis ----------
+      runBtn.addEventListener("click", () => {
+        if (spectraData.length < 2) {
+          alert("Please upload at least 2 Excel files.");
+          return;
+        }
+        try {
+          plotAllSpectra(spectraData);
+        } catch (err) {
+          console.error("Error plotting spectra:", err);
+          alert("Error while plotting. Check console for details.");
+        }
+      });
+
+      // ---------- Clear All Files ----------
+      clearBtn.addEventListener("click", () => {
+        spectraData = [];
+        updateFileDisplay();
+        chartInstances.forEach(chart => chart.destroy());
+        chartInstances = [];
+        chartsContainer.innerHTML = "";
+      });
+
+      // ---------- Download as PNG ----------
+      downloadBtn.addEventListener("click", () => {
+        if (chartInstances.length === 0) {
+          alert("Please run the overlay analysis first!");
+          return;
+        }
+        
+        // Download the first chart (overlay)
+        const link = document.createElement('a');
+        link.download = 'Spectral_Overlay.png';
+        link.href = chartInstances[0].toBase64Image();
+        link.click();
+      });
+    </script>
+  </body>
+</html>
