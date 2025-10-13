@@ -3,12 +3,14 @@ import { navigate } from "astro:transitions/client";
 
 type Props = { session: Session };
 
-function formatDateTime(iso: Date) {
-    return iso.toLocaleString("en-AU", {
-        dateStyle: "medium",
-        timeStyle: "short",
-    });
-}
+export function formatDateTime(value: string | Date) {
+    const d = typeof value === "string" ? new Date(value) : value;
+    return new Intl.DateTimeFormat("en-AU", {
+      timeZone: "Australia/Perth",
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(d);
+  }
 
 export default function SessionItem({ session }: Props) {
     const onSessionContinueClicked = () => {
