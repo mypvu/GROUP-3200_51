@@ -9,7 +9,7 @@ import type {
 import CompoundHelper from "@/logic/compound_helper.ts";
 
 export class SessionAlgorithmInputs implements InputParams {
-    public specturmBuffer: ArrayBuffer = null;
+    public unknownSpecturms: ArrayBuffer = null;
     public samples: ISampleContainer = {};
     public version: string = "";
 

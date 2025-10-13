@@ -109,7 +109,7 @@ describe("Manual testing for Basic Filter", () => {
     const cf = new CompoundFilter({
       samples: sample,
       version: "1",
-      specturmBuffer: new ArrayBuffer()
+      unknownSpecturms: new ArrayBuffer()
     })
 
     const candidates = (await cf.st1("1")).candidates

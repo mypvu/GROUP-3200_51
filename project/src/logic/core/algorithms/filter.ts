@@ -7,6 +7,7 @@ import conf from "../../config/conf.json"
 import type DataSets from "../models/datasets.model";
 import { parseXYFromArrayBuffer } from "@/logic/utils/fetch_excel_st2";
 import SpecturmFilter from "./SpecturmFilter";
+import type { SpecturmsOnly } from "../models/specturm.model";
 
 export default class CompoundFilter {
     private bf: BasicFilter
@@ -39,16 +40,14 @@ export default class CompoundFilter {
         }
     }
 
-    async st2(candidates: DataSets, unknowSpecturm: ArrayBuffer): Promise<ResultStage2> {
+    async st2(candidates: DataSets, unknowSpecturm: SpecturmsOnly, ver = this.input.version): Promise<ResultStage2> {
         
         if(!unknowSpecturm) 
         {
             throw new Error("There is no unknown specturm provided")
         }
-
-        const unknownPlot = parseXYFromArrayBuffer(unknowSpecturm)
         
-        this.sf.set(candidates.merge(), "1", unknownPlot)
+        this.sf.set(candidates.merge(), ver, unknowSpecturm)
 
         const res = await this.sf.extract()
         

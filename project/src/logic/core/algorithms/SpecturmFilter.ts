@@ -3,14 +3,14 @@ import type { ResultStage2 } from "../models/result_parameters.model";
 import conf from "../../config/conf.json"
 import type { Version } from "../models/version.model";
 import type Specturm from "../models/specturm.model"; 
-import { Stage2Methods, type MethodsType, type Plot, type UpperLowerBound } from "../models/specturm.model";
-import { fetchAndParseXY, type Point } from "@/logic/utils/fetch_excel_st2";
+import { MethodsType, Stage2Methods, type Plot, type SpecturmsOnly, type UpperLowerBound } from "../models/specturm.model";
+import { fetchAndParseXY, parseXYFromArrayBuffer, parseXYFromUnkownArrayBuffer, type Point } from "@/logic/utils/fetch_excel_st2";
 import { getConfidence, getUpperLowerBound } from "@/logic/utils/get_spectrum_confidence";
 import { getImageNameFromExcel } from "@/logic/utils/naming_mapping";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
-    public un: Plot
+    public unknowns?: SpecturmsOnly
     private baseUrl: string
     private version: Version
 
@@ -22,8 +22,8 @@ export default class SpecturmFilter {
             "/stage_2"
     }
 
-    public set(candidates: Compound[], version = "1", unknown: Plot): SpecturmFilter {
-        this.un = unknown
+    public set(candidates: Compound[], version = "1", unknown: SpecturmsOnly): SpecturmFilter {
+        this.unknowns = unknown
         this.candidates = candidates
         this.version = version
         this.baseUrl = conf.database_url +
@@ -34,15 +34,21 @@ export default class SpecturmFilter {
     }
 
     async extract(): Promise<ResultStage2> {
-        let currentSpecturms: Specturm[] = []
         let specturms: Specturm[] = []
+        let currentSpecturms: Specturm[] = []
+
+        if (!this.unknowns)
+            throw new Error("Unknows Specturms has not initialized")
 
         for (const c of this.candidates) {
             if (!c?.name) continue
+
             currentSpecturms = await this.fetchSpecturmMethods(c)
             specturms = specturms.concat(currentSpecturms)
+
             for (const s of specturms) {
-                s.confidence = getConfidence(s.plot, this.un)
+                s.confidence = getConfidence(s.plot, 
+                    this.selectUnknownPlot(this.unknowns, s.method))
                 s.upperLowerBound = getUpperLowerBound(s.plot)
             }
         }
@@ -58,7 +64,6 @@ export default class SpecturmFilter {
     }
 
     public compare(candidate: Specturm, target: Specturm): boolean {
-
         return true
     }
 
@@ -74,7 +79,6 @@ export default class SpecturmFilter {
         const jobs = (Stage2Methods as MethodsType[]).map((method) =>
             this.fetchSpecturm(compound, method)
         )
-
 
         const settled = await Promise.allSettled(jobs)
         const results: Specturm[] = []
@@ -106,6 +110,38 @@ export default class SpecturmFilter {
             method,
             plot
         }
+    }
+
+    private selectUnknownPlot(specturms: SpecturmsOnly, method: MethodsType): Plot {
+        let buffer: ArrayBuffer
+
+        switch(method) {
+
+            case MethodsType.FD:
+                buffer = specturms.DF
+                break
+            case MethodsType.FDN:
+                buffer = specturms.FDN
+                break
+            case MethodsType.FDV:
+                buffer = specturms.FDV
+                break
+            case MethodsType.UD:
+                buffer = specturms.UD
+                break
+            case MethodsType.UDP:
+                buffer = specturms.UDP
+                break
+            case MethodsType.UDV:
+                buffer = specturms.UDV
+                break
+
+            default:
+                throw new Error("No matching specturm methods found ")
+        }
+
+        return parseXYFromUnkownArrayBuffer(buffer)
+        
     }
 
 }

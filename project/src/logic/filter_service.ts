@@ -42,7 +42,7 @@ export default class FilterService {
 
         // second stage specturm overlay -> confidence
         // const st2_result = await cf.st2(st1_result.candidates, input.specturmBuffer)
-        const st2_result = await cf.st2(st1.candidates, input.specturmBuffer)
+        const st2_result = await cf.st2(st1.candidates, input.unknownSpecturms)
 
         return {
             input: input,

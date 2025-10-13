@@ -12,7 +12,7 @@ export default interface Specturm {
     method: MethodsType
     plot: Plot
     confidence?: number
-    upperLowerBound: UpperLowerBound
+    upperLowerBound?: UpperLowerBound
 }
 
 export interface CompoundSpecturms {
@@ -24,6 +24,16 @@ export interface CompoundSpecturms {
     UDP: Plot,
     UDV: Plot
 }
+
+export type SpecturmsOnly =  {
+    DF: ArrayBuffer,
+    UD: ArrayBuffer,
+    FDN: ArrayBuffer,
+    FDV: ArrayBuffer,
+    UDP: ArrayBuffer,
+    UDV: ArrayBuffer
+}
+
 
 export type Plot = Point[]
 
