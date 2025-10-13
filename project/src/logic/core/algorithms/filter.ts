@@ -47,7 +47,7 @@ export default class CompoundFilter {
             throw new Error("There is no unknown specturm provided")
         }
         
-        this.sf.set(candidates.merge(), ver, unknowSpecturm)
+        this.sf.set(candidates.filterPaired().merge(), ver, unknowSpecturm)
 
         const res = await this.sf.extract()
         
