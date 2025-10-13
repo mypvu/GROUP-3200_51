@@ -14,10 +14,9 @@ export async function getStaticPaths() {
     ];
 }
 
-import CompoundDetailsEditor from "@/components/analysis/new/details/CompoundDetailsEditor.tsx";
-import CompoundDetailsView from "@/components/analysis/new/details/CompoundDetailsView";
-import Layout from "@/layouts/Layout.astro";
+import CenteredBoxLayout from "@/layouts/CenteredBoxLayout.astro";
 import CompoundService from "@/logic/compound_helper.ts";
+import AnalysisNewDetailsView from "./AnalysisNewDetailsView";
 
 const { type } = Astro.params;
 
@@ -32,7 +31,7 @@ if (type === undefined || !CompoundService.doesTypeExist(type)) {
     <title>Analysis Detail - HTPLC Compound Matcher</title>
 </head>
 
-<Layout>
+<CenteredBoxLayout title="Compound Details" subtitle="Edit compound details">
     <!-- The code for this page is in components/analysis/new/details/CompoundEditor.tsx now -->
-    <CompoundDetailsView compoundType={type} client:load />
-</Layout>
+    <AnalysisNewDetailsView compoundType={type} client:load />
+</CenteredBoxLayout>
