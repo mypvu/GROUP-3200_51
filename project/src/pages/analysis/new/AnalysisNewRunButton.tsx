@@ -62,7 +62,7 @@ export default function AnalysisNewRunButton() {
                     className={
                         ready
                             ? "btn-hover-effect inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
-                            : "inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white"
+                            : "btn-hover-effect inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
                     }
                 >
                     Run Analysis
