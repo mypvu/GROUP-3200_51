@@ -3,6 +3,7 @@ import SessionService, { Session } from "@/logic/session/session_service.ts";
 import CompoundItem from "@/components/analysis/new/CompoundItem";
 import { useEffect, useState } from "preact/hooks";
 import FilterService from "@/logic/filter_service.ts";
+import { navigate } from "astro:transitions/client";
 
 // NOTE
 // This component is only usable for debugging at the moment
@@ -27,7 +28,7 @@ async function runAlgorithm() {
 
     console.log(result);
 
-    window.location.href = import.meta.env.BASE_URL + "/analysis/results";
+    navigate(import.meta.env.BASE_URL + "/analysis/results");
 }
 
 export default function AnalysisNewRunButton() {
@@ -60,15 +61,17 @@ export default function AnalysisNewRunButton() {
                     }}
                     className={
                         ready
-                            ? "cursor-pointer btn-hover-effect inline-block rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
-                            : "cursor-default inline-block rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white opacity-45"
+                            ? "btn-hover-effect inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
+                            : "inline-block cursor-default rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white opacity-45"
                     }
                 >
                     Run Analysis
                 </a>
 
                 <span class="text-gray-500">
-                    {ready ? "Ready to run" : "More input is required to run the analysis"}
+                    {ready
+                        ? "Ready to run"
+                        : "More input is required to run the analysis"}
                 </span>
             </div>
         </>
