@@ -21,7 +21,7 @@ export interface CompoundN extends CompoundBase {
 
 export interface CompoundV extends CompoundBase {
     db_label: "VK" | "VL";
-    T: number | null; // only for B databases
+    T: number | null | undefined; // only for B databases
 }
 
 // Aliases for clarity

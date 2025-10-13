@@ -5,6 +5,7 @@ import CompoundFilter from "../algorithms/filter";
 import SpecturmFilter from "../algorithms/SpecturmFilter";
 import type { Plot } from "../models/specturm.model";
 import UnknownSpecturm from "./Unknown_p.json"
+import testcases from "./case.json"
 
 
 const bf = new BasicFilter(i_sample, ds)
@@ -78,46 +79,49 @@ describe("Manual testing for Basic Filter", () => {
 
     sample.NP_KDS = {
       "db_label": "NK",
-      "RF": 0.435,
-      "DEV_254nm": 137.4,
-      "DEV_366nm": 180,
-      "VSNP_366nm": 210.9,
-      "UV_Peaks_num": 1,
-      "UV_Peaks": [276],
-      "FL_Peaks_num": 2,
-      "FL_Peaks": [225, 316]
+      "RF": 0.435
+      // "DEV_254nm": 137.4,
+      // "DEV_366nm": 180,
+      // "VSNP_366nm": 210.9,
+      // "UV_Peaks_num": 1,
+      // "UV_Peaks": [276],
+      // "FL_Peaks_num": 2,
+      // "FL_Peaks": [225, 316]
     }
 
     sample.NP_LDS = {
       "db_label": "NL",
-      "RF": 0.685,
-      "DEV_254nm": 121.3,
-      "DEV_366nm": 151.9,
-      "VSNP_366nm": 147.1,
-      "UV_Peaks_num": 2,
-      "UV_Peaks": [
-        269,
-        367
-      ],
-      "FL_Peaks_num": 2,
-      "FL_Peaks": [
-        223,
-        362
-      ]
+      "RF": 0.6
     }
+
 
     const cf = new CompoundFilter({
       samples: sample,
       version: "1",
-      unknownSpecturms: new ArrayBuffer()
+      unknownSpecturms: {
+         DF: new ArrayBuffer(),
+         UD: new ArrayBuffer(),
+        FDN: new ArrayBuffer(),
+        FDV: new ArrayBuffer(),
+        UDP: new ArrayBuffer(),
+        UDV: new ArrayBuffer()
+      }
     })
 
     const candidates = (await cf.st1("1")).candidates
-    const unknownPlot: Plot = UnknownSpecturm
-    const s2_result = await sf.set(candidates.merge(), "1", unknownPlot).extract()
+    console.log(candidates.ids())
+
+    // const s2_result = await sf.set(candidates.merge(), "1", {
+    //      DF: new ArrayBuffer(),
+    //      UD: new ArrayBuffer(),
+    //     FDN: new ArrayBuffer(),
+    //     FDV: new ArrayBuffer(),
+    //     UDP: new ArrayBuffer(),
+    //     UDV: new ArrayBuffer()
+    //   }).extract()
     
 
-    console.log(s2_result.specturms[0].plot)
+    // console.log(s2_result.specturms[0].plot)
 
 
   });
@@ -129,7 +133,7 @@ describe("Manual testing for Basic Filter", () => {
 //     vi.restoreAllMocks();
 //   });
 
-//   for (const [section, tests] of Object.entries(test_case)) {
+//   for (const [section, tests] of Object.entries(testcases)) {
 //     describe(`${section} testing`, async () => {
 //       for (const [name, { input, expected }] of Object.entries(tests)) {
 //         it(name,async () => {
@@ -152,7 +156,14 @@ describe("Manual testing for Basic Filter", () => {
 //           };
 
 
-//           const cf = new CompoundFilter({samples: sample, version: "1"})
+//           const cf = new CompoundFilter({samples: sample, version: "1", unknownSpecturms: {
+//          DF: new ArrayBuffer(),
+//          UD: new ArrayBuffer(),
+//         FDN: new ArrayBuffer(),
+//         FDV: new ArrayBuffer(),
+//         UDP: new ArrayBuffer(),
+//         UDV: new ArrayBuffer()
+//       }})
 //           const res =  (await cf.st1()).candidates
 
 //           // compare expected
