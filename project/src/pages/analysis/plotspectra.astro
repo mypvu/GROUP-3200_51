@@ -8,9 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
-  <body class="min-h-screen bg-gray-100 p-6">
+  <body class="min-h-screen bg-gray-100 p-4">
     <!-- Main Container -->
-    <div class="bg-white border-[4px] border-black rounded-3xl shadow-2xl w-full max-w-7xl mx-auto p-8 relative">
+    <div class="bg-white border-[4px] border-black rounded-3xl shadow-2xl w-full max-w-[95vw] mx-auto p-6 relative">
       
       <!-- Download Button -->
       <button
@@ -25,13 +25,13 @@
         </svg>
       </button>
 
-      <h1 class="text-4xl font-bold text-center mb-8">Spectral Overlays</h1>
+      <h1 class="text-3xl font-bold text-center mb-6">Spectral Overlays</h1>
 
       <!-- Upload Section -->
-      <div class="flex flex-col items-center mb-8 space-y-4">
+      <div class="flex flex-col items-center mb-6 space-y-3">
         <label
           for="excelInput"
-          class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-indigo-700 cursor-pointer transition"
+          class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold shadow-lg hover:bg-indigo-700 cursor-pointer transition text-sm"
         >
           📁 Select Excel Files (up to 6 total)
         </label>
@@ -47,36 +47,36 @@
         <!-- File List -->
         <ul
           id="fileList"
-          class="text-gray-700 text-sm bg-gray-50 border-2 border-gray-300 rounded-lg p-4 w-96 min-h-[80px]"
+          class="text-gray-700 text-xs bg-gray-50 border-2 border-gray-300 rounded-lg p-3 w-80 min-h-[60px] max-h-[100px] overflow-y-auto"
         >
           <li class="text-gray-400 italic text-center">No files selected</li>
         </ul>
 
         <!-- Counter -->
-        <div id="fileCount" class="text-sm font-bold text-gray-600">
+        <div id="fileCount" class="text-xs font-bold text-gray-600">
           0 / 6 files uploaded
         </div>
 
         <!-- Buttons -->
-        <div class="flex space-x-4 mt-4">
+        <div class="flex space-x-3 mt-2">
           <button
             id="runBtn"
-            class="bg-green-600 text-white px-6 py-2.5 rounded-lg shadow-lg hover:bg-green-700 transition font-bold"
+            class="bg-green-600 text-white px-5 py-2 rounded-lg shadow-lg hover:bg-green-700 transition font-bold text-sm"
           >
-            ▶️ Run Overlay Analysis
+            ▶️ Run Analysis
           </button>
 
           <button
             id="clearBtn"
-            class="bg-red-500 text-white px-6 py-2.5 rounded-lg shadow-lg hover:bg-red-600 transition font-bold"
+            class="bg-red-500 text-white px-5 py-2 rounded-lg shadow-lg hover:bg-red-600 transition font-bold text-sm"
           >
-            🗑️ Clear All
+            🗑️ Clear
           </button>
         </div>
       </div>
 
       <!-- Charts Grid -->
-      <div id="chartsContainer" class="grid grid-cols-1 gap-6">
+      <div id="chartsContainer" class="grid grid-cols-1 gap-4">
         <!-- Charts will be dynamically generated here -->
       </div>
     </div>
@@ -164,7 +164,7 @@
       // ---------- Create Overlay Chart (Top) ----------
       function createOverlayChart(grouped) {
         const chartDiv = document.createElement("div");
-        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-6 shadow-lg";
+        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-4 shadow-lg";
         chartDiv.innerHTML = `<canvas id="overlayChart"></canvas>`;
         chartsContainer.appendChild(chartDiv);
 
@@ -192,13 +192,14 @@
           options: {
             responsive: true,
             maintainAspectRatio: true,
-            aspectRatio: 2.5,
+            aspectRatio: 3.5,
             plugins: {
               legend: { 
                 position: "right",
                 labels: { 
-                  font: { size: 11 },
-                  boxWidth: 15
+                  font: { size: 10 },
+                  boxWidth: 12,
+                  padding: 8
                 }
               },
               tooltip: {
@@ -214,12 +215,12 @@
             scales: {
               x: {
                 type: "linear",
-                title: { display: true, text: "λ nm", font: { size: 12 } },
-                ticks: { font: { size: 10 } }
+                title: { display: true, text: "λ nm", font: { size: 11, weight: 'bold' } },
+                ticks: { font: { size: 9 } }
               },
               y: {
-                title: { display: true, text: "ABS", font: { size: 12 } },
-                ticks: { font: { size: 10 } }
+                title: { display: true, text: "ABS", font: { size: 11, weight: 'bold' } },
+                ticks: { font: { size: 9 } }
               },
             },
           },
@@ -234,11 +235,11 @@
         const matches = [];
 
         const chartDiv = document.createElement("div");
-        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-6 shadow-lg";
+        chartDiv.className = "bg-white border-2 border-gray-300 rounded-xl p-4 shadow-lg";
         
         const canvasId = `chart_${compound.replace(/\s/g, '_')}`;
         chartDiv.innerHTML = `
-          <h3 class="text-lg font-bold text-center mb-3">${compound}</h3>
+          <h3 class="text-base font-bold text-center mb-2">${compound}</h3>
           <canvas id="${canvasId}"></canvas>
         `;
         chartsContainer.appendChild(chartDiv);
@@ -291,13 +292,14 @@
           options: {
             responsive: true,
             maintainAspectRatio: true,
-            aspectRatio: 1.8,
+            aspectRatio: 2.2,
             plugins: {
               legend: { 
                 position: "top",
                 labels: { 
-                  font: { size: 10 },
-                  boxWidth: 12
+                  font: { size: 9 },
+                  boxWidth: 10,
+                  padding: 6
                 }
               },
               tooltip: {
@@ -313,12 +315,12 @@
             scales: {
               x: {
                 type: "linear",
-                title: { display: true, text: "λ nm", font: { size: 11 } },
-                ticks: { font: { size: 9 } }
+                title: { display: true, text: "λ nm", font: { size: 10, weight: 'bold' } },
+                ticks: { font: { size: 8 } }
               },
               y: {
-                title: { display: true, text: "ABS", font: { size: 11 } },
-                ticks: { font: { size: 9 } }
+                title: { display: true, text: "ABS", font: { size: 10, weight: 'bold' } },
+                ticks: { font: { size: 8 } }
               },
             },
           },
