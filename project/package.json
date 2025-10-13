@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@astrojs/node": "^9.4.6",
     "@astrojs/preact": "^4.1.1",
     "@nanostores/persistent": "^1.1.0",
     "@tailwindcss/vite": "^4.1.12",

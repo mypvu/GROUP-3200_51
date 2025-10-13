@@ -1,5 +1,6 @@
 ---
 // plotspectra.astro
+// Complete integration with FilterService for spectral analysis
 ---
 
 <!DOCTYPE html>
@@ -181,8 +182,13 @@
         transition: all 0.2s;
       }
       
-      .btn-run:hover {
+      .btn-run:hover:not(:disabled) {
         background: #1a6dd6;
+      }
+
+      .btn-run:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
       }
       
       .btn-clear {
@@ -219,6 +225,105 @@
         font-weight: bold;
         margin-bottom: 1rem;
         color: #1f2937;
+      }
+      
+      .analysis-info {
+        background: #f0f9ff;
+        border: 2px solid #bfdbfe;
+        border-radius: 0.75rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+      }
+      
+      .analysis-info h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #1e40af;
+      }
+      
+      .analysis-info p {
+        margin: 0.5rem 0;
+        color: #1e3a8a;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .analysis-info strong {
+        color: #1e40af;
+      }
+      
+      .analysis-info .value {
+        font-weight: 600;
+        color: #2563eb;
+      }
+
+      .candidates-list {
+        background: #fef3c7;
+        border: 2px solid #fcd34d;
+        border-radius: 0.75rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .candidates-list h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #92400e;
+      }
+
+      .candidate-item {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .candidate-name {
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .candidate-confidence {
+        background: #10b981;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .confidence-high {
+        background: #10b981;
+      }
+
+      .confidence-medium {
+        background: #f59e0b;
+      }
+
+      .confidence-low {
+        background: #ef4444;
+      }
+
+      .spectrum-match-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .spectrum-match-grid {
+          grid-template-columns: 1fr;
+        }
       }
       
       .charts-grid {
@@ -286,6 +391,22 @@
       input[type="file"] {
         display: none;
       }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid #ffffff;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
 
@@ -334,6 +455,8 @@
 
       <div id="resultsContainer" class="results-container">
         <h2 class="results-title">Analysis Results</h2>
+        <div id="analysisInfo" class="analysis-info" style="display: none;"></div>
+        <div id="candidatesList" class="candidates-list" style="display: none;"></div>
         <div id="chartsContainer" class="charts-grid"></div>
       </div>
     </div>
@@ -346,12 +469,19 @@
       const clearBtn = document.getElementById("clearBtn");
       const downloadBtn = document.getElementById("downloadBtn");
       const resultsContainer = document.getElementById("resultsContainer");
+      const analysisInfo = document.getElementById("analysisInfo");
+      const candidatesList = document.getElementById("candidatesList");
       const chartsContainer = document.getElementById("chartsContainer");
 
       let spectraData = [];
       let chartInstances = [];
+      let filterServiceResults = null;
       const MAX_FILES = 6;
 
+      // ============================================
+      // FILE UPLOAD HANDLING
+      // ============================================
+      
       fileInput.addEventListener("change", async (e) => {
         const files = Array.from(e.target.files);
         
@@ -425,6 +555,13 @@
         fileCount.textContent = spectraData.length + ' / ' + MAX_FILES + ' files uploaded';
       }
 
+      // ============================================
+      // FILTERSERVICE INTEGRATION
+      // ============================================
+
+      /**
+       * Prepare input data for FilterService algorithm
+       */
       function prepareAlgorithmInput(spectra) {
         return {
           unknownSpecturms: spectra.map(s => ({
@@ -433,6 +570,8 @@
             wavelengths: s.plot.map(p => p.x),
             absorbances: s.plot.map(p => p.y)
           })),
+          samples: [], // Add your samples configuration here if needed
+          version: 1,
           sampleCount: spectra.length,
           metadata: {
             timestamp: new Date().toISOString(),
@@ -441,9 +580,317 @@
         };
       }
 
-      async function runSpectralOverlayAnalysis(inputParams) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+      /**
+       * Call FilterService API - Runs the spectrum algorithm
+       * Stage 1: Database filtering -> candidates
+       * Stage 2: Spectral overlay -> confidence scores
+       */
+      async function runFilterServiceAnalysis(inputParams) {
+        try {
+          console.log('🔬 Starting FilterService analysis...');
+          
+          // Stage 1: Database filtering
+          console.log('📊 Stage 1: Running database filtering algorithm...');
+          const stage1Response = await fetch('/api/filter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              stage: 1,
+              inputParams: inputParams
+            })
+          });
 
+          if (!stage1Response.ok) {
+            const errorText = await stage1Response.text();
+            console.error('Stage 1 error:', errorText);
+            throw new Error('Stage 1 failed: ' + stage1Response.status);
+          }
+
+          const stage1Result = await stage1Response.json();
+          console.log('✅ Stage 1 complete:', stage1Result);
+
+          // Stage 2: Spectral overlay analysis
+          console.log('🔬 Stage 2: Running spectral overlay algorithm...');
+          const stage2Response = await fetch('/api/filter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              stage: 2,
+              inputParams: inputParams,
+              stage1Result: stage1Result.result
+            })
+          });
+
+          if (!stage2Response.ok) {
+            const errorText = await stage2Response.text();
+            console.error('Stage 2 error:', errorText);
+            throw new Error('Stage 2 failed: ' + stage2Response.status);
+          }
+
+          const stage2Result = await stage2Response.json();
+          console.log('✅ Stage 2 complete:', stage2Result);
+
+          return {
+            stage1: stage1Result,
+            stage2: stage2Result
+          };
+
+        } catch (error) {
+          console.error('❌ FilterService error:', error);
+          throw error;
+        }
+      }
+
+      // ============================================
+      // RESULTS DISPLAY ALGORITHM
+      // ============================================
+
+      /**
+       * Main algorithm to process and display FilterService results
+       * Extracts: candidates, confidence scores, match data
+       */
+      function processAndDisplayResults(results) {
+        if (!results) {
+          analysisInfo.style.display = 'none';
+          candidatesList.style.display = 'none';
+          return;
+        }
+
+        // Display summary info
+        displayAnalysisInfo(results);
+        
+        // Display detailed candidates with confidence scores
+        displayCandidates(results);
+      }
+
+      /**
+       * Display FilterService analysis summary
+       */
+      function displayAnalysisInfo(results) {
+        let infoHTML = '<h3>🔬 FilterService Analysis Summary</h3>';
+        
+        // Stage 1 results
+        if (results.stage1 && results.stage1.result) {
+          const candidatesCount = results.stage1.result.candidates?.length || 
+                                  results.stage1.result.ids?.length || 0;
+          infoHTML += '<p><strong>Stage 1 - Database Filtering:</strong> <span class="value">' + candidatesCount + ' candidate(s) found</span></p>';
+          
+          if (results.stage1.result.version) {
+            infoHTML += '<p><strong>Database Version:</strong> <span class="value">v' + results.stage1.result.version + '</span></p>';
+          }
+        }
+
+        // Stage 2 results
+        if (results.stage2 && results.stage2.result) {
+          if (results.stage2.result.specturms) {
+            infoHTML += '<p><strong>Stage 2 - Spectral Matches:</strong> <span class="value">' + results.stage2.result.specturms.length + ' match(es)</span></p>';
+          }
+        }
+
+        infoHTML += '<p style="margin-top: 1rem; font-size: 0.75rem; color: #6b7280;"><strong>Completed:</strong> ' + new Date().toLocaleString() + '</p>';
+
+        analysisInfo.innerHTML = infoHTML;
+        analysisInfo.style.display = 'block';
+      }
+
+      /**
+       * Display candidate compounds with confidence scores and individual charts
+       * Shows matched spectrum overlays similar to the reference image
+       */
+      function displayCandidates(results) {
+        if (!results.stage2 || !results.stage2.result || !results.stage2.result.specturms) {
+          candidatesList.style.display = 'none';
+          return;
+        }
+
+        const spectrums = results.stage2.result.specturms;
+        
+        if (spectrums.length === 0) {
+          candidatesList.style.display = 'none';
+          return;
+        }
+
+        let candidatesHTML = '<h3>📋 Identified Candidate Matches</h3>';
+        candidatesHTML += '<div class="spectrum-match-grid">';
+        
+        // Sort by confidence (highest first)
+        const sortedSpectrums = [...spectrums].sort((a, b) => {
+          const confA = a.confidence || 0;
+          const confB = b.confidence || 0;
+          return confB - confA;
+        });
+
+        sortedSpectrums.forEach((spectrum, index) => {
+          const name = spectrum.name || spectrum.compound?.name || 'Unknown Compound';
+          const confidence = spectrum.confidence !== undefined ? spectrum.confidence : null;
+          
+          let confidenceHTML = '';
+          let confidenceClass = 'confidence-low';
+          
+          if (confidence !== null) {
+            const confidencePercent = (confidence * 100).toFixed(0);
+            if (confidence >= 0.7) confidenceClass = 'confidence-high';
+            else if (confidence >= 0.4) confidenceClass = 'confidence-medium';
+            
+            confidenceHTML = '<div class="candidate-confidence ' + confidenceClass + '">' + name + ': ' + confidencePercent + '%</div>';
+          } else {
+            confidenceHTML = '<div class="candidate-confidence confidence-low">' + name + '</div>';
+          }
+
+          candidatesHTML += confidenceHTML;
+        });
+
+        candidatesHTML += '</div>';
+
+        candidatesList.innerHTML = candidatesHTML;
+        candidatesList.style.display = 'block';
+
+        // Create individual comparison charts for top matches
+        createIndividualMatchCharts(sortedSpectrums);
+      }
+
+      /**
+       * Create individual spectrum comparison charts
+       * Each chart shows unknown spectrum vs matched candidate
+       */
+      function createIndividualMatchCharts(matches) {
+        // Show top 4 matches maximum (like in the reference image)
+        const topMatches = matches.slice(0, Math.min(4, matches.length));
+        
+        topMatches.forEach((match, index) => {
+          if (match.plot && match.plot.length > 0) {
+            createComparisonChart(match, index);
+          }
+        });
+      }
+
+      /**
+       * Create a single comparison chart showing unknown vs candidate
+       */
+      function createComparisonChart(match, index) {
+        const colors = ['#2b7de9', '#ef4444', '#10b981', '#f59e0b'];
+        const matchColor = colors[index % colors.length];
+        
+        const chartDiv = document.createElement("div");
+        chartDiv.className = "chart-card";
+        
+        const name = match.name || match.compound?.name || 'Unknown';
+        const confidence = match.confidence ? (match.confidence * 100).toFixed(0) : 'N/A';
+        
+        chartDiv.innerHTML = '<h3>' + name + ': ' + confidence + '%</h3><div style="height: 240px; position: relative;"><canvas id="matchChart_' + index + '"></canvas></div>';
+        chartsContainer.appendChild(chartDiv);
+
+        setTimeout(function() {
+          const canvas = document.getElementById('matchChart_' + index);
+          if (!canvas) return;
+          
+          const ctx = canvas.getContext("2d");
+
+          const datasets = [];
+          
+          // Add unknown spectrum (from uploaded data)
+          if (spectraData.length > 0) {
+            const unknownSpectrum = spectraData[0]; // Use first uploaded spectrum
+            datasets.push({
+              label: 'Unknown Sample',
+              data: unknownSpectrum.plot.map(p => ({ x: p.x, y: p.y })),
+              borderColor: '#6b7280',
+              backgroundColor: '#6b728020',
+              borderWidth: 2,
+              fill: false,
+              tension: 0.2,
+              pointRadius: 0,
+              borderDash: [5, 5]
+            });
+          }
+
+          // Add matched candidate spectrum
+          if (match.plot && match.plot.length > 0) {
+            datasets.push({
+              label: name,
+              data: match.plot,
+              borderColor: matchColor,
+              backgroundColor: matchColor + '20',
+              borderWidth: 2.5,
+              fill: false,
+              tension: 0.2,
+              pointRadius: 0
+            });
+          }
+
+          const chart = new Chart(ctx, {
+            type: "line",
+            data: { datasets: datasets },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              interaction: {
+                mode: 'index',
+                intersect: false,
+              },
+              plugins: {
+                legend: { 
+                  position: "top",
+                  labels: { 
+                    font: { size: 10 },
+                    color: '#374151',
+                    usePointStyle: true
+                  }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function(context) {
+                      return context.dataset.label + ': ' + context.parsed.y.toFixed(3);
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  type: "linear",
+                  title: { 
+                    display: true, 
+                    text: "λ nm", 
+                    font: { size: 11 },
+                    color: '#374151'
+                  },
+                  ticks: { 
+                    color: '#6b7280',
+                    font: { size: 9 }
+                  },
+                  grid: { color: '#e5e7eb' }
+                },
+                y: {
+                  type: "linear",
+                  title: { 
+                    display: true, 
+                    text: "ABS", 
+                    font: { size: 11 },
+                    color: '#374151'
+                  },
+                  ticks: { 
+                    color: '#6b7280',
+                    font: { size: 9 }
+                  },
+                  grid: { color: '#e5e7eb' },
+                  beginAtZero: true
+                },
+              },
+            },
+          });
+
+          chartInstances.push(chart);
+        }, 150 + (index * 50));
+      }
+
+      // ============================================
+      // SPECTRAL OVERLAY PLOTTING
+      // ============================================
+
+      /**
+       * Process spectral data for plotting (uses uploaded data, NOT FilterService results)
+       */
+      async function runSpectralOverlayAnalysis(inputParams) {
         const normalizedSpectra = inputParams.unknownSpecturms.map(spectrum => {
           const maxAbs = Math.max(...spectrum.absorbances);
           return {
@@ -458,34 +905,9 @@
         createOverlayChart(normalizedSpectra);
       }
 
-      runBtn.addEventListener("click", async () => {
-        const dataLength = spectraData.length;
-        if (dataLength === 0) {
-          alert("Please upload sample spectra!");
-          return;
-        }
-
-        runBtn.disabled = true;
-        runBtn.textContent = "⏳ Processing...";
-
-        try {
-          chartInstances.forEach(chart => chart.destroy());
-          chartInstances = [];
-          chartsContainer.innerHTML = "";
-
-          const inputParams = prepareAlgorithmInput(spectraData);
-          
-          await runSpectralOverlayAnalysis(inputParams);
-
-          resultsContainer.classList.add("visible");
-        } catch (err) {
-          alert('Analysis error: ' + (err.message || 'Unknown error'));
-        } finally {
-          runBtn.disabled = false;
-          runBtn.textContent = "▶️ Run Analysis";
-        }
-      });
-
+      /**
+       * Create the spectral overlay chart
+       */
       function createOverlayChart(spectra) {
         const colors = [
           "#2b7de9", "#ef4444", "#10b981", "#f59e0b", 
@@ -495,10 +917,9 @@
         const chartDiv = document.createElement("div");
         chartDiv.className = "chart-card full-width";
         
-        chartDiv.innerHTML = '<h3>Spectral Overlay Analysis (' + spectra.length + ' samples)</h3><div class="chart-wrapper"><canvas id="overlayChart" width="800" height="400"></canvas></div>';
+        chartDiv.innerHTML = '<h3>Spectral Overlay (' + spectra.length + ' samples)</h3><div class="chart-wrapper"><canvas id="overlayChart" width="800" height="400"></canvas></div>';
         chartsContainer.appendChild(chartDiv);
 
-        // Small delay to ensure DOM is ready
         setTimeout(function() {
           const canvas = document.getElementById("overlayChart");
           if (!canvas) return;
@@ -518,6 +939,7 @@
             tension: 0.2,
             pointRadius: 0,
             pointHitRadius: 5,
+            spanGaps: true
           }));
 
           const chart = new Chart(ctx, {
@@ -544,6 +966,9 @@
                   callbacks: {
                     label: function(context) {
                       return context.dataset.label + ': ' + context.parsed.y.toFixed(4) + ' ABS';
+                    },
+                    title: function(context) {
+                      return 'Wavelength: ' + context[0].parsed.x.toFixed(2) + ' nm';
                     }
                   }
                 }
@@ -564,6 +989,7 @@
                   grid: { color: '#e5e7eb' }
                 },
                 y: {
+                  type: "linear",
                   title: { 
                     display: true, 
                     text: "Absorbance (ABS)", 
@@ -574,7 +1000,8 @@
                     color: '#6b7280',
                     font: { size: 10 }
                   },
-                  grid: { color: '#e5e7eb' }
+                  grid: { color: '#e5e7eb' },
+                  beginAtZero: true
                 },
               },
             },
@@ -584,12 +1011,66 @@
         }, 100);
       }
 
+      // ============================================
+      // MAIN ANALYSIS EXECUTION
+      // ============================================
+
+      runBtn.addEventListener("click", async () => {
+        if (spectraData.length === 0) {
+          alert("Please upload sample spectra!");
+          return;
+        }
+
+        runBtn.disabled = true;
+        runBtn.innerHTML = '<span class="loading-spinner"></span>Running Analysis...';
+
+        try {
+          // Clear previous results
+          chartInstances.forEach(chart => chart.destroy());
+          chartInstances = [];
+          chartsContainer.innerHTML = "";
+          analysisInfo.style.display = 'none';
+          candidatesList.style.display = 'none';
+
+          // Prepare input data for FilterService
+          const inputParams = prepareAlgorithmInput(spectraData);
+          
+          // Run FilterService spectrum algorithm (Stage 1 & 2)
+          console.log('🚀 Executing FilterService spectrum algorithm...');
+          filterServiceResults = await runFilterServiceAnalysis(inputParams);
+          
+          // Process and display FilterService results (candidates, confidence scores)
+          processAndDisplayResults(filterServiceResults);
+          
+          // Plot spectral overlay using uploaded data
+          await runSpectralOverlayAnalysis(inputParams);
+
+          resultsContainer.classList.add("visible");
+          
+          console.log('✅ Complete! FilterService analysis finished.');
+
+        } catch (err) {
+          console.error('❌ Analysis error:', err);
+          alert('Analysis error: ' + (err.message || 'Unknown error') + '\n\nMake sure:\n1. /src/pages/api/filter.ts exists\n2. astro.config.mjs has output: "server"\n3. Dev server was restarted');
+        } finally {
+          runBtn.disabled = false;
+          runBtn.innerHTML = '▶️ Run Analysis';
+        }
+      });
+
+      // ============================================
+      // CLEAR AND DOWNLOAD FUNCTIONS
+      // ============================================
+
       clearBtn.addEventListener("click", () => {
         spectraData = [];
+        filterServiceResults = null;
         updateFileDisplay();
         chartInstances.forEach(chart => chart.destroy());
         chartInstances = [];
         chartsContainer.innerHTML = "";
+        analysisInfo.style.display = 'none';
+        candidatesList.style.display = 'none';
         resultsContainer.classList.remove("visible");
       });
 
@@ -600,7 +1081,7 @@
         }
         
         const link = document.createElement('a');
-        link.download = 'Spectral_Overlay.png';
+        link.download = 'Spectral_Overlay_Analysis.png';
         link.href = chartInstances[0].toBase64Image();
         link.click();
       });
