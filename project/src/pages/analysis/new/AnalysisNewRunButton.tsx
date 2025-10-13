@@ -57,22 +57,17 @@ export default function AnalysisNewRunButton() {
             <div class="flex flex-row items-center gap-3">
                 <a
                     onClick={() => {
-                        if (ready) runAlgorithm();
+                        runAlgorithm();
                     }}
                     className={
                         ready
                             ? "btn-hover-effect inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white hover:bg-gray-600"
-                            : "inline-block cursor-default rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white opacity-45"
+                            : "inline-block cursor-pointer rounded-lg bg-gray-500 px-6 py-2 font-semibold text-white"
                     }
                 >
                     Run Analysis
                 </a>
 
-                <span class="text-gray-500">
-                    {ready
-                        ? "Ready to run"
-                        : "More input is required to run the analysis"}
-                </span>
             </div>
         </>
     );
