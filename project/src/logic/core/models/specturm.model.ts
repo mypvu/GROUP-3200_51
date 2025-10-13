@@ -1,12 +1,18 @@
 import type { Point } from "@/logic/utils/fetch_excel_st2"
 import type { Compound } from "./compund.model"
 
+export type UpperLowerBound = {
+    upper: Plot
+    lower: Plot
+}
+
 export default interface Specturm {
     name: string
     compound: Compound
     method: MethodsType
     plot: Plot
     confidence?: number
+    upperLowerBound: UpperLowerBound
 }
 
 export interface CompoundSpecturms {

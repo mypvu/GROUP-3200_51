@@ -1,7 +1,7 @@
-import type { Plot } from "@/logic/core/models/specturm.model";
+import type { Plot, UpperLowerBound } from "@/logic/core/models/specturm.model";
 import { DEFAULT_BOUNDS_SPEC } from "./rw";
 
-export function getUpperLowerBound(standard: Plot, bounds = DEFAULT_BOUNDS_SPEC): { lower: Plot; upper: Plot } {
+export function getUpperLowerBound(standard: Plot, bounds = DEFAULT_BOUNDS_SPEC): UpperLowerBound {
   const bound_val = bounds["ABS_Bound"];  
   const lower_val = 1 - bound_val;
   const upper_val = 1 + bound_val;

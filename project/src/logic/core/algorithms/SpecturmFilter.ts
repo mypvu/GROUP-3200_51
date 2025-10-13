@@ -2,10 +2,10 @@ import type { Compound } from "../models/compund.model";
 import type { ResultStage2 } from "../models/result_parameters.model";
 import conf from "../../config/conf.json"
 import type { Version } from "../models/version.model";
-import type Specturm from "../models/specturm.model";
-import { Stage2Methods, type MethodsType, type Plot } from "../models/specturm.model";
+import type Specturm from "../models/specturm.model"; 
+import { Stage2Methods, type MethodsType, type Plot, type UpperLowerBound } from "../models/specturm.model";
 import { fetchAndParseXY, type Point } from "@/logic/utils/fetch_excel_st2";
-import { getConfidence } from "@/logic/utils/get_spectrum_confidence";
+import { getConfidence, getUpperLowerBound } from "@/logic/utils/get_spectrum_confidence";
 import { getImageNameFromExcel } from "@/logic/utils/naming_mapping";
 
 export default class SpecturmFilter {
@@ -43,7 +43,7 @@ export default class SpecturmFilter {
             specturms = specturms.concat(currentSpecturms)
             for (const s of specturms) {
                 s.confidence = getConfidence(s.plot, this.un)
-
+                s.upperLowerBound = getUpperLowerBound(s.plot)
             }
         }
         
