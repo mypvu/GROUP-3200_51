@@ -1,12 +1,10 @@
-import { describe, it, expect, beforeEach, vi, test } from "vitest";
+import { describe, it, beforeEach } from "vitest";
 import BasicFilter from '../algorithms/BasicFilter'
 import { ds, sample as i_sample } from '../../utils/csvLoader'
-import test_case from './case.json'
 import CompoundFilter from "../algorithms/filter";
 import SpecturmFilter from "../algorithms/SpecturmFilter";
-import type Specturm from "../models/specturm.model";
 import type { Plot } from "../models/specturm.model";
-import UnknownSpecturm from "./Unknown.json"
+import UnknownSpecturm from "./Unknown_p.json"
 
 
 const bf = new BasicFilter(i_sample, ds)
@@ -110,18 +108,16 @@ describe("Manual testing for Basic Filter", () => {
 
     const cf = new CompoundFilter({
       samples: sample,
-      version: "1"
+      version: "1",
+      specturmBuffer: new ArrayBuffer()
     })
 
     const candidates = (await cf.st1("1")).candidates
     const unknownPlot: Plot = UnknownSpecturm
-    console.log(candidates)
     const s2_result = await sf.set(candidates.merge(), "1", unknownPlot).extract()
-    console.log(s2_result.specturms.filter((s: Specturm) => {
-      return s.compound.db_label === "NL"
-    }))
-
     
+
+    console.log(s2_result.specturms[0].plot)
 
 
   });

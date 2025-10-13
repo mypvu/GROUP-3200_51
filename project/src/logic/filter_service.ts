@@ -21,7 +21,6 @@ export default class FilterService {
      * Run the filtering algorithm on the given sample and datasets.
      * @param input StoredFilterInput from the InputService
      */
-
     
 
     public static async run_stage1(input: InputParams): Promise<FilterResult> {
@@ -31,11 +30,10 @@ export default class FilterService {
         // first stage database filtering -> candidates
         const st1_result = await cf.st1()
         
-
         // Return
         return {
             input: input,
-            result: st1_result,
+            result: st1_result
         };
     }
 
@@ -48,7 +46,7 @@ export default class FilterService {
 
         return {
             input: input,
-            result: st2_result,
+            result: st2_result
         };
     }
 }

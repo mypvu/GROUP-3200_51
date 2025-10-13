@@ -1,8 +1,9 @@
 import * as XLSX from "xlsx"
 import type { Plot } from "../core/models/specturm.model";
+import conf from "../config/conf.json"
 
 
-export type Point = { x: number; y: number };
+export type Point = { x: number; y: number; p: number };
 
 type Cell = string | number | null | undefined;
 
@@ -49,7 +50,8 @@ export function parseXYFromArrayBuffer(
     for (let r = firstData; r < grid.length; r++) {
         const row = grid[r] ?? [];
         const a = row[0];
-        const b = row[1];
+        const b = row[2];
+        const c = row[21];
 
         // stop if the row is blank-ish
         if (!hasAnyValue(row)) break;
@@ -63,9 +65,10 @@ export function parseXYFromArrayBuffer(
 
         const x = Number(a);
         const y = toNumberOrNaN(b);
+        const p = toNumberOrNaN(c)
 
         if (Number.isFinite(x) && Number.isFinite(y)) {
-            points.push({ x, y });
+            points.push({ x, y ,p});
         }
     }
 
@@ -75,7 +78,7 @@ export function parseXYFromArrayBuffer(
 
 /** Convenience: fetch one Excel by URL and return XY points */
 export async function fetchAndParseXY(url: URL, sheetName = "1"): Promise<Plot> {
-    const res = await fetch(url);
+    const res = await fetch(url, {signal: AbortSignal.timeout(conf.timeout)});
     // if (!res.ok) {
     //     console.log(res.status)
     //     console.log(url)
