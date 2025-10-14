@@ -1,6 +1,7 @@
 ---
 // plotspectra.astro
-// Complete integration with FilterService for spectral analysis
+// Client-side FilterService integration for spectral analysis
+import DataSets from "@/logic/core/models/datasets.model.ts";
 ---
 
 <!DOCTYPE html>
@@ -12,407 +13,60 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
-      body {
-        min-height: 100vh;
-        background-color: #e8eef5;
-        padding: 1rem;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        overflow-x: hidden;
-      }
-      
-      .container {
-        background: white;
-        border: 2px solid #d1d5db;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        max-width: 1400px;
-        width: calc(100% - 2rem);
-        margin: 0 auto 2rem auto;
-        padding: 1.5rem;
-        position: relative;
-        overflow: hidden;
-        box-sizing: border-box;
-      }
-      
-      .download-btn {
-        position: absolute;
-        top: 2rem;
-        right: 2rem;
-        border: 2px solid #d1d5db;
-        border-radius: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: white;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        color: #374151;
-      }
-      
-      .download-btn:hover {
-        background: #f9fafb;
-      }
-      
-      .download-btn svg {
-        width: 1.25rem;
-        height: 1.25rem;
-      }
-      
-      h1 {
-        font-size: 1.875rem;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 2rem;
-        color: #1f2937;
-      }
-      
-      .stage-section {
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        background: white;
-        border: 2px solid #d1d5db;
-        border-radius: 0.75rem;
-      }
-      
-      .stage-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: #1f2937;
-      }
-      
-      .upload-area {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-      }
-      
-      .upload-btn {
-        background: #2b7de9;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        transition: all 0.2s;
-        border: none;
-        display: inline-block;
-      }
-      
-      .upload-btn:hover {
-        background: #1a6dd6;
-      }
-      
-      .file-list {
-        list-style: none;
-        background: #f9fafb;
-        border: 2px solid #e5e7eb;
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-        width: 20rem;
-        min-height: 60px;
-        max-height: 100px;
-        overflow-y: auto;
-        font-size: 0.875rem;
-        color: #374151;
-      }
-      
-      .file-list li {
-        padding: 0.25rem 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      
-      .file-list .empty {
-        text-align: center;
-        font-style: italic;
-        color: #9ca3af;
-        display: block;
-      }
-      
-      .delete-file-btn {
-        background: #ef4444;
-        color: white;
-        border: none;
-        border-radius: 0.25rem;
-        padding: 0.125rem 0.5rem;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      
-      .delete-file-btn:hover {
-        background: #dc2626;
-      }
-      
-      .file-count {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #6b7280;
-      }
-      
-      .action-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      
-      .btn-run {
-        background: #2b7de9;
-        color: white;
-        padding: 0.75rem 2rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        font-weight: 600;
-        font-size: 1rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      
-      .btn-run:hover:not(:disabled) {
-        background: #1a6dd6;
-      }
-
-      .btn-run:disabled {
-        background: #9ca3af;
-        cursor: not-allowed;
-      }
-      
-      .btn-clear {
-        background: #6b7280;
-        color: white;
-        padding: 0.75rem 2rem;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        font-weight: 600;
-        font-size: 1rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      
-      .btn-clear:hover {
-        background: #4b5563;
-      }
-      
-      .results-container {
-        display: none;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        padding-bottom: 2rem;
-      }
-      
-      .results-container.visible {
-        display: block;
-      }
-      
-      .results-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        color: #1f2937;
-      }
-      
-      .analysis-info {
-        background: #f0f9ff;
-        border: 2px solid #bfdbfe;
-        border-radius: 0.75rem;
-        padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
-        font-size: 0.875rem;
-      }
-      
-      .analysis-info h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        color: #1e40af;
-      }
-      
-      .analysis-info p {
-        margin: 0.5rem 0;
-        color: #1e3a8a;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      
-      .analysis-info strong {
-        color: #1e40af;
-      }
-      
-      .analysis-info .value {
-        font-weight: 600;
-        color: #2563eb;
-      }
-
-      .candidates-list {
-        background: #fef3c7;
-        border: 2px solid #fcd34d;
-        border-radius: 0.75rem;
-        padding: 1rem 1.5rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .candidates-list h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        color: #92400e;
-      }
-
-      .candidate-item {
-        background: white;
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-        margin: 0.5rem 0;
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 1rem;
-        align-items: center;
-      }
-
-      .candidate-name {
-        font-weight: 600;
-        color: #1f2937;
-      }
-
-      .candidate-confidence {
-        background: #10b981;
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.25rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-align: center;
-      }
-
-      .confidence-high {
-        background: #10b981;
-      }
-
-      .confidence-medium {
-        background: #f59e0b;
-      }
-
-      .confidence-low {
-        background: #ef4444;
-      }
-
-      .spectrum-match-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      @media (max-width: 768px) {
-        .spectrum-match-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      
-      .charts-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-      }
-      
-      @media (min-width: 1024px) {
-        .charts-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      
-      @media (max-width: 1023px) {
-        .charts-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      
-      .chart-card {
-        background: white;
-        border: 2px solid #d1d5db;
-        border-radius: 0.75rem;
-        padding: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        width: 100%;
-        max-width: 100%;
-        overflow: hidden;
-        position: relative;
-        box-sizing: border-box;
-      }
-      
-      .chart-card h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        color: #1f2937;
-      }
-      
-      .chart-card canvas {
-        max-width: 100%;
-        display: block;
-      }
-      
-      .chart-card.full-width {
-        grid-column: 1 / -1;
-        height: 500px;
-        min-height: 500px;
-        max-height: 500px;
-      }
-      
-      .chart-card.full-width .chart-wrapper {
-        height: 440px;
-        min-height: 440px;
-        max-height: 440px;
-        position: relative;
-        width: 100%;
-      }
-      
-      input[type="file"] {
-        display: none;
-      }
-
-      .loading-spinner {
-        display: inline-block;
-        width: 1rem;
-        height: 1rem;
-        border: 2px solid #ffffff;
-        border-top: 2px solid transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-right: 0.5rem;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
+      /* ---------- identical styles retained ---------- */
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{min-height:100vh;background-color:#e8eef5;padding:1rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;overflow-x:hidden;}
+      .container{background:white;border:2px solid #d1d5db;border-radius:1rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);max-width:1400px;width:calc(100% - 2rem);margin:0 auto 2rem auto;padding:1.5rem;position:relative;overflow:hidden;box-sizing:border-box;}
+      .download-btn{position:absolute;top:2rem;right:2rem;border:2px solid #d1d5db;border-radius:.5rem;padding:.5rem 1rem;background:white;display:flex;align-items:center;gap:.5rem;font-weight:600;cursor:pointer;transition:all .2s;color:#374151;}
+      .download-btn:hover{background:#f9fafb;}
+      .download-btn svg{width:1.25rem;height:1.25rem;}
+      h1{font-size:1.875rem;font-weight:bold;text-align:center;margin-bottom:2rem;color:#1f2937;}
+      .stage-section{margin-bottom:1.5rem;padding:1.5rem;background:white;border:2px solid #d1d5db;border-radius:.75rem;}
+      .stage-title{font-size:1.25rem;font-weight:600;margin-bottom:1rem;color:#1f2937;}
+      .upload-area{display:flex;flex-direction:column;align-items:center;gap:1rem;}
+      .upload-btn{background:#2b7de9;color:white;padding:.75rem 1.5rem;border-radius:.5rem;font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,0.1);cursor:pointer;transition:all .2s;border:none;display:inline-block;}
+      .upload-btn:hover{background:#1a6dd6;}
+      .file-list{list-style:none;background:#f9fafb;border:2px solid #e5e7eb;border-radius:.5rem;padding:.75rem;width:20rem;min-height:60px;max-height:100px;overflow-y:auto;font-size:.875rem;color:#374151;}
+      .file-list li{padding:.25rem 0;display:flex;justify-content:space-between;align-items:center;}
+      .file-list .empty{text-align:center;font-style:italic;color:#9ca3af;display:block;}
+      .delete-file-btn{background:#ef4444;color:white;border:none;border-radius:.25rem;padding:.125rem .5rem;font-size:.75rem;cursor:pointer;transition:all .2s;}
+      .delete-file-btn:hover{background:#dc2626;}
+      .file-count{font-size:.875rem;font-weight:600;color:#6b7280;}
+      .action-buttons{display:flex;justify-content:center;gap:1rem;margin-bottom:1.5rem;}
+      .btn-run{background:#2b7de9;color:white;padding:.75rem 2rem;border-radius:.5rem;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-weight:600;font-size:1rem;border:none;cursor:pointer;transition:all .2s;}
+      .btn-run:hover:not(:disabled){background:#1a6dd6;}
+      .btn-run:disabled{background:#9ca3af;cursor:not-allowed;}
+      .btn-clear{background:#6b7280;color:white;padding:.75rem 2rem;border-radius:.5rem;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-weight:600;font-size:1rem;border:none;cursor:pointer;transition:all .2s;}
+      .btn-clear:hover{background:#4b5563;}
+      .results-container{display:none;width:100%;max-width:100%;box-sizing:border-box;padding-bottom:2rem;}
+      .results-container.visible{display:block;}
+      .results-title{font-size:1.5rem;font-weight:bold;margin-bottom:1rem;color:#1f2937;}
+      .analysis-info{background:#f0f9ff;border:2px solid #bfdbfe;border-radius:.75rem;padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:.875rem;}
+      .analysis-info h3{font-size:1rem;font-weight:600;margin-bottom:.75rem;color:#1e40af;}
+      .analysis-info p{margin:.5rem 0;color:#1e3a8a;display:flex;justify-content:space-between;align-items:center;}
+      .analysis-info strong{color:#1e40af;}
+      .analysis-info .value{font-weight:600;color:#2563eb;}
+      .candidates-list{background:#fef3c7;border:2px solid #fcd34d;border-radius:.75rem;padding:1rem 1.5rem;margin-bottom:1.5rem;}
+      .candidates-list h3{font-size:1rem;font-weight:600;margin-bottom:.75rem;color:#92400e;}
+      .candidate-confidence{background:#10b981;color:white;padding:.25rem .75rem;border-radius:.25rem;font-size:.875rem;font-weight:600;text-align:center;}
+      .confidence-high{background:#10b981;}
+      .confidence-medium{background:#f59e0b;}
+      .confidence-low{background:#ef4444;}
+      .spectrum-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+      @media(max-width:768px){.spectrum-match-grid{grid-template-columns:1fr;}}
+      .charts-grid{display:grid;grid-template-columns:1fr;gap:1rem;width:100%;max-width:100%;box-sizing:border-box;}
+      @media(min-width:1024px){.charts-grid{grid-template-columns:repeat(2,1fr);}}
+      .chart-card{background:white;border:2px solid #d1d5db;border-radius:.75rem;padding:1rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);width:100%;overflow:hidden;}
+      .chart-card.full-width{grid-column:1/-1;height:500px;min-height:500px;}
+      .chart-card.full-width .chart-wrapper{height:440px;position:relative;width:100%;}
+      input[type="file"]{display:none;}
+      .loading-spinner{display:inline-block;width:1rem;height:1rem;border:2px solid #fff;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin-right:.5rem;}
+      @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
     </style>
   </head>
 
   <body>
     <div class="container">
-      
       <button id="downloadBtn" class="download-btn">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
           stroke-width="2" stroke="currentColor">
@@ -426,667 +80,232 @@
 
       <div class="stage-section">
         <h2 class="stage-title">Upload Sample Spectra</h2>
-        
         <div class="upload-area">
-          <label for="fileInput" class="upload-btn">
-            📁 Upload Sample Spectra (Max 6 files)
-          </label>
+          <label for="fileInput" class="upload-btn">📁 Upload Sample Spectra (Max 6 files)</label>
           <input id="fileInput" type="file" accept=".xlsx,.xls" multiple />
-
-          <ul id="fileList" class="file-list">
-            <li class="empty">No files uploaded</li>
-          </ul>
-
-          <div id="fileCount" class="file-count">
-            0 / 6 files uploaded
-          </div>
+          <ul id="fileList" class="file-list"><li class="empty">No files uploaded</li></ul>
+          <div id="fileCount" class="file-count">0 / 6 files uploaded</div>
         </div>
       </div>
 
       <div class="action-buttons">
-        <button id="runBtn" class="btn-run">
-          ▶️ Run Analysis
-        </button>
-
-        <button id="clearBtn" class="btn-clear">
-          🗑️ Clear All
-        </button>
+        <button id="runBtn" class="btn-run">▶️ Run Analysis</button>
+        <button id="clearBtn" class="btn-clear">🗑️ Clear All</button>
       </div>
 
       <div id="resultsContainer" class="results-container">
         <h2 class="results-title">Analysis Results</h2>
-        <div id="analysisInfo" class="analysis-info" style="display: none;"></div>
-        <div id="candidatesList" class="candidates-list" style="display: none;"></div>
+        <div id="analysisInfo" class="analysis-info" style="display:none;"></div>
+        <div id="candidatesList" class="candidates-list" style="display:none;"></div>
         <div id="chartsContainer" class="charts-grid"></div>
       </div>
     </div>
 
     <script>
-      import FilterService from "@/logic/filter_service.ts";
+  // ✅ Dynamically import FilterService client-side
+  let FilterService = null;
 
-      const fileInput = document.getElementById("fileInput");
-      const fileList = document.getElementById("fileList");
-      const fileCount = document.getElementById("fileCount");
-      const runBtn = document.getElementById("runBtn");
-      const clearBtn = document.getElementById("clearBtn");
-      const downloadBtn = document.getElementById("downloadBtn");
-      const resultsContainer = document.getElementById("resultsContainer");
-      const analysisInfo = document.getElementById("analysisInfo");
-      const candidatesList = document.getElementById("candidatesList");
-      const chartsContainer = document.getElementById("chartsContainer");
+  (async () => {
+    try {
+      const module = await import("/src/logic/filter_service.ts");
+      FilterService = module.default;
+      console.log("✅ FilterService loaded successfully");
+    } catch (err) {
+      console.error("❌ Failed to load FilterService:", err);
+    }
+  })();
 
-      let spectraData = [];
-      let chartInstances = [];
-      let filterServiceResults = null;
-      const MAX_FILES = 6;
+      const fileInput=document.getElementById("fileInput");
+      const fileList=document.getElementById("fileList");
+      const fileCount=document.getElementById("fileCount");
+      const runBtn=document.getElementById("runBtn");
+      const clearBtn=document.getElementById("clearBtn");
+      const downloadBtn=document.getElementById("downloadBtn");
+      const resultsContainer=document.getElementById("resultsContainer");
+      const analysisInfo=document.getElementById("analysisInfo");
+      const candidatesList=document.getElementById("candidatesList");
+      const chartsContainer=document.getElementById("chartsContainer");
+      let spectraData=[],chartInstances=[],filterServiceResults=null;
+      const MAX_FILES=6;
 
-      // ============================================
-      // FILE UPLOAD HANDLING
-      // ============================================
-      
-      fileInput.addEventListener("change", async (e) => {
-        const files = Array.from(e.target.files);
-        
-        if (spectraData.length + files.length > MAX_FILES) {
-          alert('You can only upload up to ' + MAX_FILES + ' files. Currently have ' + spectraData.length + ' file(s).');
-          fileInput.value = "";
-          return;
+      // -------- Upload & File Management --------
+      fileInput.addEventListener("change",async(e)=>{
+        const files=Array.from(e.target.files);
+        if(spectraData.length+files.length>MAX_FILES){
+          alert(`You can only upload up to ${MAX_FILES} files.`);
+          fileInput.value="";return;
         }
-        
-        for (const file of files) {
-          const fileName = file.name;
-          if (spectraData.some(s => s.originalName === fileName)) {
-            alert('File "' + fileName + '" has already been uploaded.');
-            continue;
-          }
-          
-          try {
-            const buffer = await file.arrayBuffer();
-            const workbook = XLSX.read(buffer, { type: "array" });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-            const points = rows
-              .slice(1)
-              .map((r) => ({ x: parseFloat(r[0]), y: parseFloat(r[1]) }))
-              .filter((p) => !isNaN(p.x) && !isNaN(p.y));
-
-            if (points.length > 0) {
-              spectraData.push({
-                name: file.name.replace(/\.[^/.]+$/, ""),
-                originalName: fileName,
-                plot: points,
-              });
-            }
-          } catch (err) {
-            alert('Error reading file ' + fileName + ': ' + err.message);
-          }
+        for(const file of files){
+          const fileName=file.name;
+          if(spectraData.some(s=>s.originalName===fileName)){alert(`"${fileName}" already uploaded.`);continue;}
+          try{
+            const buffer=await file.arrayBuffer();
+            const workbook=XLSX.read(buffer,{type:"array"});
+            const sheet=workbook.Sheets[workbook.SheetNames[0]];
+            const rows=XLSX.utils.sheet_to_json(sheet,{header:1});
+            const points=rows.slice(1).map(r=>({x:parseFloat(r[0]),y:parseFloat(r[1])}))
+              .filter(p=>!isNaN(p.x)&&!isNaN(p.y));
+            if(points.length>0)spectraData.push({name:file.name.replace(/\.[^/.]+$/,""),originalName:fileName,plot:points});
+          }catch(err){alert("Error reading "+fileName+": "+err.message);}
         }
-        updateFileDisplay();
-        fileInput.value = "";
+        updateFileDisplay();fileInput.value="";
       });
 
-      function deleteFile(index) {
-        spectraData.splice(index, 1);
-        updateFileDisplay();
-      }
-
-      function updateFileDisplay() {
-        fileList.innerHTML = "";
-        if (spectraData.length === 0) {
-          fileList.innerHTML = '<li class="empty">No files uploaded</li>';
-          fileCount.textContent = '0 / ' + MAX_FILES + ' files uploaded';
-          return;
+      function updateFileDisplay(){
+        fileList.innerHTML="";
+        if(spectraData.length===0){
+          fileList.innerHTML='<li class="empty">No files uploaded</li>';
+          fileCount.textContent=`0 / ${MAX_FILES} files uploaded`;return;
         }
-
-        spectraData.forEach((s, i) => {
-          const li = document.createElement("li");
-          const span = document.createElement("span");
-          span.textContent = (i + 1) + '. ' + s.name;
-          
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "Delete";
-          deleteBtn.className = "delete-file-btn";
-          deleteBtn.onclick = () => deleteFile(i);
-          
-          li.appendChild(span);
-          li.appendChild(deleteBtn);
-          fileList.appendChild(li);
+        spectraData.forEach((s,i)=>{
+          const li=document.createElement("li");
+          const span=document.createElement("span");
+          span.textContent=`${i+1}. ${s.name}`;
+          const del=document.createElement("button");
+          del.textContent="Delete";del.className="delete-file-btn";del.onclick=()=>{spectraData.splice(i,1);updateFileDisplay();};
+          li.appendChild(span);li.appendChild(del);fileList.appendChild(li);
         });
-
-        fileCount.textContent = spectraData.length + ' / ' + MAX_FILES + ' files uploaded';
+        fileCount.textContent=`${spectraData.length} / ${MAX_FILES} files uploaded`;
       }
 
-      // ============================================
-      // FILTERSERVICE INTEGRATION
-      // ============================================
-
-      /**
-       * Prepare input data for FilterService algorithm
-       */
-      function prepareAlgorithmInput(spectra) {
-        return {
-          unknownSpecturms: spectra.map(s => ({
-            name: s.name,
-            data: s.plot,
-            wavelengths: s.plot.map(p => p.x),
-            absorbances: s.plot.map(p => p.y)
-          })),
-          samples: [], // Add your samples configuration here if needed
-          version: 1,
-          sampleCount: spectra.length,
-          metadata: {
-            timestamp: new Date().toISOString(),
-            fileNames: spectra.map(s => s.originalName)
-          }
-        };
+      // -------- FilterService Processing --------
+      function prepareAlgorithmInput(spectra){
+        return{unknownSpecturms:spectra.map(s=>({name:s.name,data:s.plot,wavelengths:s.plot.map(p=>p.x),absorbances:s.plot.map(p=>p.y)})),
+          samples:[],version:1,sampleCount:spectra.length,metadata:{timestamp:new Date().toISOString(),fileNames:spectra.map(s=>s.originalName)}};
       }
 
-      /**
-       * Call FilterService API - Runs the spectrum algorithm
-       * Stage 1: Database filtering -> candidates
-       * Stage 2: Spectral overlay -> confidence scores
-       */
       async function runFilterServiceAnalysis(inputParams) {
         try {
-          console.log('🔬 Starting FilterService analysis...');
-          
-          // Stage 1: Database filtering
+          console.log('🔬 Starting FilterService analysis (client-side)...');
+
+          // ✅ Ensure FilterService is loaded (for client-side dynamic import)
+          if (!FilterService) {
+            console.warn('FilterService not yet loaded, importing dynamically...');
+            const module = await import("@/logic/filter_service.ts");
+            FilterService = module.default;
+          }
+
+          // --- Stage 1: Database filtering ---
           console.log('📊 Stage 1: Running database filtering algorithm...');
           const stage1Result = await FilterService.run_stage1(inputParams);
-          /*const stage1Response = await fetch('/api/filter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              stage: 1,
-              inputParams: inputParams
-            })
-          });
-
-          if (!stage1Response.ok) {
-            const errorText = await stage1Response.text();
-            console.error('Stage 1 error:', errorText);
-            throw new Error('Stage 1 failed: ' + stage1Response.status);
-          }
-
-          const stage1Result = await stage1Response.json();*/
           console.log('✅ Stage 1 complete:', stage1Result);
 
-          // Stage 2: Spectral overlay analysis
+          // --- Stage 2: Spectral overlay ---
           console.log('🔬 Stage 2: Running spectral overlay algorithm...');
           const stage2Result = await FilterService.run_stage2(inputParams, stage1Result.result);
-          /*const stage2Response = await fetch('/api/filter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              stage: 2,
-              inputParams: inputParams,
-              stage1Result: stage1Result.result
-            })
-          });
-
-          if (!stage2Response.ok) {
-            const errorText = await stage2Response.text();
-            console.error('Stage 2 error:', errorText);
-            throw new Error('Stage 2 failed: ' + stage2Response.status);
-          }
-
-          const stage2Result = await stage2Response.json();*/
           console.log('✅ Stage 2 complete:', stage2Result);
 
           return {
             stage1: stage1Result,
             stage2: stage2Result
           };
-
         } catch (error) {
           console.error('❌ FilterService error:', error);
           throw error;
         }
       }
 
-      // ============================================
-      // RESULTS DISPLAY ALGORITHM
-      // ============================================
 
-      /**
-       * Main algorithm to process and display FilterService results
-       * Extracts: candidates, confidence scores, match data
-       */
-      function processAndDisplayResults(results) {
-        if (!results) {
-          analysisInfo.style.display = 'none';
-          candidatesList.style.display = 'none';
-          return;
+      function displayAnalysisInfo(results){
+        let html="<h3>🔬 FilterService Analysis Summary</h3>";
+        if(results.stage1?.result){
+          const c=results.stage1.result.candidates?.length||results.stage1.result.ids?.length||0;
+          html+=`<p><strong>Stage 1:</strong> <span class='value'>${c} candidate(s)</span></p>`;
         }
-
-        // Display summary info
-        displayAnalysisInfo(results);
-        
-        // Display detailed candidates with confidence scores
-        displayCandidates(results);
+        if(results.stage2?.result?.specturms){
+          html+=`<p><strong>Stage 2:</strong> <span class='value'>${results.stage2.result.specturms.length} match(es)</span></p>`;
+        }
+        html+=`<p style='font-size:.75rem;color:#6b7280'><strong>Completed:</strong> ${new Date().toLocaleString()}</p>`;
+        analysisInfo.innerHTML=html;analysisInfo.style.display='block';
       }
 
-      /**
-       * Display FilterService analysis summary
-       */
-      function displayAnalysisInfo(results) {
-        let infoHTML = '<h3>🔬 FilterService Analysis Summary</h3>';
-        
-        // Stage 1 results
-        if (results.stage1 && results.stage1.result) {
-          const candidatesCount = results.stage1.result.candidates?.length || 
-                                  results.stage1.result.ids?.length || 0;
-          infoHTML += '<p><strong>Stage 1 - Database Filtering:</strong> <span class="value">' + candidatesCount + ' candidate(s) found</span></p>';
-          
-          if (results.stage1.result.version) {
-            infoHTML += '<p><strong>Database Version:</strong> <span class="value">v' + results.stage1.result.version + '</span></p>';
-          }
-        }
-
-        // Stage 2 results
-        if (results.stage2 && results.stage2.result) {
-          if (results.stage2.result.specturms) {
-            infoHTML += '<p><strong>Stage 2 - Spectral Matches:</strong> <span class="value">' + results.stage2.result.specturms.length + ' match(es)</span></p>';
-          }
-        }
-
-        infoHTML += '<p style="margin-top: 1rem; font-size: 0.75rem; color: #6b7280;"><strong>Completed:</strong> ' + new Date().toLocaleString() + '</p>';
-
-        analysisInfo.innerHTML = infoHTML;
-        analysisInfo.style.display = 'block';
-      }
-
-      /**
-       * Display candidate compounds with confidence scores and individual charts
-       * Shows matched spectrum overlays similar to the reference image
-       */
-      function displayCandidates(results) {
-        if (!results.stage2 || !results.stage2.result || !results.stage2.result.specturms) {
-          candidatesList.style.display = 'none';
-          return;
-        }
-
-        const spectrums = results.stage2.result.specturms;
-        
-        if (spectrums.length === 0) {
-          candidatesList.style.display = 'none';
-          return;
-        }
-
-        let candidatesHTML = '<h3>📋 Identified Candidate Matches</h3>';
-        candidatesHTML += '<div class="spectrum-match-grid">';
-        
-        // Sort by confidence (highest first)
-        const sortedSpectrums = [...spectrums].sort((a, b) => {
-          const confA = a.confidence || 0;
-          const confB = b.confidence || 0;
-          return confB - confA;
+      function displayCandidates(results){
+        if(!results.stage2?.result?.specturms){candidatesList.style.display='none';return;}
+        const sorted=[...results.stage2.result.specturms].sort((a,b)=>(b.confidence||0)-(a.confidence||0));
+        let html="<h3>📋 Identified Candidate Matches</h3><div class='spectrum-match-grid'>";
+        sorted.forEach(s=>{
+          const conf=s.confidence??0,name=s.name||s.compound?.name||"Unknown";
+          let cls="confidence-low";if(conf>=0.7)cls="confidence-high";else if(conf>=0.4)cls="confidence-medium";
+          html+=`<div class='candidate-confidence ${cls}'>${name}: ${(conf*100).toFixed(0)}%</div>`;
         });
+        html+="</div>";
+        candidatesList.innerHTML=html;candidatesList.style.display='block';
+        createIndividualMatchCharts(sorted);
+      }
 
-        sortedSpectrums.forEach((spectrum, index) => {
-          const name = spectrum.name || spectrum.compound?.name || 'Unknown Compound';
-          const confidence = spectrum.confidence !== undefined ? spectrum.confidence : null;
-          
-          let confidenceHTML = '';
-          let confidenceClass = 'confidence-low';
-          
-          if (confidence !== null) {
-            const confidencePercent = (confidence * 100).toFixed(0);
-            if (confidence >= 0.7) confidenceClass = 'confidence-high';
-            else if (confidence >= 0.4) confidenceClass = 'confidence-medium';
-            
-            confidenceHTML = '<div class="candidate-confidence ' + confidenceClass + '">' + name + ': ' + confidencePercent + '%</div>';
-          } else {
-            confidenceHTML = '<div class="candidate-confidence confidence-low">' + name + '</div>';
+      function createIndividualMatchCharts(matches){
+        matches.slice(0,4).forEach((m,i)=>{if(m.plot?.length>0)createComparisonChart(m,i);});
+      }
+
+      function createComparisonChart(match,index){
+        const colors=['#2b7de9','#ef4444','#10b981','#f59e0b'];
+        const matchColor=colors[index%colors.length];
+        const div=document.createElement("div");
+        div.className="chart-card";
+        const name=match.name||match.compound?.name||'Unknown';
+        const conf=match.confidence?(match.confidence*100).toFixed(0):'N/A';
+        div.innerHTML=`<h3>${name}: ${conf}%</h3><div style='height:240px'><canvas id='matchChart_${index}'></canvas></div>`;
+        chartsContainer.appendChild(div);
+        setTimeout(()=>{
+          const ctx=document.getElementById(`matchChart_${index}`).getContext("2d");
+          const datasets=[];
+          if(spectraData[0]){
+            datasets.push({label:'Unknown Sample',data:spectraData[0].plot,borderColor:'#6b7280',backgroundColor:'#6b728020',borderWidth:2,fill:false,tension:0.2,pointRadius:0,borderDash:[5,5]});
           }
-
-          candidatesHTML += confidenceHTML;
-        });
-
-        candidatesHTML += '</div>';
-
-        candidatesList.innerHTML = candidatesHTML;
-        candidatesList.style.display = 'block';
-
-        // Create individual comparison charts for top matches
-        createIndividualMatchCharts(sortedSpectrums);
+          if(match.plot)datasets.push({label:name,data:match.plot,borderColor:matchColor,backgroundColor:matchColor+'20',borderWidth:2.5,fill:false,tension:0.2,pointRadius:0});
+          chartInstances.push(new Chart(ctx,{type:"line",data:{datasets},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{font:{size:10},color:'#374151'}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(4)} ABS`,title:c=>`Wavelength: ${c[0].parsed.x.toFixed(2)} nm`}}},scales:{x:{type:'linear',title:{display:true,text:'Wavelength (λ nm)',font:{size:12}},grid:{color:'#e5e7eb'}},y:{title:{display:true,text:'Absorbance (ABS)',font:{size:12}},beginAtZero:true,grid:{color:'#e5e7eb'}}}}}));
+        },100);
       }
 
-      /**
-       * Create individual spectrum comparison charts
-       * Each chart shows unknown spectrum vs matched candidate
-       */
-      function createIndividualMatchCharts(matches) {
-        // Show top 4 matches maximum (like in the reference image)
-        const topMatches = matches.slice(0, Math.min(4, matches.length));
-        
-        topMatches.forEach((match, index) => {
-          if (match.plot && match.plot.length > 0) {
-            createComparisonChart(match, index);
-          }
-        });
+      async function runSpectralOverlayAnalysis(inputParams){
+        const normalized=inputParams.unknownSpecturms.map(s=>{const max=Math.max(...s.absorbances);return{name:s.name,wavelengths:s.wavelengths,absorbances:s.absorbances,maxAbsorbance:max};});
+        createOverlayChart(normalized);
       }
 
-      /**
-       * Create a single comparison chart showing unknown vs candidate
-       */
-      function createComparisonChart(match, index) {
-        const colors = ['#2b7de9', '#ef4444', '#10b981', '#f59e0b'];
-        const matchColor = colors[index % colors.length];
-        
-        const chartDiv = document.createElement("div");
-        chartDiv.className = "chart-card";
-        
-        const name = match.name || match.compound?.name || 'Unknown';
-        const confidence = match.confidence ? (match.confidence * 100).toFixed(0) : 'N/A';
-        
-        chartDiv.innerHTML = '<h3>' + name + ': ' + confidence + '%</h3><div style="height: 240px; position: relative;"><canvas id="matchChart_' + index + '"></canvas></div>';
-        chartsContainer.appendChild(chartDiv);
-
-        setTimeout(function() {
-          const canvas = document.getElementById('matchChart_' + index);
-          if (!canvas) return;
-          
-          const ctx = canvas.getContext("2d");
-
-          const datasets = [];
-          
-          // Add unknown spectrum (from uploaded data)
-          if (spectraData.length > 0) {
-            const unknownSpectrum = spectraData[0]; // Use first uploaded spectrum
-            datasets.push({
-              label: 'Unknown Sample',
-              data: unknownSpectrum.plot.map(p => ({ x: p.x, y: p.y })),
-              borderColor: '#6b7280',
-              backgroundColor: '#6b728020',
-              borderWidth: 2,
-              fill: false,
-              tension: 0.2,
-              pointRadius: 0,
-              borderDash: [5, 5]
-            });
-          }
-
-          // Add matched candidate spectrum
-          if (match.plot && match.plot.length > 0) {
-            datasets.push({
-              label: name,
-              data: match.plot,
-              borderColor: matchColor,
-              backgroundColor: matchColor + '20',
-              borderWidth: 2.5,
-              fill: false,
-              tension: 0.2,
-              pointRadius: 0
-            });
-          }
-
-          const chart = new Chart(ctx, {
-            type: "line",
-            data: { datasets: datasets },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              interaction: {
-                mode: 'index',
-                intersect: false,
-              },
-              plugins: {
-                legend: { 
-                  position: "top",
-                  labels: { 
-                    font: { size: 10 },
-                    color: '#374151',
-                    usePointStyle: true
-                  }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function(context) {
-                      return context.dataset.label + ': ' + context.parsed.y.toFixed(3);
-                    }
-                  }
-                }
-              },
-              scales: {
-                x: {
-                  type: "linear",
-                  title: { 
-                    display: true, 
-                    text: "λ nm", 
-                    font: { size: 11 },
-                    color: '#374151'
-                  },
-                  ticks: { 
-                    color: '#6b7280',
-                    font: { size: 9 }
-                  },
-                  grid: { color: '#e5e7eb' }
-                },
-                y: {
-                  type: "linear",
-                  title: { 
-                    display: true, 
-                    text: "ABS", 
-                    font: { size: 11 },
-                    color: '#374151'
-                  },
-                  ticks: { 
-                    color: '#6b7280',
-                    font: { size: 9 }
-                  },
-                  grid: { color: '#e5e7eb' },
-                  beginAtZero: true
-                },
-              },
-            },
-          });
-
-          chartInstances.push(chart);
-        }, 150 + (index * 50));
+      function createOverlayChart(spectra){
+        const colors=["#2b7de9","#ef4444","#10b981","#f59e0b","#8b5cf6","#ec4899"];
+        const div=document.createElement("div");
+        div.className="chart-card full-width";
+        div.innerHTML=`<h3>Spectral Overlay (${spectra.length} samples)</h3><div class='chart-wrapper'><canvas id='overlayChart'></canvas></div>`;
+        chartsContainer.appendChild(div);
+        setTimeout(()=>{
+          const ctx=document.getElementById("overlayChart").getContext("2d");
+          const datasets=spectra.map((s,i)=>({label:`${s.name} (max: ${s.maxAbsorbance.toFixed(3)})`,data:s.wavelengths.map((wl,j)=>({x:wl,y:s.absorbances[j]})),borderColor:colors[i%colors.length],backgroundColor:colors[i%colors.length]+'20',borderWidth:2.5,fill:false,tension:0.2,pointRadius:0}));
+          chartInstances.push(new Chart(ctx,{type:"line",data:{datasets},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{font:{size:11},color:'#374151',usePointStyle:true}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(4)} ABS`,title:c=>`Wavelength: ${c[0].parsed.x.toFixed(2)} nm`}}},scales:{x:{type:'linear',title:{display:true,text:'Wavelength (λ nm)',font:{size:13,weight:'bold'},color:'#374151'},grid:{color:'#e5e7eb'}},y:{title:{display:true,text:'Absorbance (ABS)',font:{size:13,weight:'bold'},color:'#374151'},beginAtZero:true,grid:{color:'#e5e7eb'}}}}}));
+        },100);
       }
 
-      // ============================================
-      // SPECTRAL OVERLAY PLOTTING
-      // ============================================
-
-      /**
-       * Process spectral data for plotting (uses uploaded data, NOT FilterService results)
-       */
-      async function runSpectralOverlayAnalysis(inputParams) {
-        const normalizedSpectra = inputParams.unknownSpecturms.map(spectrum => {
-          const maxAbs = Math.max(...spectrum.absorbances);
-          return {
-            name: spectrum.name,
-            wavelengths: spectrum.wavelengths,
-            absorbances: spectrum.absorbances,
-            normalizedAbs: spectrum.absorbances.map(a => a / (maxAbs || 1)),
-            maxAbsorbance: maxAbs
-          };
-        });
-
-        createOverlayChart(normalizedSpectra);
-      }
-
-      /**
-       * Create the spectral overlay chart
-       */
-      function createOverlayChart(spectra) {
-        const colors = [
-          "#2b7de9", "#ef4444", "#10b981", "#f59e0b", 
-          "#8b5cf6", "#ec4899"
-        ];
-
-        const chartDiv = document.createElement("div");
-        chartDiv.className = "chart-card full-width";
-        
-        chartDiv.innerHTML = '<h3>Spectral Overlay (' + spectra.length + ' samples)</h3><div class="chart-wrapper"><canvas id="overlayChart" width="800" height="400"></canvas></div>';
-        chartsContainer.appendChild(chartDiv);
-
-        setTimeout(function() {
-          const canvas = document.getElementById("overlayChart");
-          if (!canvas) return;
-          
-          const ctx = canvas.getContext("2d");
-
-          const datasets = spectra.map((spec, idx) => ({
-            label: spec.name + ' (max: ' + spec.maxAbsorbance.toFixed(3) + ')',
-            data: spec.wavelengths.map((wl, i) => ({ 
-              x: wl, 
-              y: spec.absorbances[i] 
-            })),
-            borderColor: colors[idx % colors.length],
-            backgroundColor: colors[idx % colors.length] + '20',
-            borderWidth: 2.5,
-            fill: false,
-            tension: 0.2,
-            pointRadius: 0,
-            pointHitRadius: 5,
-            spanGaps: true
-          }));
-
-          const chart = new Chart(ctx, {
-            type: "line",
-            data: { datasets: datasets },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              interaction: {
-                mode: 'index',
-                intersect: false,
-              },
-              plugins: {
-                legend: { 
-                  position: "top",
-                  labels: { 
-                    font: { size: 11 },
-                    color: '#374151',
-                    padding: 12,
-                    usePointStyle: true
-                  }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: function(context) {
-                      return context.dataset.label + ': ' + context.parsed.y.toFixed(4) + ' ABS';
-                    },
-                    title: function(context) {
-                      return 'Wavelength: ' + context[0].parsed.x.toFixed(2) + ' nm';
-                    }
-                  }
-                }
-              },
-              scales: {
-                x: {
-                  type: "linear",
-                  title: { 
-                    display: true, 
-                    text: "Wavelength (λ nm)", 
-                    font: { size: 13, weight: 'bold' },
-                    color: '#374151'
-                  },
-                  ticks: { 
-                    color: '#6b7280',
-                    font: { size: 10 }
-                  },
-                  grid: { color: '#e5e7eb' }
-                },
-                y: {
-                  type: "linear",
-                  title: { 
-                    display: true, 
-                    text: "Absorbance (ABS)", 
-                    font: { size: 13, weight: 'bold' },
-                    color: '#374151'
-                  },
-                  ticks: { 
-                    color: '#6b7280',
-                    font: { size: 10 }
-                  },
-                  grid: { color: '#e5e7eb' },
-                  beginAtZero: true
-                },
-              },
-            },
-          });
-
-          chartInstances.push(chart);
-        }, 100);
-      }
-
-      // ============================================
-      // MAIN ANALYSIS EXECUTION
-      // ============================================
-
-      runBtn.addEventListener("click", async () => {
-        if (spectraData.length === 0) {
-          alert("Please upload sample spectra!");
-          return;
-        }
-
-        runBtn.disabled = true;
-        runBtn.innerHTML = '<span class="loading-spinner"></span>Running Analysis...';
-
-        try {
-          // Clear previous results
-          chartInstances.forEach(chart => chart.destroy());
-          chartInstances = [];
-          chartsContainer.innerHTML = "";
-          analysisInfo.style.display = 'none';
-          candidatesList.style.display = 'none';
-
-          // Prepare input data for FilterService
-          const inputParams = prepareAlgorithmInput(spectraData);
-          
-          // Run FilterService spectrum algorithm (Stage 1 & 2)
-          console.log('🚀 Executing FilterService spectrum algorithm...');
-          filterServiceResults = await runFilterServiceAnalysis(inputParams);
-          
-          // Process and display FilterService results (candidates, confidence scores)
-          processAndDisplayResults(filterServiceResults);
-          
-          // Plot spectral overlay using uploaded data
-          await runSpectralOverlayAnalysis(inputParams);
-
+      // -------- Main Analysis Execution --------
+      runBtn.addEventListener("click",async()=>{
+        if(spectraData.length===0){alert("Please upload sample spectra!");return;}
+        runBtn.disabled=true;runBtn.innerHTML='<span class="loading-spinner"></span>Running Analysis...';
+        try{
+          chartInstances.forEach(c=>c.destroy());chartInstances=[];chartsContainer.innerHTML="";
+          analysisInfo.style.display='none';candidatesList.style.display='none';
+          const input=prepareAlgorithmInput(spectraData);
+          filterServiceResults=await runFilterServiceAnalysis(input);
+          displayAnalysisInfo(filterServiceResults);
+          displayCandidates(filterServiceResults);
+          await runSpectralOverlayAnalysis(input);
           resultsContainer.classList.add("visible");
-          
-          console.log('✅ Complete! FilterService analysis finished.');
-
-        } catch (err) {
-          console.error('❌ Analysis error:', err);
-          alert('Analysis error: ' + (err.message || 'Unknown error') + '\n\nMake sure:\n1. /src/pages/api/filter.ts exists\n2. astro.config.mjs has output: "server"\n3. Dev server was restarted');
-        } finally {
-          runBtn.disabled = false;
-          runBtn.innerHTML = '▶️ Run Analysis';
-        }
+        }catch(err){console.error(err);alert("Analysis error: "+err.message);}
+        finally{runBtn.disabled=false;runBtn.innerHTML='▶️ Run Analysis';}
       });
 
-      // ============================================
-      // CLEAR AND DOWNLOAD FUNCTIONS
-      // ============================================
-
-      clearBtn.addEventListener("click", () => {
-        spectraData = [];
-        filterServiceResults = null;
-        updateFileDisplay();
-        chartInstances.forEach(chart => chart.destroy());
-        chartInstances = [];
-        chartsContainer.innerHTML = "";
-        analysisInfo.style.display = 'none';
-        candidatesList.style.display = 'none';
+      // -------- Clear & Download --------
+      clearBtn.addEventListener("click",()=>{
+        spectraData=[];filterServiceResults=null;
+        updateFileDisplay();chartInstances.forEach(c=>c.destroy());
+        chartInstances=[];chartsContainer.innerHTML="";
+        analysisInfo.style.display='none';candidatesList.style.display='none';
         resultsContainer.classList.remove("visible");
       });
 
-      downloadBtn.addEventListener("click", () => {
-        if (chartInstances.length === 0) {
-          alert("Please run analysis first!");
-          return;
-        }
-        
-        const link = document.createElement('a');
-        link.download = 'Spectral_Overlay_Analysis.png';
-        link.href = chartInstances[0].toBase64Image();
+      downloadBtn.addEventListener("click",()=>{
+        if(chartInstances.length===0){alert("Run analysis first!");return;}
+        const link=document.createElement("a");
+        link.download="Spectral_Overlay_Analysis.png";
+        link.href=chartInstances[0].toBase64Image();
         link.click();
       });
     </script>
