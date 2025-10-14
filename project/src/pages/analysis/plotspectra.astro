@@ -462,6 +462,8 @@
     </div>
 
     <script is:inline>
+      import FilterService from "@/logic/filter_service.ts";
+
       const fileInput = document.getElementById("fileInput");
       const fileList = document.getElementById("fileList");
       const fileCount = document.getElementById("fileCount");
@@ -591,7 +593,8 @@
           
           // Stage 1: Database filtering
           console.log('📊 Stage 1: Running database filtering algorithm...');
-          const stage1Response = await fetch('/api/filter', {
+          const stage1Result = await FilterService.run_stage1(inputParams);
+          /*const stage1Response = await fetch('/api/filter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -606,12 +609,13 @@
             throw new Error('Stage 1 failed: ' + stage1Response.status);
           }
 
-          const stage1Result = await stage1Response.json();
+          const stage1Result = await stage1Response.json();*/
           console.log('✅ Stage 1 complete:', stage1Result);
 
           // Stage 2: Spectral overlay analysis
           console.log('🔬 Stage 2: Running spectral overlay algorithm...');
-          const stage2Response = await fetch('/api/filter', {
+          const stage2Result = await FilterService.run_stage2(inputParams, stage1Result.result);
+          /*const stage2Response = await fetch('/api/filter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -627,7 +631,7 @@
             throw new Error('Stage 2 failed: ' + stage2Response.status);
           }
 
-          const stage2Result = await stage2Response.json();
+          const stage2Result = await stage2Response.json();*/
           console.log('✅ Stage 2 complete:', stage2Result);
 
           return {
