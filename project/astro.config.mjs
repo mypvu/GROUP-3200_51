@@ -2,7 +2,6 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import preact from "@astrojs/preact";
-import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,9 +17,6 @@ export default defineConfig({
     site: 'https://mypvu.github.io',
     base: '/GROUP-3200_51',
 
-    // API routes config (REQUIRED for FilterService)
-    output: 'server',
-    adapter: node({
-        mode: 'standalone'
-    })
+    // Static site generation (no server/API routes needed)
+    output: 'static'
 });
