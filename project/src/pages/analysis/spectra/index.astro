@@ -1,0 +1,18 @@
+---
+import CenteredBoxLayout from "@/layouts/CenteredBoxLayout.astro";
+import SpectralOverlayView from "@/components/analysis/spectra/SpectralOverlayView.tsx";
+---
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Results - HTPLC Compound Matcher</title>
+</head>
+
+<CenteredBoxLayout
+    title="Spectral Overlay Visualizer"
+    subtitle="View the spectral overlay generated from your results"
+    backPath="analysis/new"
+>
+    <!-- Saved Analyses List -->
+    <SpectralOverlayView client:load />
+</CenteredBoxLayout>

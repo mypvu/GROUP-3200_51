@@ -4,29 +4,30 @@ import CompoundItem from "@/components/analysis/new/CompoundItem";
 import { useEffect, useState } from "preact/hooks";
 import FilterService from "@/logic/filter_service.ts";
 import { navigate } from "astro:transitions/client";
+import type { ResultStage1 } from "@core/models/result_parameters.model.ts";
 
 // NOTE
 // This component is only usable for debugging at the moment
 
 async function runAlgorithm() {
     let sessionService = SessionService.getInstance();
-    let session = sessionService.getCurrentSession();
+    let session = sessionService.getCurrentSession()!;
+
     const sessionAlgorithmData = await session.getAlgorithmData();
 
     // run algorithm
     console.log("running...");
-    let result = await FilterService.run_stage1(sessionAlgorithmData.inputs);
-    console.log("result: ", result);
+    let results = await FilterService.run_stage1(sessionAlgorithmData.inputs);
+    console.log("result: ", results);
 
     // save to session data
     console.log("preparing to save...");
     let sessionAlgorithmResult = await session.getAlgorithmResult();
-    sessionAlgorithmResult.data = result;
+    sessionAlgorithmResult.data!.resultForStageOne =
+        results.result as ResultStage1;
 
     console.log("saving result...");
     await sessionAlgorithmResult.save();
-
-    console.log(result);
 
     navigate(import.meta.env.BASE_URL + "/analysis/results");
 }
@@ -67,7 +68,6 @@ export default function AnalysisNewRunButton() {
                 >
                     Run Analysis
                 </a>
-
             </div>
         </>
     );

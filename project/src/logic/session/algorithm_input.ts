@@ -7,9 +7,10 @@ import type {
     Sample,
 } from "@core/models/compund.model.ts";
 import CompoundHelper from "@/logic/compound_helper.ts";
+import type { SpecturmsOnly } from "@core/models/specturm.model.ts";
 
 export class SessionAlgorithmInputs implements InputParams {
-    public unknownSpecturms: ArrayBuffer = null;
+    public unknownSpecturms: SpecturmsOnly = undefined;
     public samples: ISampleContainer = {};
     public version: string = "";
 

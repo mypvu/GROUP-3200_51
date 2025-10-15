@@ -4,6 +4,10 @@ import type { ISampleContainer } from "@core/models/compund.model.ts";
 import { SessionAlgorithmInputs } from "./algorithm_input";
 import type { WritableAtom } from "nanostores";
 import type { FilterResult } from "@/logic/filter_service.ts";
+import type {
+    ResultStage1,
+    ResultStage2,
+} from "@core/models/result_parameters.model.ts";
 
 interface ISessionData {
     save(): Promise<void>;
@@ -94,15 +98,20 @@ export class SessionAlgorithmData {
     }
 }
 
+export interface SessionFilterResult {
+    resultForStageOne?: ResultStage1;
+    resultForStageTwo?: ResultStage2;
+}
+
 export class SessionAlgorithmResult {
     private sessionId: string;
-    public data?: FilterResult;
-    private atom: WritableAtom<FilterResult | undefined>;
+    public data?: SessionFilterResult;
+    private atom: WritableAtom<SessionFilterResult | undefined>;
 
     constructor(sessionId: string) {
         this.sessionId = sessionId;
 
-        this.atom = persistentAtom<FilterResult | undefined>(
+        this.atom = persistentAtom<SessionFilterResult | undefined>(
             `result-${this.sessionId}`,
             undefined,
             {
