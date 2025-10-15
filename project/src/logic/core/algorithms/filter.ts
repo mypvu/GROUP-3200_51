@@ -5,9 +5,8 @@ import type { InputParams } from "../models/search_parameters.model";
 import { fetch_dataset } from "@/logic/utils/fetch_excel_st1";
 import conf from "../../config/conf.json"
 import type DataSets from "../models/datasets.model";
-import { parseXYFromArrayBuffer } from "@/logic/utils/fetch_excel_st2";
 import SpecturmFilter from "./SpecturmFilter";
-import type { SpecturmsOnly } from "../models/specturm.model";
+import type { SpecturmFiles } from "../models/specturm.model";
 
 export default class CompoundFilter {
     private bf: BasicFilter
@@ -40,9 +39,9 @@ export default class CompoundFilter {
         }
     }
 
-    async st2(candidates: DataSets, unknowSpecturm: SpecturmsOnly, ver = this.input.version): Promise<ResultStage2> {
+    async st2(candidates: DataSets, unknowSpecturm: SpecturmFiles, ver = this.input.version): Promise<ResultStage2> {
         
-        if(!unknowSpecturm) 
+        if(!unknowSpecturm)
         {
             throw new Error("There is no unknown specturm provided")
         }

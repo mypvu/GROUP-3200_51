@@ -1,3 +1,6 @@
+import type { UploadedFile, UploadedFileList } from "@/components/analysis/spectra/FileListView";
+import type { SpecturmFiles } from "../core/models/specturm.model";
+
 // Prefer first non-empty column in `keys`
 export function get(row: Record<string, string>, keys: string[]): string {
   for (const k of keys) {
@@ -14,6 +17,25 @@ export function toNumber(v: string | undefined): number {
   const m = s.match(/-?\d+(?:\.\d+)?/);
   return m ? parseFloat(m[0]) : NaN;
 }
+
+export const createSpectrumFiles = (uploadedFiles: UploadedFile[]): SpectrumFiles => {
+  const spectrumKeys = ["DF", "UD", "FDN", "FDV", "UDP", "UDV"] as const;
+
+  const result: Partial<SpecturmFiles> = {};
+
+  for (const key of spectrumKeys) {
+    const match = uploadedFiles.files.find(
+      (file) => file.name.toUpperCase() === key && file.data
+    );
+    if (match?.data) {
+      result[key] = match.data;
+    }
+  }
+
+  // Type assertion because we know all required keys should exist if files are complete
+  return result as SpectrumFiles;
+};
+
 
 export const H = {
   code: ["Code", "ID"],

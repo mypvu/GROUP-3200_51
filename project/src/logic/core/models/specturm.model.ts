@@ -25,7 +25,7 @@ export interface CompoundSpecturms {
     UDV: Plot
 }
 
-export type SpecturmsOnly =  {
+export type SpecturmFiles =  {
     DF: ArrayBuffer,
     UD: ArrayBuffer,
     FDN: ArrayBuffer,

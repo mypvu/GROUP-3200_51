@@ -7,6 +7,7 @@ import type {
     ResultStage2,
 } from "./algo.interface.ts";
 import CompoundFilter from "./core/algorithms/filter.ts";
+import type { SpecturmFiles } from "./core/models/specturm.model.ts";
 
 export interface FilterResult {
     // Inputs
@@ -37,16 +38,16 @@ export default class FilterService {
         };
     }
 
-    public static async run_stage2(input: InputParams, st1: ResultStage1): Promise<FilterResult> {
+    public static async run_stage2(input: InputParams, st1: ResultStage1, files: SpecturmFiles): Promise<FilterResult> {
         const cf = new CompoundFilter(input);
 
         // second stage specturm overlay -> confidence
         // const st2_result = await cf.st2(st1_result.candidates, input.specturmBuffer)
-        const st2_result = await cf.st2(st1.candidates, input.unknownSpecturms)
+        const st2_result = await cf.st2(st1.candidates, files)
 
         return {
-            input: input,
+            input,
             result: st2_result
-        };
+        }
     }
 }

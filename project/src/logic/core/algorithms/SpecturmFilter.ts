@@ -3,14 +3,14 @@ import type { ResultStage2 } from "../models/result_parameters.model";
 import conf from "../../config/conf.json"
 import type { Version } from "../models/version.model";
 import type Specturm from "../models/specturm.model"; 
-import { MethodsType, Stage2Methods, type Plot, type SpecturmsOnly, type UpperLowerBound } from "../models/specturm.model";
+import { MethodsType, Stage2Methods, type Plot, type SpecturmFiles, type UpperLowerBound } from "../models/specturm.model";
 import { fetchAndParseXY, parseXYFromArrayBuffer, parseXYFromUnkownArrayBuffer, type Point } from "@/logic/utils/fetch_excel_st2";
 import { getConfidence, getUpperLowerBound } from "@/logic/utils/get_spectrum_confidence";
 import { getImageNameFromExcel } from "@/logic/utils/naming_mapping";
 
 export default class SpecturmFilter {
     public candidates: Compound[]
-    public unknowns?: SpecturmsOnly
+    public unknowns?: SpecturmFiles
     private baseUrl: string
     private version: Version
 
@@ -22,7 +22,7 @@ export default class SpecturmFilter {
             "/stage_2"
     }
 
-    public set(candidates: Compound[], version = "1", unknown: SpecturmsOnly): SpecturmFilter {
+    public set(candidates: Compound[], version = "1", unknown: SpecturmFiles): SpecturmFilter {
         this.unknowns = unknown
         this.candidates = candidates
         this.version = version
@@ -112,7 +112,7 @@ export default class SpecturmFilter {
         }
     }
 
-    private selectUnknownPlot(specturms: SpecturmsOnly, method: MethodsType): Plot {
+    private selectUnknownPlot(specturms: SpecturmFiles, method: MethodsType): Plot {
         let buffer: ArrayBuffer
 
         switch(method) {
