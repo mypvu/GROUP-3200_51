@@ -16,10 +16,10 @@ export interface DataSetsInterface {
 
 export default class DataSets implements Iterable<Compound> {
     constructor(
-        public NP_KDS: Compound[],
-        public NP_LDS: Compound[],
-        public VS_KDS: Compound[],
-        public VS_LDS: Compound[]
+        public NP_KDS: Compound[] = [],
+        public NP_LDS: Compound[] = [],
+        public VS_KDS: Compound[] = [],
+        public VS_LDS: Compound[] = []
     ) { }
 
     *[Symbol.iterator](): Iterator<Compound> {
