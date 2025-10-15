@@ -187,7 +187,15 @@ const persistentSessionList = persistentAtom<Session[] | undefined>(
         encode: JSON.stringify,
         decode: (x) => {
             let l: any[] = JSON.parse(x);
-            return l.map((v) => Object.assign(new Session(), v));
+            return l.map((v) => {
+                if (v !== undefined) {
+                    // HACK: do not let these get parsed!
+                    v.algorithmData = undefined;
+                    v.algorithmResult = undefined;
+                    v.sessionNotes = undefined;
+                }
+                return Object.assign(new Session(), v);
+            });
         },
     },
 );
