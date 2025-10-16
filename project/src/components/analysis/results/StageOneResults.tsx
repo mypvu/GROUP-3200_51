@@ -80,7 +80,7 @@ export default function StageOneResults({ session }: Props) {
                 >
                     <thead className="bg-gray-200 text-sm font-semibold text-gray-700 uppercase">
                         <tr>
-                            <th className="border p-3">Name and Code</th>
+                            <th className="border p-3">Name</th>
                             <th className="border p-3">Rf 1</th>
                             <th className="border p-3">H° DEV 254 nm</th>
                             <th className="border p-3">H° DEV 366 nm</th>
