@@ -1,4 +1,22 @@
 {
     "database_url": "https://mypvu.github.io/GROUP-3200_51/data/database",
-    "timeout": 10000
+    "timeout": 10000,
+    "compound_database": {
+        "version": "v1",
+        "stage": "stage_1",
+        "files": [
+            {
+                "name": "Database_KDS_NP.xlsx"
+            },
+            {
+                "name": "Database_KDS_VS.xlsx"
+            },
+            {
+                "name": "Database_LDS_NP.xlsx"
+            },
+            {
+                "name": "Database_LDS_VS.xlsx"
+            }
+        ]
+    }
 }

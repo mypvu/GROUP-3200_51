@@ -4,6 +4,7 @@ import DataSets from "../core/models/datasets.model";
 import type { Compound, DBLabel } from "../core/models/compund.model";
 import { get, H, toNumber } from "./utils";
 import download_from_url, { download_json } from "./network";
+import conf from "../config/conf.json"
 
 export async function fetch_dataset(
     databaseUrl: URL,
@@ -11,72 +12,36 @@ export async function fetch_dataset(
 ): Promise<DataSets> {
     return await fetch_datasets_from_manifest(
         databaseUrl,
-        new URL(datasetUrl.toString() + "/manifest.json"),
+        datasetUrl,
     );
 }
 
 async function fetch_datasets_from_manifest(
     databaseUrl: URL,
-    manifestUrl: URL,
+    datasetUrl: URL,
 ): Promise<DataSets> {
     // HACK for now
-    const url = manifestUrl;
+    const url = datasetUrl;
 
-    const manifest = await download_json(url);
-
-    let files: Array<{ name?: string; url?: string; path?: string }>;
-    if ("files" in manifest && Array.isArray(manifest.files)) {
-        files = manifest.files;
-    } else if (manifest.type === "versions") {
-        const next =
-            manifest.latest?.manifest ?? manifest.versions?.[0]?.manifest;
-        if (!next)
-            throw new Error("No version manifest found in stage manifest.");
-        const verUrl = new URL(next, url);
-
-        const r2 = await fetch(verUrl.toString(), { cache: "default" });
-        if (!r2.ok)
-            throw new Error(
-                `Failed to load version manifest: ${r2.status} ${verUrl}`,
-            );
-
-        const ver = await r2.json();
-        if (!Array.isArray(ver.files))
-            throw new Error("Version manifest has no files[]");
-
-        files = ver.files;
-    } else {
-        throw new Error("Unexpected manifest schema.");
-    }
+    const database = conf.compound_database
+    const database_files = database.files
 
     const NK: Compound[] = [];
     const NL: Compound[] = [];
     const VK: Compound[] = [];
     const VL: Compound[] = [];
 
-    // console.log("url", url);
+    // console.log("url", url.toString());
 
     await Promise.all(
-        files.map(async (f) => {
+        database_files.map(async (f) => {
             let href: string | undefined;
-            if (typeof f.path === "string") {
-                // databaseUrl might not end with a slash, which breaks URL(path, base)
-                const fixedDatabaseUrl = databaseUrl.toString().endsWith("/")
-                    ? databaseUrl
-                    : new URL(databaseUrl.toString() + "/");
-
-                href = new URL(f.path, fixedDatabaseUrl).toString();
-            } else if (typeof f.url === "string") {
-                href = f.url;
-            } else {
-                return;
-            }
-
-            const name = String(f.name ?? f.path ?? f.url ?? "");
+            const name = String(f.name);
             const label = inferLabelFromFilename(name);
+
             if (!label) return;
 
-            const list = await fetch_excel(new URL(href, databaseUrl), label);
+            const list = await fetch_excel(new URL(name, url + "/"), label);
             const withLabel = list.map((c) => ({
                 ...c,
                 db_label: label as DBLabel,
