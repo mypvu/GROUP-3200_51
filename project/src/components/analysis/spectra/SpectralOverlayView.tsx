@@ -7,18 +7,15 @@ import FileListView, {
 import SessionService, {
     type Session,
 } from "@/logic/session/session_service.ts";
-import FilterService, { type FilterResult } from "@/logic/filter_service.ts";
+import FilterService from "@/logic/filter_service.ts";
 import type {
     ResultStage1,
     ResultStage2,
 } from "@core/models/result_parameters.model.ts";
 import type { InputParams } from "@core/models/search_parameters.model.ts";
-import { plotSpectrum } from "@/logic/plot";
 import { For, Show } from "@preact/signals/utils";
 import type { SpecturmFiles } from "@/logic/core/models/specturm.model";
 import { createSpectrumFiles } from "@/logic/utils/utils";
-import { version } from "xlsx";
-import SpecturmFilter from "@/logic/core/algorithms/SpecturmFilter";
 
 export default function SpectralOverlayView() {
     const uploadedFiles = useSignal<UploadedFileList>({ files: [] });
@@ -55,10 +52,15 @@ export default function SpectralOverlayView() {
     ): Promise<ResultStage2 | undefined> {
         // TODO: implement this
 
-        const specturmsFiles : SpecturmFiles = createSpectrumFiles(files) 
+        const specturmsFiles: SpecturmFiles = createSpectrumFiles(files);
 
-        return (await FilterService.run_stage2(stage1Inputs, stage1Result, specturmsFiles)).result as ResultStage2
-        
+        return (
+            await FilterService.run_stage2(
+                stage1Inputs,
+                stage1Result,
+                specturmsFiles,
+            )
+        ).result as ResultStage2;
     }
 
     async function startAnalysisUx(): Promise<string | undefined> {
