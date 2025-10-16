@@ -105,7 +105,7 @@ export interface SessionFilterResult {
 
 export class SessionAlgorithmResult {
     private sessionId: string;
-    public data?: SessionFilterResult;
+    public data?: SessionFilterResult = {};
     private atom: WritableAtom<SessionFilterResult | undefined>;
 
     constructor(sessionId: string) {

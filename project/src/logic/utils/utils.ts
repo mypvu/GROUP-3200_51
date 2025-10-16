@@ -1,5 +1,5 @@
 import type { UploadedFile, UploadedFileList } from "@/components/analysis/spectra/FileListView";
-import type { SpecturmFiles } from "../core/models/specturm.model";
+import type { SpecturmFiles as SpectrumFiles } from "../core/models/specturm.model";
 
 // Prefer first non-empty column in `keys`
 export function get(row: Record<string, string>, keys: string[]): string {
@@ -21,10 +21,10 @@ export function toNumber(v: string | undefined): number {
 export const createSpectrumFiles = (uploadedFiles: UploadedFile[]): SpectrumFiles => {
   const spectrumKeys = ["DF", "UD", "FDN", "FDV", "UDP", "UDV"] as const;
 
-  const result: Partial<SpecturmFiles> = {};
+  const result: Partial<SpectrumFiles> = {};
 
   for (const key of spectrumKeys) {
-    const match = uploadedFiles.files.find(
+    const match = uploadedFiles.find(
       (file) => file.name.toUpperCase() === key && file.data
     );
     if (match?.data) {
