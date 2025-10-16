@@ -91,6 +91,8 @@ export default function StageOneResults({ session }: Props) {
                             <th className="border p-3">UV-Vis λ₁</th>
                             <th className="border p-3">UV-Vis λ₂</th>
                             <th className="border p-3">UV-Vis λ₃</th>
+                            <th className="border p-3">FI VS λ</th>
+                            <th className="border p-3">UV VS λ</th>
                         </tr>
                     </thead>
 
